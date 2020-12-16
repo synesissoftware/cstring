@@ -1,32 +1,68 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
 
-# Precompiled Headers
-*.gch
-*.pch
+# directories (by name)
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+_UpgradeReport_Files/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+bin/
+lib/
 
-# Executables
+Debug/
+DebugMt/
+Release/
+ReleaseMt/
+ReleaseUnix/
+UDebug/
+UDebugMt/
+URelease/
+UReleaseMt/
+
+Win32/
+x64/
+
+xcshareddata/
+xcuserdata/
+
+# directories (by pattern)
+
+# files (by name)
+
+.DS_Store
+
+tools/*/*/*/lnunique
+tools/*/*/*/touch
+
+tools/bin
+tools/lib
+
+# files (by pattern)
+
+UpgradeLog*.XML
+
+RCa0*
+RCb0*
+
+*-201*.log
+
+*~
+*.*~
+*.aps
 *.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+*.ipch
+*.log
+*.ncb
+*.o
+*.obj
+*.opt
+*.opensdf
+*.pch
+*.pdb
+*.scc
+*.sdf
+*.suo
+*.swp
+*.tmp
+*.vcproj*.user
+*.vcxproj*.user
+*.xcuserstate
 
-# Debug files
-*.dSYM/
+
