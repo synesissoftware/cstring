@@ -28,6 +28,9 @@ xcuserdata/
 
 .DS_Store
 
+makefile.tmpl
+makefile.tools.xml
+
 tools/*/*/*/lnunique
 tools/*/*/*/touch
 
