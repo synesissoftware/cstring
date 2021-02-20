@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="./cstring.common.props" />
+
+  <ItemGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros" />
+
+  <PropertyGroup Condition=" $(Configuration.ToUpper().Contains('DEBUG'))">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories Condition="'$(XTESTS_C_ROOT)' != '' AND exists('$(XTESTS_C_ROOT)/include')">$(XTESTS_C_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(STLSOFT)' != '' AND exists('$(STLSOFT)/include')">$(STLSOFT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4505;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>"$(OutDir)$(TargetName)$(TargetExt)"</Command>
+      <Message>Running unit-tests ...</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+
+</Project>

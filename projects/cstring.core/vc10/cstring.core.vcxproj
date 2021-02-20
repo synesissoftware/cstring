@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug Multithreaded|Win32">
+      <Configuration>Debug Multithreaded</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Multithreaded|x64">
+      <Configuration>Debug Multithreaded</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Multithreaded DLL|Win32">
+      <Configuration>Debug Multithreaded DLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Multithreaded DLL|x64">
+      <Configuration>Debug Multithreaded DLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Multithreaded pseudoUNIX|Win32">
+      <Configuration>Debug Multithreaded pseudoUNIX</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Multithreaded pseudoUNIX|x64">
+      <Configuration>Debug Multithreaded pseudoUNIX</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded|Win32">
+      <Configuration>Release Multithreaded</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded|x64">
+      <Configuration>Release Multithreaded</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded DLL|Win32">
+      <Configuration>Release Multithreaded DLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded DLL|x64">
+      <Configuration>Release Multithreaded DLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded pseudoUNIX|Win32">
+      <Configuration>Release Multithreaded pseudoUNIX</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Multithreaded pseudoUNIX|x64">
+      <Configuration>Release Multithreaded pseudoUNIX</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode Debug Multithreaded|Win32">
+      <Configuration>Unicode Debug Multithreaded</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode Debug Multithreaded|x64">
+      <Configuration>Unicode Debug Multithreaded</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode Release Multithreaded|Win32">
+      <Configuration>Unicode Release Multithreaded</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode Release Multithreaded|x64">
+      <Configuration>Unicode Release Multithreaded</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B3B93938-D299-8534-AD2A-702C0E0297EC}</ProjectGuid>
+    <RootNamespace>cstring.core</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <CharacterSet>MultiByte</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition=" $(Configuration.ToUpper().Contains('DEBUG'))">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="!$(Configuration.ToUpper().Contains('DEBUG'))">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition=" $(Configuration.ToUpper().Contains('UNICODE'))">
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded DLL|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.dll.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded DLL|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.dll.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded pseudoUNIX|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.unix.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Multithreaded pseudoUNIX|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.unix.x64.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.mt</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.mt</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded DLL|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.dll</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded DLL|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.dll</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded pseudoUNIX|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.unix.mt</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Multithreaded pseudoUNIX|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.unix.x64.mt</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Unicode Debug Multithreaded|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.widestring.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Unicode Debug Multithreaded pseudoUNIX|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.widestring.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Unicode Release Multithreaded|Win32'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.widestring.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Unicode Release Multithreaded pseudoUNIX|x64'">
+    <SynSoft_LibTargetStem>cstring.4.core.vc10.x64.widestring.mt.debug</SynSoft_LibTargetStem>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SynSoft_LibTargetDir>$(ProjectDir)..\..\..\lib\</SynSoft_LibTargetDir>
+    <SynSoft_LibTargetPath>$(SynSoft_LibTargetDir)$(SynSoft_LibTargetStem).lib</SynSoft_LibTargetPath>
+    <ExtensionsToDeleteOnClean>$(SynSoft_LibTargetPath);$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)projects/vcprops/cstring.common.props" Condition="exists('$(SolutionDir)projects/vcprops/cstring.common.props')" Label="cstringStandardProperties" />
+    <Import Project="$(SolutionDir)projects/vcprops/cstring.no-PCH.props" Condition="exists('$(SolutionDir)projects/vcprops/cstring.no-PCH.props')" Label="cstringStandardProperties" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "$(SynSoft_LibTargetDir)" (
+  ECHO "$(SynSoft_LibTargetDir)" does not exist
+) ELSE (
+  COPY /Y "$(TargetPath)" "$(SynSoft_LibTargetPath)"
+)</Command>
+      <Message>Creating Synesis-named library in lib directory ...</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>not.exist</PrecompiledHeaderFile>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\cstring.core.c" />
+    <ClCompile Include="..\..\..\src\dllmain.c">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuildStep Include="..\..\..\src\cstring.def">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </CustomBuildStep>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="../../../include\cstring\cstring.h" />
+    <ClInclude Include="../../../include\cstring\internal\safestr.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
