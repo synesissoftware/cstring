@@ -1,32 +1,84 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
 
-# Precompiled Headers
-*.gch
-*.pch
+# directories (by name)
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+_internal/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+_UpgradeReport_Files/
 
-# Executables
+doc/
+
+bin/
+lib/
+
+Debug/
+DebugMt/
+Release/
+ReleaseMt/
+ReleaseUnix/
+UDebug/
+UDebugMt/
+URelease/
+UReleaseMt/
+
+Win32/
+x64/
+
+xcshareddata/
+xcuserdata/
+
+# directories (by pattern)
+
+# files (by name)
+
+.DS_Store
+
+/cstring.vc9.sln
+/test/scratch/cstring.test.scratch.vc9.sln
+
+/list_changes.cmd
+/update_deps.cmd
+
+makefile.tmpl
+makefile.tools.xml
+
+tools/*/*/*/lnunique
+tools/*/*/*/touch
+
+tools/bin
+tools/lib
+
+# files (by pattern)
+
+UpgradeLog*.XML
+
+RCa0*
+RCb0*
+
+*-201*.log
+
+*~
+*.*~
+*.aps
+*.dsp
+*.dsw
 *.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+*.ipch
+*.log
+*.ncb
+*.o
+*.obj
+*.opt
+*.opensdf
+*.pch
+*.pdb
+*.scc
+*.sdf
+*.suo
+*.swp
+*.tmp
+*.vcproj
+*.vcproj*.user
+*.vcxproj*.user
+*.xcuserstate
 
-# Debug files
-*.dSYM/
+
