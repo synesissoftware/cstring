@@ -6,7 +6,7 @@
 #           on the Win32 platform
 #
 # Created:	16th December 2007
-# Updated:	17th December 2020
+# Updated:	20th February 2021
 #
 ############################################################################
 

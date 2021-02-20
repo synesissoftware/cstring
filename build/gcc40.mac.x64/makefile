@@ -6,7 +6,7 @@
 #           on the Mac OS-X platform
 #
 # Created:	16th December 2007
-# Updated:	17th December 2020
+# Updated:	20th February 2021
 #
 ############################################################################
 
@@ -325,7 +325,7 @@ CUSTOM_DEFS			=
 
 CC_F_NOLOGO           =   
 CC_F_COMPILE_ONLY     =   -c
-CC_F_WARNING_MAX      =   -Wall -pedantic -Wno-long-long -Wno-long-double -Wno-unused-value -Wno-unused-function -Wundef -Wendif-labels -Wshadow
+CC_F_WARNING_MAX      =   -Wall -pedantic -Wno-long-long -Wno-long-double -Wno-missing-braces -Wno-\#pragma-messages -Wno-unused-function -Wno-unused-value -Wundef -Wendif-labels -Wshadow
 CC_F_WARNING_ERR      =   -Werror
 CC_F_MINIMUM_SIZE     =   -O1
 CC_F_MAXIMUM_SPEED	=	-O3
@@ -358,7 +358,7 @@ CC_FLAGS_ST_R =\
 
 CPPC_F_NOLOGO           =   
 CPPC_F_COMPILE_ONLY     =   -c
-CPPC_F_WARNING_MAX      =   -Wall -pedantic -Wno-long-long -Wno-long-double -Wno-unused-value -Wno-unused-function
+CPPC_F_WARNING_MAX      =   -Wall -pedantic -Wno-long-long -Wno-long-double -Wno-missing-braces -Wno-\#pragma-messages -Wno-unused-function -Wno-unused-value
 CPPC_F_WARNING_ERR      =   -Werror
 CPPC_F_EXCEPTIONS_ON	=	
 CPPC_F_EXCEPTIONS_OFF	=	
