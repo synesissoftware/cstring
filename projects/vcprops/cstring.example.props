@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="./cstring.common.props" />
+
+  <ItemGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros" />
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories Condition="'$(STLSOFT)' != '' AND exists('$(STLSOFT)/include')">$(STLSOFT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(RECLS_ROOT)' != '' AND exists('$(RECLS_ROOT)/include')">$(RECLS_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(PANTHEIOS_EXTRAS_XHELPERS_ROOT)' != '' AND exists('$(PANTHEIOS_EXTRAS_XHELPERS_ROOT)/include')">$(PANTHEIOS_EXTRAS_XHELPERS_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(PANTHEIOS_EXTRAS_MAIN_ROOT)' != '' AND exists('$(PANTHEIOS_EXTRAS_MAIN_ROOT)/include')">$(PANTHEIOS_EXTRAS_MAIN_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(PANTHEIOS_EXTRAS_DIAGUTIL_ROOT)' != '' AND exists('$(PANTHEIOS_EXTRAS_DIAGUTIL_ROOT)/include')">$(PANTHEIOS_EXTRAS_DIAGUTIL_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(PANTHEIOS_ROOT)' != '' AND exists('$(PANTHEIOS_ROOT)/include')">$(PANTHEIOS_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(LIBCLIMATE_ROOT)' != '' AND exists('$(LIBCLIMATE_ROOT)/include')">$(LIBCLIMATE_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(FASTFORMAT_ROOT)' != '' AND exists('$(FASTFORMAT_ROOT)/include')">$(FASTFORMAT_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(CLASP_ROOT)' != '' AND exists('$(CLASP_ROOT)/include')">$(CLASP_ROOT)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(RECLS_ROOT)' != '' AND exists('$(RECLS_ROOT)/lib')">$(RECLS_ROOT)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(PANTHEIOS_ROOT)' != '' AND exists('$(PANTHEIOS_ROOT)/lib')">$(PANTHEIOS_ROOT)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(LIBCLIMATE_ROOT)' != '' AND exists('$(LIBCLIMATE_ROOT)/lib')">$(LIBCLIMATE_ROOT)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(CLASP_ROOT)' != '' AND exists('$(CLASP_ROOT)/lib')">$(CLASP_ROOT)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(FASTFORMAT_ROOT)' != '' AND exists('$(FASTFORMAT_ROOT)/lib')">$(FASTFORMAT_ROOT)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+
+</Project>
