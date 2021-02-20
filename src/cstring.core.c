@@ -182,6 +182,77 @@ convert_negative_index(
     return CSTRING_RC_SUCCESS;
 }
 
+/*
+ * \param dst Destination. May NOT be \c NULL
+ * \param src Source. May be \c NULL
+ * \param lim Maximum number of elements in \c dst
+ *
+ * \return The actual length of src if not \c NULL; 0 otherwise
+ *
+ * \pre NULL != dst
+ */
+static
+size_t
+cstring_strlcpy_safe_(
+    cstring_char_t          dst[]
+,   cstring_char_t const*   src
+,   size_t                  lim
+)
+{
+    CSTRING_ASSERT(NULL != dst);
+
+    if (NULL == src)
+    {
+        memset(dst, 0, sizeof(cstring_char_t) * lim);
+
+        return 0;
+    }
+    else
+    {
+        size_t i;
+
+        for (i = 0; i != lim; ++i, ++dst, ++src)
+        {
+            *dst = *src;
+
+            if ('\0' == *src)
+            {
+                break;
+            }
+        }
+
+        memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
+
+        for (; '\0' != *src; ++i, ++src)
+        {
+        }
+
+        return i;
+    }
+}
+
+/*
+ *
+ * \pre NULL != dst
+ * \pre 0 == cch || NULL != src
+ */
+static
+void
+cstring_memcpy_safe_(
+    void*                   dst
+,   void const*             src
+,   size_t                  cb
+)
+{
+    CSTRING_ASSERT(NULL != dst);
+    CSTRING_ASSERT(0 == cb || NULL != src);
+
+    if (0 != cb)
+    {
+        memcpy(dst, src, cb);
+    }
+}
+
 /* /////////////////////////////////////////////////////////////////////////
  * allocation functions
  */
@@ -426,7 +497,7 @@ cstring_create(
     else
     {
         pcs->len        =   len;
-        memcpy(pcs->ptr, s, len * sizeof(cstring_char_t));
+        cstring_memcpy_safe_(pcs->ptr, s, len * sizeof(cstring_char_t));
         pcs->ptr[len]   =   '\0';
         pcs->capacity   =   cch;
         pcs->flags      =   CSTRING_F_MEMORY_IS_INTERNAL_HEAP | CSTRING_F_USE_REALLOC;
@@ -460,7 +531,7 @@ cstring_createLen(
     else
     {
         pcs->len        =   len;
-        memcpy(pcs->ptr, s, len * sizeof(cstring_char_t));
+        cstring_strlcpy_safe_(pcs->ptr, s, len);
         pcs->ptr[len]   =   '\0';
         pcs->capacity   =   cch;
         pcs->flags      =   CSTRING_F_MEMORY_IS_INTERNAL_HEAP | CSTRING_F_USE_REALLOC;
@@ -477,9 +548,7 @@ cstring_createN(
 ,   size_t                  n
 )
 {
-    static cstring_char_t const s_empty[] = { 0 };
-
-    CSTRING_RC rc = cstring_createLen(pcs, s_empty, n);
+    CSTRING_RC rc = cstring_createLen(pcs, NULL, n);
 
     if (CSTRING_RC_SUCCESS == rc)
     {
@@ -614,7 +683,7 @@ cstring_createLenFn(
         }
 
         pcs->len        =   len;
-        memcpy(pcs->ptr, s, len * sizeof(cstring_char_t));
+        cstring_strlcpy_safe_(pcs->ptr, s, len);
         pcs->ptr[len]   =   '\0';
         pcs->flags      =   flags;
 
@@ -906,7 +975,7 @@ cstring_assignFn(
         /* WARNING: This code is not self-assignment safe */
 
         pcs->len = len;
-        memcpy(pcs->ptr, s, len * sizeof(cstring_char_t));
+        cstring_memcpy_safe_(pcs->ptr, s, len * sizeof(cstring_char_t));
         pcs->ptr[len] = '\0';
 
         return CSTRING_RC_SUCCESS;
@@ -1004,7 +1073,7 @@ cstring_assignLenFn(
         }
 
         pcs->len = len;
-        memcpy(pcs->ptr, s, len * sizeof(cstring_char_t));
+        cstring_strlcpy_safe_(pcs->ptr, s, len);
         pcs->ptr[len] = '\0';
 
         return CSTRING_RC_SUCCESS;
@@ -1122,7 +1191,7 @@ cstring_appendFn(
             }
         }
 
-        memcpy(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+        cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
         pcs->len            +=  len;
         pcs->ptr[pcs->len]  =   '\0';
 
@@ -1232,7 +1301,7 @@ cstring_appendLenFn(
             }
         }
 
-        memcpy(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+        cstring_strlcpy_safe_(pcs->ptr + pcs->len, s, len);
         pcs->len            +=  len;
         pcs->ptr[pcs->len]  =   '\0';
 
@@ -1496,7 +1565,7 @@ cstring_insertLen(
         memmove(pcs->ptr + realIndex + len, pcs->ptr + realIndex, n * sizeof(cstring_char_t));
 
         pcs->len += len;
-        memcpy(pcs->ptr + realIndex, s, sizeof(cstring_char_t) * len);
+        cstring_strlcpy_safe_(pcs->ptr + realIndex, s, len);
         pcs->ptr[pcs->len] = '\0';
     }
 
@@ -1580,7 +1649,7 @@ cstring_replaceLen(
     }
 
     /* we can simply replace directly */
-    memcpy(pcs->ptr + realIndex, s, sizeof(cstring_char_t) * cch);
+    cstring_memcpy_safe_(pcs->ptr + realIndex, s, sizeof(cstring_char_t) * cch);
 
     return CSTRING_RC_SUCCESS;
 }
