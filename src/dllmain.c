@@ -4,11 +4,11 @@
  * Purpose: Definition of DllMain for the Win32 platform
  *
  * Created: 19th August 2005
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2005-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -44,7 +44,7 @@
  */
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/cstring.h>
@@ -55,7 +55,7 @@
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Compatibility
+ * compatibility
  */
 
 #if 1 &&\
@@ -93,7 +93,7 @@ typedef void            *LPVOID;
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Declarations
+ * declarations
  */
 
 CSTRING_EXTERN_C CSTRING_RC cstring_apiInit(void);
@@ -120,7 +120,7 @@ BOOL WINAPI DllMain(HANDLE  hInst
     ((void)hInst);
     ((void)lpReserved);
 
-    switch(dwReason)
+    switch (dwReason)
     {
         case    DLL_PROCESS_ATTACH:
             return CSTRING_RC_SUCCESS == cstring_apiInit();
@@ -150,11 +150,11 @@ struct cstringdll_DllVersionInfo
 
 HRESULT WINAPI cstringdll_DllGetVersion(struct cstringdll_DllVersionInfo *pdvi)
 {
-    if(NULL == pdvi)
+    if (NULL == pdvi)
     {
         return E_INVALIDARG;
     }
-    else if(pdvi->cbSize != sizeof(struct cstringdll_DllVersionInfo))
+    else if (pdvi->cbSize != sizeof(struct cstringdll_DllVersionInfo))
     {
         return E_INVALIDARG;
     }
@@ -176,7 +176,7 @@ HRESULT WINAPI cstringdll_DllGetVersion(struct cstringdll_DllVersionInfo *pdvi)
 CSTRING_EXTERN_C CSTRING_RC cstringdll_yield(   struct cstring_t*   pcs
                                             ,   char**              pPayload)
 {
-    if( NULL != pcs &&
+    if (NULL != pcs &&
         (pcs->flags & CSTRING_F_ARENA_MASK) == CSTRING_F_USE_REALLOC)
     {
         return CSTRING_RC_CANNOTYIELDFROMSO;
@@ -193,7 +193,7 @@ CSTRING_EXTERN_C CSTRING_RC cstringdll_yield2(  struct cstring_t*   pcs
                                             ,   char**              pPayload
                                             ,   void**              pRaw)
 {
-    if( NULL != pcs &&
+    if (NULL != pcs &&
         (pcs->flags & CSTRING_F_ARENA_MASK) == CSTRING_F_USE_REALLOC)
     {
         return CSTRING_RC_CANNOTYIELDFROMSO;

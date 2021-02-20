@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring.vector API
  *
  * Created: 16th June 1994
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -45,10 +45,10 @@
  */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
-/* cstring Header Files */
+/* cstring header files */
 
 #include <cstring/cstring.vector.h>
 
@@ -56,7 +56,7 @@
 # include <cstring/internal/safestr.h>
 #endif /* CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR */
 
-/* Standard C Header Files */
+/* Standard C header files */
 
 #include <assert.h>
 #include <stdio.h>
@@ -64,19 +64,19 @@
 #include <string.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Constants & definitions
+ * constants & definitions
  */
 
 #define CSTRING_VECTOR_DEF_CAPACITY_    (8)
 
 /* /////////////////////////////////////////////////////////////////////////
- * Debugging
+ * debugging
  */
 
 #define cstring_vector_assert(expr)     assert(expr)
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER)
@@ -91,13 +91,13 @@
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler compatibility
+ * compiler compatibility
  */
 
 #if defined(__BORLANDC__)
 char* strncpy_safe(char* dest, char const* src, size_t len)
 {
-    if(0 != len)
+    if (0 != len)
     {
         strncpy(dest, src, len);
     }
@@ -125,12 +125,12 @@ cstring_vector_init(
 {
     cstring_vector_assert(NULL != pcsv);
 
-    if(cstring_vector_DEFAULT_CAPACITY == minCapacity)
+    if (cstring_vector_DEFAULT_CAPACITY == minCapacity)
     {
         minCapacity = CSTRING_VECTOR_DEF_CAPACITY_;
     }
 
-    if(0 == minCapacity)
+    if (0 == minCapacity)
     {
         cstring_vector_t const csv = cstring_vector_t_DEFAULT;
 
@@ -143,7 +143,7 @@ cstring_vector_init(
         CSTRING_RC  rc  =   CSTRING_RC_SUCCESS;
         cstring_t*  ptr =   malloc(sizeof(cstring_t) * minCapacity);
 
-        if(NULL == ptr)
+        if (NULL == ptr)
         {
             rc = CSTRING_RC_OUTOFMEMORY;
         }
@@ -169,11 +169,11 @@ cstring_vector_destroy(
 
     cstring_vector_assert(NULL != pcsv);
 
-    for(i = 0; i != pcsv->len; ++i)
+    for (i = 0; i != pcsv->len; ++i)
     {
         CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
 
-        if( CSTRING_RC_SUCCESS != rc2 &&
+        if (CSTRING_RC_SUCCESS != rc2 &&
             CSTRING_RC_SUCCESS == rc)
         {
             rc = rc2;
@@ -202,11 +202,11 @@ cstring_vector_truncate(
     cstring_vector_assert(NULL != pcsv);
     cstring_vector_assert(len <= pcsv->len);
 
-    for(i = len; i != pcsv->len; ++i)
+    for (i = len; i != pcsv->len; ++i)
     {
         CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
 
-        if( CSTRING_RC_SUCCESS != rc2 &&
+        if (CSTRING_RC_SUCCESS != rc2 &&
             CSTRING_RC_SUCCESS == rc)
         {
             rc = rc2;
@@ -227,7 +227,7 @@ cstring_vector_create(
 {
     cstring_vector_assert(NULL != pcsv);
 
-    if(cstring_vector_DEFAULT_CAPACITY == initialSize)
+    if (cstring_vector_DEFAULT_CAPACITY == initialSize)
     {
         return (CSTRING_RC)CSTRING_RC_REQUESTTOOLARGE;
     }
@@ -235,19 +235,19 @@ cstring_vector_create(
     {
         CSTRING_RC rc = cstring_vector_init(pcsv, initialSize);
 
-        if(CSTRING_RC_SUCCESS == rc)
+        if (CSTRING_RC_SUCCESS == rc)
         {
             size_t i;
 
             cstring_vector_assert(pcsv->capacity >= initialSize);
 
-            for(i = 0; i != initialSize; ++i)
+            for (i = 0; i != initialSize; ++i)
             {
                 CSTRING_RC rc2 = cstring_init(pcsv->ptr + i);
 
-                if(CSTRING_RC_SUCCESS != rc2)
+                if (CSTRING_RC_SUCCESS != rc2)
                 {
-                    while(0 != i)
+                    while (0 != i)
                     {
                         cstring_destroy(pcsv->ptr + (i - 1));
 
@@ -265,7 +265,7 @@ cstring_vector_create(
             }
         }
 
-        if(CSTRING_RC_SUCCESS == rc)
+        if (CSTRING_RC_SUCCESS == rc)
         {
             pcsv->len = initialSize;
         }
@@ -285,7 +285,7 @@ cstring_vector_insertAt(
     cstring_vector_assert(NULL != pcsv);
     cstring_vector_assert(NULL != strings || 0 == numStrings);
 
-    if(0 == numStrings)
+    if (0 == numStrings)
     {
         return CSTRING_RC_SUCCESS;
     }
@@ -295,11 +295,11 @@ cstring_vector_insertAt(
         size_t      i;
         size_t      newSize = pcsv->len + numStrings;
 
-        if(newSize > pcsv->capacity)
+        if (newSize > pcsv->capacity)
         {
             cstring_t* newPtr = realloc(pcsv->ptr, sizeof(cstring_t) * newSize);
 
-            if(NULL == newPtr)
+            if (NULL == newPtr)
             {
                 return CSTRING_RC_OUTOFMEMORY;
             }
@@ -311,16 +311,16 @@ cstring_vector_insertAt(
         }
 
         /* Make space for new items */
-        if(position < pcsv->len)
+        if (position < pcsv->len)
         {
             memmove(pcsv->ptr + pcsv->len + numStrings, pcsv->ptr + pcsv->len, sizeof(cstring_t) * numStrings);
         }
 
-        for(i = 0; i != numStrings; ++i)
+        for (i = 0; i != numStrings; ++i)
         {
             cstring_t* dest = pcsv->ptr + pcsv->len + i;
 
-            if(NULL == strings)
+            if (NULL == strings)
             {
                 cstring_t const cs = cstring_t_DEFAULT;
 
@@ -331,9 +331,9 @@ cstring_vector_insertAt(
                 cstring_t const*    src =   strings + i;
                 CSTRING_RC          rc2 =   cstring_createLen(dest, src->ptr, src->len);
 
-                if(CSTRING_RC_SUCCESS != rc2)
+                if (CSTRING_RC_SUCCESS != rc2)
                 {
-                    while(0 != i)
+                    while (0 != i)
                     {
                         cstring_destroy(pcsv->ptr + pcsv->len + (i - 1));
 
@@ -346,14 +346,14 @@ cstring_vector_insertAt(
             }
         }
 
-        if(CSTRING_RC_SUCCESS == rc)
+        if (CSTRING_RC_SUCCESS == rc)
         {
             pcsv->len += numStrings;
         }
         else
         {
             /* If it's failed, and we made space for new items, remove the gap (leaving it with increased capacity) */
-            if(position < pcsv->len)
+            if (position < pcsv->len)
             {
                 memmove(pcsv->ptr + pcsv->len, pcsv->ptr + pcsv->len + numStrings, sizeof(cstring_t) * numStrings);
             }
@@ -379,7 +379,7 @@ cstring_vector_readLines(
 
     initialLen = pcsv->len;
 
-    if(NULL == numLinesRead)
+    if (NULL == numLinesRead)
     {
         numLinesRead = &numLinesRead_;
     }
@@ -390,15 +390,15 @@ cstring_vector_readLines(
     {
         rc = cstring_readline(stm, &cs, NULL);
 
-        if( CSTRING_RC_SUCCESS == rc ||
+        if (CSTRING_RC_SUCCESS == rc ||
             CSTRING_RC_EOF == rc)
         {
-            if( 0 != cs.len ||
+            if (0 != cs.len ||
                 CSTRING_RC_EOF != rc)
             {
                 CSTRING_RC rc2 = cstring_vector_append(pcsv, &cs, 1);
 
-                if(CSTRING_RC_SUCCESS != rc2)
+                if (CSTRING_RC_SUCCESS != rc2)
                 {
                     /* TODO : make this "failure"-safe (i.e. carry out the operation into an empty csv then blat in all at once */
 
@@ -415,7 +415,7 @@ cstring_vector_readLines(
             }
         }
 
-    } while(CSTRING_RC_SUCCESS == rc);
+    } while (CSTRING_RC_SUCCESS == rc);
 
     cstring_destroy(&cs);
 
@@ -423,7 +423,7 @@ cstring_vector_readLines(
 }
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER) && \

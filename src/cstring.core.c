@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 10th August 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -45,10 +45,10 @@
  */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
-/* cstring Header Files */
+/* cstring header files */
 
 #include <cstring/cstring.h>
 
@@ -56,7 +56,7 @@
 # include <cstring/internal/safestr.h>
 #endif /* CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR */
 
-/* Standard C Header Files */
+/* Standard C header files */
 
 #include <assert.h>
 #include <stdio.h>
@@ -68,26 +68,27 @@
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Constants & definitions
+ * constants & definitions
  */
 
-#define CSTRING_ALLOC_GRANULARITY   (8)
+#define CSTRING_ALLOC_GRANULARITY                           (8)
 
-#define CSTRING_OFFSET_SIZE         (16)
+#define CSTRING_OFFSET_SIZE                                 (16)
 
 #if defined(WIN32) || \
     defined(WIN64)
+
 # define CSTRING_USE_WINAPI_
 #endif
 
 /* /////////////////////////////////////////////////////////////////////////
- * Debugging
+ * debugging
  */
 
 #define cstring_assert(expr)        assert(expr)
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER)
@@ -102,21 +103,23 @@
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Character encoding
+ * character encoding
  */
 
 #ifdef CSTRING_USE_WIDE_STRINGS
-# define cstring_strlen_        wcslen
-# define cstring_strncpy_       wcsncpy
-# define cstring_strstr_        wcsstr
+
+# define cstring_strlen_                                    wcslen
+# define cstring_strncpy_                                   wcsncpy
+# define cstring_strstr_                                    wcsstr
 #else /* ? CSTRING_USE_WIDE_STRINGS */
-# define cstring_strlen_        strlen
-# define cstring_strncpy_       strncpy
-# define cstring_strstr_        strstr
+
+# define cstring_strlen_                                    strlen
+# define cstring_strncpy_                                   strncpy
+# define cstring_strstr_                                    strstr
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler compatibility
+ * compiler compatibility
  */
 
 #if defined(__BORLANDC__)
@@ -127,7 +130,7 @@ strncpy_safe(
 ,   size_t                  len
 )
 {
-    if(0 != len)
+    if (0 != len)
     {
         cstring_strncpy_(dest, src, len);
     }
@@ -144,7 +147,7 @@ strncpy_safe(
 #endif
 
 /* /////////////////////////////////////////////////////////////////////////
- * Utility functions
+ * utility functions
  */
 
 static
@@ -169,7 +172,7 @@ convert_negative_index(
 
     ++index;
 
-    if(-index > (int)pcs->len)
+    if (-index > (int)pcs->len)
     {
         return CSTRING_RC_INVALIDSECTION;
     }
@@ -180,7 +183,7 @@ convert_negative_index(
 }
 
 /* /////////////////////////////////////////////////////////////////////////
- * Allocation functions
+ * allocation functions
  */
 
 #if defined(CSTRING_USE_WINAPI_)
@@ -203,19 +206,19 @@ cstring_realloc_2(
     void*   pvNew;
     size_t  cb;
 
-    if(CSTRING_F_MEMORY_IS_OFFSET & flags)
+    if (CSTRING_F_MEMORY_IS_OFFSET & flags)
     {
-        if(NULL != pv)
+        if (NULL != pv)
         {
             pv = (cstring_char_t*)pv - CSTRING_OFFSET_SIZE;
 
-            if(NULL == pfnAllocFailHandler)
+            if (NULL == pfnAllocFailHandler)
             {
                 memcpy(&pfnAllocFailHandler, pv, sizeof(pfnAllocFailHandler));
             }
         }
 
-        if(0 != cch)
+        if (0 != cch)
         {
             cch += CSTRING_OFFSET_SIZE;
         }
@@ -227,12 +230,12 @@ cstring_realloc_2(
 
 alloc_retry:
 
-    switch(CSTRING_F_ARENA_MASK & flags)
+    switch (CSTRING_F_ARENA_MASK & flags)
     {
         case    CSTRING_F_USE_REALLOC:
 #if defined(_MSC_VER) && \
     defined(_DEBUG)
-            if(0 == cb)
+            if (0 == cb)
             {
                 free(pv);
                 return NULL;
@@ -260,9 +263,9 @@ alloc_retry:
             return NULL;
     }
 
-    if(NULL == pvNew)
+    if (NULL == pvNew)
     {
-        if( 0 != cb &&
+        if (0 != cb &&
             NULL != pfnAllocFailHandler &&
             1 == (*pfnAllocFailHandler)(pv, cb, flags, param))
         {
@@ -274,11 +277,11 @@ alloc_retry:
 
     pv = pvNew;
 
-    if(CSTRING_F_MEMORY_IS_OFFSET & flags)
+    if (CSTRING_F_MEMORY_IS_OFFSET & flags)
     {
-        if(NULL != pv)
+        if (NULL != pv)
         {
-            if(NULL != pfnAllocFailHandler)
+            if (NULL != pfnAllocFailHandler)
             {
                 memcpy(pv, &pfnAllocFailHandler, sizeof(pfnAllocFailHandler));
             }
@@ -306,27 +309,39 @@ cstring_realloc_(
  * API
  */
 
-#if defined(_DLL) || \
+#if 0 || \
+    defined(_DLL) || \
     defined(__DLL) || \
-    1
-CSTRING_EXTERN_C CSTRING_RC cstring_apiInit(void);
-CSTRING_EXTERN_C void cstring_apiUninit(void);
+    0
 
-CSTRING_EXTERN_C CSTRING_RC cstring_apiInit(void)
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_apiInit(void);
+CSTRING_EXTERN_C
+void
+cstring_apiUninit(void);
+
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_apiInit(void)
 {
     return CSTRING_RC_SUCCESS;
 }
 
-CSTRING_EXTERN_C void cstring_apiUninit(void)
+CSTRING_EXTERN_C
+void
+cstring_apiUninit(void)
 {
 }
 #endif /* _DLL */
 
-CSTRING_EXTERN_C char const* cstring_getStatusCodeString(
+CSTRING_EXTERN_C
+char const*
+cstring_getStatusCodeString(
     CSTRING_RC rc
 )
 {
-    switch(rc)
+    switch (rc)
     {
         default:    return "<<unknown error>>";
         case    CSTRING_RC_SUCCESS                  :   return "operation completed successfully";
@@ -352,21 +367,27 @@ CSTRING_EXTERN_C char const* cstring_getStatusCodeString(
     }
 }
 
-CSTRING_EXTERN_C size_t cstring_getStatusCodeStringLength(
+CSTRING_EXTERN_C
+size_t
+cstring_getStatusCodeStringLength(
     CSTRING_RC rc
 )
 {
     return strlen(cstring_getStatusCodeString(rc));
 }
 
-CSTRING_EXTERN_C char const* cstring_error(
+CSTRING_EXTERN_C
+char const*
+cstring_error(
     CSTRING_RC rc
 )
 {
     return cstring_getStatusCodeString(rc);
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_init(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_init(
     struct cstring_t* pcs
 )
 {
@@ -380,7 +401,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_init(
     return CSTRING_RC_SUCCESS;
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_create(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_create(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 )
@@ -396,7 +419,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_create(
 
     pcs->ptr = (cstring_char_t*)cstring_realloc_(NULL, cch + 1, 0, &rc);
 
-    if(NULL == pcs->ptr)
+    if (NULL == pcs->ptr)
     {
         return rc;
     }
@@ -412,7 +435,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_create(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_createLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  len
@@ -428,7 +453,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLen(
 
     pcs->ptr = (cstring_char_t*)cstring_realloc_(NULL, cch + 1, 0, &rc);
 
-    if(NULL == pcs->ptr)
+    if (NULL == pcs->ptr)
     {
         return rc;
     }
@@ -444,7 +469,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLen(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_createN(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createN(
     struct cstring_t*       pcs
 ,   cstring_char_t          ch
 ,   size_t                  n
@@ -460,7 +487,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createN(
 
         cstring_assert(n == pcs->len);
 
-        for(i = 0; i != n; ++i)
+        for (i = 0; i != n; ++i)
         {
             pcs->ptr[i] = ch;
         }
@@ -469,7 +496,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createN(
     return rc;
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_createEx(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createEx(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   cstring_flags_t         flags
@@ -482,7 +511,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createEx(
     return cstring_createLenEx(pcs, s, len, flags, arena, capacity);
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_createLenEx(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLenEx(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  len
@@ -495,7 +526,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenEx(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      len
@@ -508,37 +541,37 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
 {
     cstring_assert(NULL != pcs);
 
-    if(NULL != pfnAllocFailHandler)
+    if (NULL != pfnAllocFailHandler)
     {
         flags |= CSTRING_F_MEMORY_IS_OFFSET;
     }
 
     /* Borrowed => fixed */
-    if(CSTRING_F_MEMORY_IS_BORROWED & flags)
+    if (CSTRING_F_MEMORY_IS_BORROWED & flags)
     {
-        if(0 == (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & flags))
+        if (0 == (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & flags))
         {
             flags |= CSTRING_F_MEMORY_IS_FIXED;
         }
     }
 
-    if( NULL != arena &&
+    if (NULL != arena &&
         !(CSTRING_F_MEMORY_IS_BORROWED & flags))
     {
         return CSTRING_RC_CUSTOMARENANOTSUPPORTED;
     }
     else
     {
-        if(CSTRING_F_MEMORY_IS_BORROWED & flags)
+        if (CSTRING_F_MEMORY_IS_BORROWED & flags)
         {
-            if(len + 1 > capacity)
+            if (len + 1 > capacity)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & flags)
                 {
                     cstring_t   cs2;
                     CSTRING_RC  rc2 = cstring_createLenFn(&cs2, s, len, 0, NULL, capacity, pfnAllocFailHandler, param);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -564,7 +597,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
             CSTRING_RC  rc;
 
             cch = (0 == len) ? 1u : len;
-            if(cch < capacity)
+            if (cch < capacity)
             {
                 cch = capacity;
             }
@@ -572,7 +605,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
 
             pcs->ptr = (cstring_char_t*)cstring_realloc_2(NULL, cch + 1, flags, &rc, pfnAllocFailHandler, param);
 
-            if(NULL == pcs->ptr)
+            if (NULL == pcs->ptr)
             {
                 return rc;
             }
@@ -589,7 +622,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_destroy(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_destroy(
     struct cstring_t* pcs
 )
 {
@@ -597,7 +632,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_destroy(
 
     cstring_assert(NULL != pcs);
 
-    if(!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags))
+    if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags))
     {
         (void)cstring_realloc_(pcs->ptr, 0, pcs->flags, &rc);
     }
@@ -611,7 +646,10 @@ CSTRING_EXTERN_C CSTRING_RC cstring_destroy(
 }
 
 #ifndef CSTRING_OBSOLETE
-CSTRING_EXTERN_C CSTRING_RC cstring_yield(
+
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_yield(
     struct cstring_t*   pcs
 ,   cstring_char_t**    ppBuff
 );
@@ -620,7 +658,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield(
 /**
  * \deprecated
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_yield(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_yield(
     struct cstring_t*   pcs
 ,   cstring_char_t**    ppBuff
 )
@@ -630,11 +670,11 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield(
 
     *ppBuff = NULL;
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
-    else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+    else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
     {
         return CSTRING_RC_BORROWED;
     }
@@ -650,7 +690,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_yield2(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_yield2(
     struct cstring_t*   pcs
 ,   cstring_char_t**    pPayload
 ,   void**              pRaw
@@ -664,11 +706,11 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield2(
     *pPayload   =   NULL;
     *pRaw       =   NULL;
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
-    else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+    else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
     {
         return CSTRING_RC_BORROWED;
     }
@@ -686,7 +728,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield2(
 }
 
 
-CSTRING_EXTERN_C CSTRING_RC cstring_setCapacity(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_setCapacity(
     struct cstring_t*   pcs
 ,   size_t              capacity
 )
@@ -695,7 +739,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacity(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_setCapacityFn(
     struct cstring_t*           pcs
 ,   size_t                      newCapacity
 ,   cstring_allocFailHandler    pfnAllocFailHandler
@@ -704,27 +750,27 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
 {
     cstring_assert(NULL != pcs);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
     else
     {
-        if(CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
+        if (CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
         {
             return CSTRING_RC_EXCEEDFIXEDCAPACITY;
         }
-        else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+        else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
         {
-            if( newCapacity != pcs->capacity &&
+            if (newCapacity != pcs->capacity &&
                 newCapacity > pcs->len)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
                 {
                     cstring_t   cs2;
                     CSTRING_RC  rc2 = cstring_createLenEx(&cs2, pcs->ptr, pcs->len, 0, NULL, newCapacity);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -741,7 +787,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
                 }
             }
         }
-        else if(newCapacity != pcs->capacity &&
+        else if (newCapacity != pcs->capacity &&
                 newCapacity > pcs->len)
         {
             CSTRING_RC      rc;
@@ -750,7 +796,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
             newCapacity =   (newCapacity + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
             newPtr      =   (cstring_char_t*)cstring_realloc_2(pcs->ptr, newCapacity + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
-            if(NULL == newPtr)
+            if (NULL == newPtr)
             {
                 return rc;
             }
@@ -767,7 +813,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_assign(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assign(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 )
@@ -776,7 +824,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assign(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   cstring_allocFailHandler    pfnAllocFailHandler
@@ -785,7 +835,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
 {
     cstring_assert(NULL != pcs);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
@@ -793,7 +843,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
     {
         const size_t len = cstring_strlen_safe_(s);
 
-        if( 0 == pcs->capacity ||
+        if (0 == pcs->capacity ||
             pcs->capacity < len)
         {
             size_t cch;
@@ -801,23 +851,23 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
             cch =   (0 == len) ? 1u : len;
             cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
-            if(cch < pcs->capacity * 2)
+            if (cch < pcs->capacity * 2)
             {
                 cch = pcs->capacity * 2;
             }
 
-            if(CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
+            if (CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
             {
                 return CSTRING_RC_EXCEEDFIXEDCAPACITY;
             }
-            else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+            else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
                 {
                     cstring_t   cs2;
                     CSTRING_RC  rc2 = cstring_createLenFn(&cs2, s, len, 0, NULL, 0, pfnAllocFailHandler, param);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -840,7 +890,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
                 CSTRING_RC      rc;
                 cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
-                if(NULL == newPtr)
+                if (NULL == newPtr)
                 {
                     return rc;
                 }
@@ -863,7 +913,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_assignLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  len
@@ -873,7 +925,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLen(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      len
@@ -883,13 +937,13 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
 {
     cstring_assert(NULL != pcs);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
     else
     {
-        if( 0 == pcs->capacity ||
+        if (0 == pcs->capacity ||
             pcs->capacity < len)
         {
             size_t cch;
@@ -897,23 +951,23 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
             cch =   (0 == len) ? 1u : len;
             cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
-            if(cch < pcs->capacity * 2)
+            if (cch < pcs->capacity * 2)
             {
                 cch = pcs->capacity * 2;
             }
 
-            if(CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
+            if (CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
             {
                 return CSTRING_RC_EXCEEDFIXEDCAPACITY;
             }
-            else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+            else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
                 {
                     cstring_t   cs2;
                     CSTRING_RC  rc2 = cstring_createLenFn(&cs2, s, len, 0, NULL, 0, pfnAllocFailHandler, param);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -936,7 +990,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
                 CSTRING_RC      rc;
                 cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
-                if(NULL == newPtr)
+                if (NULL == newPtr)
                 {
                     return rc;
                 }
@@ -957,7 +1011,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_copy(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_copy(
     struct cstring_t*         pcs
 ,   struct cstring_t const*   pcsSrc
 )
@@ -968,7 +1024,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_copy(
     return cstring_assignLen(pcs, pcsSrc->ptr, pcsSrc->len);
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_append(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_append(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 )
@@ -977,7 +1035,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_append(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   cstring_allocFailHandler    pfnAllocFailHandler
@@ -986,7 +1046,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
 {
     cstring_assert(NULL != pcs);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
@@ -995,31 +1055,31 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
         size_t const    len     =   cstring_strlen_safe_(s);
         size_t const    newLen  =   pcs->len + len;
 
-        if(pcs->capacity < newLen)
+        if (pcs->capacity < newLen)
         {
             size_t cch;
 
             cch =   newLen;
             cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
-            if(cch < pcs->capacity * 2)
+            if (cch < pcs->capacity * 2)
             {
                 cch = pcs->capacity * 2;
             }
 
-            if(CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
+            if (CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
             {
                 return CSTRING_RC_EXCEEDFIXEDCAPACITY;
             }
-            else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+            else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
                 {
                     cstring_t       cs2;
                     size_t const    len2    =   len + pcs->len;
                     CSTRING_RC      rc2     =   cstring_createLenEx(&cs2, pcs->ptr, pcs->len, 0, NULL, len2);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -1027,7 +1087,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
                     {
                         rc2 = cstring_appendFn(&cs2, s, pfnAllocFailHandler, param);
 
-                        if(CSTRING_RC_SUCCESS != rc2)
+                        if (CSTRING_RC_SUCCESS != rc2)
                         {
                             return rc2;
                         }
@@ -1049,7 +1109,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
                 CSTRING_RC      rc;
                 cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
-                if(NULL == newPtr)
+                if (NULL == newPtr)
                 {
                     return rc;
                 }
@@ -1070,7 +1130,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_appendLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  len
@@ -1080,7 +1142,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLen(
 }
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      len
@@ -1091,7 +1155,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
     cstring_assert(NULL != pcs);
     cstring_assert(NULL != s || 0 == len);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
@@ -1099,31 +1163,31 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
     {
         size_t newLen = pcs->len + len;
 
-        if(pcs->capacity < newLen)
+        if (pcs->capacity < newLen)
         {
             size_t cch;
 
             cch  =   pcs->len + len;
             cch  =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
-            if(cch < pcs->capacity * 2)
+            if (cch < pcs->capacity * 2)
             {
                 cch = pcs->capacity * 2;
             }
 
-            if(CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
+            if (CSTRING_F_MEMORY_IS_FIXED & pcs->flags)
             {
                 return CSTRING_RC_EXCEEDFIXEDCAPACITY;
             }
-            else if(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
+            else if (CSTRING_F_MEMORY_IS_BORROWED & pcs->flags)
             {
-                if(CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
+                if (CSTRING_F_MEMORY_CAN_GROW_TO_HEAP & pcs->flags)
                 {
                     cstring_t       cs2;
                     size_t const    len2    =   len + pcs->len;
                     CSTRING_RC      rc2     =   cstring_createLenEx(&cs2, pcs->ptr, pcs->len, 0, NULL, len2);
 
-                    if(CSTRING_RC_SUCCESS != rc2)
+                    if (CSTRING_RC_SUCCESS != rc2)
                     {
                         return rc2;
                     }
@@ -1131,7 +1195,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
                     {
                         rc2 = cstring_appendLenFn(&cs2, s, len, pfnAllocFailHandler, param);
 
-                        if(CSTRING_RC_SUCCESS != rc2)
+                        if (CSTRING_RC_SUCCESS != rc2)
                         {
                             return rc2;
                         }
@@ -1155,7 +1219,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
                 CSTRING_RC      rc;
                 cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
-                if(NULL == newPtr)
+                if (NULL == newPtr)
                 {
                     return rc;
                 }
@@ -1176,20 +1240,22 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_truncate(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_truncate(
     struct cstring_t*   pcs
 ,   size_t              len
 )
 {
     cstring_assert(NULL != pcs);
 
-    if(CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
+    if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
         return CSTRING_RC_READONLY;
     }
     else
     {
-        if(len < pcs->len)
+        if (len < pcs->len)
         {
             pcs->ptr[pcs->len = len] = '\0';
         }
@@ -1198,7 +1264,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_truncate(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_swap(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_swap(
     struct cstring_t* pcs1
 ,   struct cstring_t* pcs2
 )
@@ -1206,12 +1274,12 @@ CSTRING_EXTERN_C CSTRING_RC cstring_swap(
     cstring_assert(NULL != pcs1);
     cstring_assert(NULL != pcs2);
 
-    if( (CSTRING_F_MEMORY_IS_READONLY & pcs1->flags) ||
+    if ((CSTRING_F_MEMORY_IS_READONLY & pcs1->flags) ||
         (CSTRING_F_MEMORY_IS_READONLY & pcs2->flags))
     {
         return CSTRING_RC_READONLY;
     }
-    else if((CSTRING_F_MEMORY_IS_BORROWED & pcs1->flags) ||
+    else if ((CSTRING_F_MEMORY_IS_BORROWED & pcs1->flags) ||
             (CSTRING_F_MEMORY_IS_BORROWED & pcs2->flags))
     {
         return CSTRING_RC_BORROWED;
@@ -1229,10 +1297,12 @@ CSTRING_EXTERN_C CSTRING_RC cstring_swap(
 }
 
 /* /////////////////////////////////////////////////////////////////////////
- * File functions
+ * file functions
  */
 
-CSTRING_EXTERN_C CSTRING_RC cstring_readline(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_readline(
     FILE*               stm
 ,   struct cstring_t*   pcs
 ,   size_t*             numRead /* = NULL */
@@ -1243,12 +1313,12 @@ CSTRING_EXTERN_C CSTRING_RC cstring_readline(
 
     cstring_assert(NULL != pcs);
 
-    if(NULL == numRead)
+    if (NULL == numRead)
     {
         numRead = &numRead_;
     }
 
-    if( NULL == stm ||
+    if (NULL == stm ||
         0 != ferror(stm))
     {
         return CSTRING_RC_INVALIDSTREAM;
@@ -1258,19 +1328,19 @@ CSTRING_EXTERN_C CSTRING_RC cstring_readline(
 
     cstring_truncate(pcs, 0);
 
-    for(;;)
+    for (;;)
     {
         int ch = fgetc(stm);
 
-        if(EOF == ch)
+        if (EOF == ch)
         {
             return CSTRING_RC_EOF;
         }
         else
         {
-            if('\n' == ch)
+            if ('\n' == ch)
             {
-                if('\r' == previous)
+                if ('\r' == previous)
                 {
                     cstring_truncate(pcs, pcs->len - 1u);
                 }
@@ -1282,7 +1352,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_readline(
                 cstring_char_t  c1 = (char)ch;
                 CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
 
-                if(CSTRING_RC_SUCCESS != rc)
+                if (CSTRING_RC_SUCCESS != rc)
                 {
                     return rc;
                 }
@@ -1310,12 +1380,12 @@ cstring_write_(
 
     cstring_assert(NULL != pcs);
 
-    if(NULL == numWritten)
+    if (NULL == numWritten)
     {
         numWritten = &numWritten_;
     }
 
-    if( NULL == stm ||
+    if (NULL == stm ||
         0 != ferror(stm))
     {
         return CSTRING_RC_INVALIDSTREAM;
@@ -1325,7 +1395,7 @@ cstring_write_(
 
     r = fprintf(stm, fmt, (int)pcs->len, pcs->ptr);
 
-    if(r < 0)
+    if (r < 0)
     {
         return CSTRING_RC_IOERROR;
     }
@@ -1337,7 +1407,9 @@ cstring_write_(
     }
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_writeline(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_writeline(
     FILE*                   stm
 ,   struct cstring_t const* pcs
 ,   size_t*                 numWritten /* = NULL */
@@ -1346,7 +1418,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_writeline(
     return cstring_write_(stm, pcs, numWritten, "%.*s\n");
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_write(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_write(
     FILE*                   stm
 ,   struct cstring_t const* pcs
 ,   size_t*                 numWritten /* = NULL */
@@ -1356,10 +1430,12 @@ CSTRING_EXTERN_C CSTRING_RC cstring_write(
 }
 
 /* /////////////////////////////////////////////////////////////////////////
- * Search/replace functions
+ * search/replace functions
  */
 
-CSTRING_EXTERN_C CSTRING_RC cstring_insert(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_insert(
     struct cstring_t*       pcs
 ,   int                     index
 ,   cstring_char_t const*   s
@@ -1370,7 +1446,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insert(
     return cstring_insertLen(pcs, index, s, cch);
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_insertLen(
     struct cstring_t*       pcs
 ,   int                     index
 ,   cstring_char_t const*   s
@@ -1381,11 +1459,11 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
 
     cstring_assert(NULL != pcs);
 
-    if(index < 0)
+    if (index < 0)
     {
         CSTRING_RC rc = convert_negative_index(pcs, index, &realIndex);
 
-        if(rc != CSTRING_RC_SUCCESS)
+        if (rc != CSTRING_RC_SUCCESS)
         {
             return rc;
         }
@@ -1395,22 +1473,22 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
         realIndex = (size_t)index;
     }
 
-    if(realIndex > pcs->len)
+    if (realIndex > pcs->len)
     {
         return CSTRING_RC_INVALIDSECTION;
     }
 
-    if(len > pcs->capacity - pcs->len)
+    if (len > pcs->capacity - pcs->len)
     {
         CSTRING_RC rc = cstring_setCapacity(pcs, pcs->len + len);
 
-        if(rc != CSTRING_RC_SUCCESS)
+        if (rc != CSTRING_RC_SUCCESS)
         {
             return rc;
         }
     }
 
-    if(0 != len)
+    if (0 != len)
     {
         /* copy over the rhs of the string */
         const size_t n = pcs->len - realIndex;
@@ -1425,7 +1503,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
     return CSTRING_RC_SUCCESS;
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_replace(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replace(
     struct cstring_t*       pcs
 ,   int                     index
 ,   size_t                  len
@@ -1437,7 +1517,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replace(
     return cstring_replaceLen(pcs, index, len, s, cch);
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replaceLen(
     struct cstring_t*       pcs
 ,   int                     index
 ,   size_t                  len
@@ -1449,11 +1531,11 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
 
     cstring_assert(NULL != pcs);
 
-    if(index < 0)
+    if (index < 0)
     {
         CSTRING_RC rc = convert_negative_index(pcs, index, &realIndex);
 
-        if(rc != CSTRING_RC_SUCCESS)
+        if (rc != CSTRING_RC_SUCCESS)
         {
             return rc;
         }
@@ -1463,29 +1545,29 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
         realIndex = (size_t)index;
     }
 
-    if(realIndex + len > pcs->len)
+    if (realIndex + len > pcs->len)
     {
         return CSTRING_RC_INVALIDSECTION;
     }
 
-    if(cch > len)
+    if (cch > len)
     {
         CSTRING_RC rc = cstring_setCapacity(pcs, pcs->len + (cch - len));
 
-        if(rc != CSTRING_RC_SUCCESS)
+        if (rc != CSTRING_RC_SUCCESS)
         {
             return rc;
         }
     }
 
-    if(len != cch)
+    if (len != cch)
     {
         /* copy over the rhs of the string */
         const size_t n = pcs->len - (realIndex + len);
 
         memmove(pcs->ptr + realIndex + cch, pcs->ptr + realIndex + len, n * sizeof(cstring_char_t));
 
-        if(cch > len)
+        if (cch > len)
         {
             pcs->len += (cch - len);
         }
@@ -1503,7 +1585,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
     return CSTRING_RC_SUCCESS;
 }
 
-CSTRING_EXTERN_C CSTRING_RC cstring_replaceAll(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replaceAll(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   f
 ,   cstring_char_t const*   t
@@ -1514,19 +1598,19 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceAll(
 
     cstring_assert(NULL != pcs);
 
-    if(NULL == numReplaced)
+    if (NULL == numReplaced)
     {
         numReplaced = &numReplaced_;
     }
 
     *numReplaced = 0u;
 
-    if( NULL == f ||
+    if (NULL == f ||
         '\0' == 0[f])
     {
        return CSTRING_RC_SUCCESS;
     }
-    else if(0 == pcs->len)
+    else if (0 == pcs->len)
     {
        return CSTRING_RC_SUCCESS;
     }
@@ -1538,7 +1622,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceAll(
         size_t          pos     =   0;
         cstring_char_t* p;
 
-        for(; NULL != (p = cstring_strstr_(pcs->ptr + pos, f)); pos += tlen)
+        for (; NULL != (p = cstring_strstr_(pcs->ptr + pos, f)); pos += tlen)
         {
             CSTRING_RC rc;
 
@@ -1546,7 +1630,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceAll(
 
             rc = cstring_replaceLen(pcs, (int)pos, flen, t, tlen);
 
-            if(CSTRING_RC_SUCCESS != rc)
+            if (CSTRING_RC_SUCCESS != rc)
             {
                 return rc;
             }
@@ -1604,9 +1688,9 @@ win32_global_realloc(
      * file MWAtors.h) from the Synesis Software Public Domain Source Code
      * Library (http://synesis.com.au/software).
      */
-    if(NULL != pv)
+    if (NULL != pv)
     {
-        if(0 == cb)
+        if (0 == cb)
         {
             return (GlobalFree((HGLOBAL)pv), (void*)NULL);
         }
@@ -1632,9 +1716,9 @@ win32_processheap_realloc(
      * file MWAtors.h) from the Synesis Software Public Domain Source Code
      * Library (http://synesis.com.au/software).
      */
-    if(NULL != pv)
+    if (NULL != pv)
     {
-        if(0 == cb)
+        if (0 == cb)
         {
             return (HeapFree(GetProcessHeap(), 0, (HGLOBAL)pv), (void*)NULL);
         }
@@ -1663,17 +1747,17 @@ win32_comtask_realloc(
     static HINSTANCE            s_cstring_ole32_HINSTANCE           =   NULL;
     static PfnCoTaskMemRealloc  s_cstring_pfnCoTaskMemRealloc       =   NULL;
 
-    if(NULL == pv)
+    if (NULL == pv)
     {
-        for(; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
+        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
         {}
 
-        if(1 == ++s_cstring_PfnCoTaskMemRealloc_init)
+        if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
         {
             s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
             s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
 
-            if( NULL == s_cstring_ole32_HINSTANCE ||
+            if (NULL == s_cstring_ole32_HINSTANCE ||
                 NULL == s_cstring_pfnCoTaskMemRealloc)
             {
                 --s_cstring_PfnCoTaskMemRealloc_init;
@@ -1685,12 +1769,12 @@ win32_comtask_realloc(
 
     pv = (NULL != s_cstring_pfnCoTaskMemRealloc) ? s_cstring_pfnCoTaskMemRealloc(pv, cb) : NULL;
 
-    if(0 == cb)
+    if (0 == cb)
     {
-        for(; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
+        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
         {}
 
-        if(0 == --s_cstring_PfnCoTaskMemRealloc_init)
+        if (0 == --s_cstring_PfnCoTaskMemRealloc_init)
         {
             FreeLibrary(s_cstring_ole32_HINSTANCE);
         }
@@ -1706,7 +1790,7 @@ win32_comtask_realloc(
 #endif /* CSTRING_USE_WINAPI_ */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER) && \

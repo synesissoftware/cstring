@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2012-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -48,24 +48,24 @@
 #define CSTRING_INCL_CSTRING_H_VECTOR
 
 /* /////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
 # define CSTRING_VER_CSTRING_H_VECTOR_REVISION  1
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      3
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      4
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/cstring.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Typedefs
+ * typedefs
  */
 
 struct cstring_vector_t
@@ -147,9 +147,9 @@ cstring_vector_insertAt(
 ,   size_t              numStrings
 );
 
-#define cstring_vector_append(pscv, strings, numStrings)   cstring_vector_insertAt((pscv), (pscv)->len, (strings), (numStrings))
+#define cstring_vector_append(pscv, strings, numStrings)    cstring_vector_insertAt((pscv), (pscv)->len, (strings), (numStrings))
 
-#define cstring_vector_prepend(pscv, strings, numStrings)  cstring_vector_insertAt((pscv), 0, (strings), (numStrings))
+#define cstring_vector_prepend(pscv, strings, numStrings)   cstring_vector_insertAt((pscv), 0, (strings), (numStrings))
 
 CSTRING_RC
 cstring_vector_readLines(
@@ -158,7 +158,13 @@ cstring_vector_readLines(
 ,   size_t*             numLinesRead /* = NULL */
 );
 
-/* ////////////////////////////////////////////////////////////////////// */
+/* /////////////////////////////////////////////////////////////////////////
+ * inclusion control
+ */
+
+#ifdef STLSOFT_PPF_pragma_once_SUPPORT
+# pragma once
+#endif /* STLSOFT_PPF_pragma_once_SUPPORT */
 
 #endif /* CSTRING_INCL_CSTRING_H_VECTOR */
 

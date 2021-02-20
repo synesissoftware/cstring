@@ -4,11 +4,11 @@
  * Purpose: Implicit linking for cstring APIs.
  *
  * Created: 18th August 2005
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2005-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -59,31 +59,31 @@
 #define CSTRING_INCL_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE_
 
 /* /////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE__MAJOR       3
 # define CSTRING_VER_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE__MINOR       2
 # define CSTRING_VER_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE__REVISION    1
-# define CSTRING_VER_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE__EDIT        15
+# define CSTRING_VER_CSTRING_INTERNAL_IMPLICIT_LINK_H_BASE__EDIT        16
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/cstring.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Helper macros
+ * helper macros
  */
 
 # define CSTRING_STRINGIZE_(x)  #x
 # define CSTRING_STRINGIZE(x)   CSTRING_STRINGIZE_(x)
 
 /* /////////////////////////////////////////////////////////////////////////
- * Architecture discrimination
+ * architecture discrimination
  */
 
 #if defined(__amd64__) || \
@@ -91,21 +91,24 @@
     defined(_AMD64_) || \
     defined(_M_AMD64) || \
     defined(_M_X64)
+
 # define CSTRING_ARCH_IS_X64
 #elif defined(__ia64__) || \
       defined(__ia64) || \
       defined(_IA64_) || \
       defined(_M_IA64)
+
 # define CSTRING_ARCH_IS_IA64
 #elif defined(__i386__) || \
       defined(__i386) || \
       defined(_X86_) || \
       defined(_M_IX86)
+
 # define CSTRING_ARCH_IS_X86
 #endif /* _M_?? */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Implicit linking
+ * implicit linking
  */
 
 #if defined(_WIN32) || \
@@ -116,13 +119,16 @@
      defined(__INTEL_COMPILER) || \
      defined(__MWERKS__) || \
      defined(_MSC_VER)
+
 #  if !defined(__COMO__)
+
 #   define CSTRING_IMPLICIT_LINK_SUPPORT
 #  endif /* compiler */
 # endif /* compiler */
 
 #if defined(CSTRING_IMPLICIT_LINK_SUPPORT) && \
     defined(CSTRING_NO_IMPLICIT_LINK)
+
 # undef CSTRING_IMPLICIT_LINK_SUPPORT
 #endif /* CSTRING_IMPLICIT_LINK_SUPPORT && CSTRING_NO_IMPLICIT_LINK */
 

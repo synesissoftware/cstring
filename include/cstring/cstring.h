@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -48,14 +48,14 @@
 #define CSTRING_INCL_CSTRING_H_CSTRING
 
 /* /////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     68
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     70
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -100,25 +100,26 @@
 # define CSTRING_VER_3_7_1      0x03070100
 # define CSTRING_VER_4_0_1      0x04000100
 # define CSTRING_VER_4_0_2      0x04000200
+# define CSTRING_VER_4_0_3      0x04000300
 
 # define CSTRING_VER            CSTRING_VER_4_0_2
 #else /* ? CSTRING_DOCUMENTATION_SKIP_SECTION */
-# define CSTRING_VER            0x04000200
+# define CSTRING_VER            0x04000300
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 #define CSTRING_VER_MAJOR       4
 #define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    2
+#define CSTRING_VER_REVISION    3
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <stddef.h>
 #include <stdio.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Documentation
+ * documentation
  */
 
 /** \defgroup group__cstring_api cstring API
@@ -129,7 +130,7 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * Storage class
+ * storage class
  */
 
 #ifdef __cplusplus
@@ -139,7 +140,7 @@
 #endif /* ? __cplusplus */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Constants & definitions
+ * constants & definitions
  */
 
 /** \brief The return code type of the cstring API
@@ -174,7 +175,7 @@ typedef enum CSTRING_RC     CSTRING_RC;
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Character encoding
+ * character encoding
  */
 
 #ifndef CSTRING_USE_WIDE_STRINGS
@@ -192,10 +193,10 @@ typedef enum CSTRING_RC     CSTRING_RC;
 #endif /* CSTRING_NO_USE_WIDE_STRINGS */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Typedefs
+ * typedefs
  */
 
-/** Character type
+/** character type
  * \ingroup group__cstring_api
  */
 #ifdef CSTRING_USE_WIDE_STRINGS
@@ -236,7 +237,7 @@ typedef struct cstring_t    cstring_t;
 #define cstring_t_DEFAULT  { 0, NULL, 0, 0 }
 
 /* /////////////////////////////////////////////////////////////////////////
- * Custom settings
+ * custom settings
  */
 
 #ifndef CSTRING_NO_USE_SYNESIS_APIS
@@ -246,7 +247,7 @@ typedef struct cstring_t    cstring_t;
 #endif /* !CSTRING_NO_USE_SYNESIS_APIS */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Macros
+ * macros
  */
 
 /** \def CSTRING_FROM_END(x)
@@ -262,7 +263,7 @@ typedef struct cstring_t    cstring_t;
 #define CSTRING_FROM_END(x)     (-1 - (int)(x))
 
 /* /////////////////////////////////////////////////////////////////////////
- * Flags
+ * flags
  */
 
 /** \defgroup group__cstring_api__flags Function Control Flags
@@ -332,7 +333,9 @@ typedef struct cstring_t    cstring_t;
  *
  * \return A non-NULL nul-terminated string
  */
-CSTRING_EXTERN_C char const* cstring_getStatusCodeString(
+CSTRING_EXTERN_C
+char const*
+cstring_getStatusCodeString(
     CSTRING_RC  rc
 );
 
@@ -345,7 +348,9 @@ CSTRING_EXTERN_C char const* cstring_getStatusCodeString(
  *   cstring_getStatusCodeString() for the the given error code, or 0 if the
  *   code is not recognised.
  */
-CSTRING_EXTERN_C size_t cstring_getStatusCodeStringLength(
+CSTRING_EXTERN_C
+size_t
+cstring_getStatusCodeStringLength(
     CSTRING_RC  rc
 );
 
@@ -361,7 +366,9 @@ CSTRING_EXTERN_C size_t cstring_getStatusCodeStringLength(
     _MSC_VER >= 1400
 __declspec(deprecated("cstring_error() is deprecated, and may be removed in a future version: instead use cstring_getStatusCodeString()"))
 #endif /* compiler */
-CSTRING_EXTERN_C char const* cstring_error(
+CSTRING_EXTERN_C
+char const*
+cstring_error(
     CSTRING_RC  rc
 );
 
@@ -372,7 +379,9 @@ CSTRING_EXTERN_C char const* cstring_error(
  *
  * \note This is equivalent to assigning an instance from cstring_t_DEFAULT.
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_init(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_init(
     struct cstring_t*       pcs
 );
 
@@ -387,7 +396,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_init(
  * \retval CSTRING_RC_SUCCESS the capacity was adjusted
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_create(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_create(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 );
@@ -405,7 +416,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_create(
  * \retval CSTRING_RC_SUCCESS the capacity was adjusted
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_createLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  cch
@@ -424,7 +437,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLen(
  * \retval CSTRING_RC_SUCCESS the capacity was adjusted
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_createN(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createN(
     struct cstring_t*       pcs
 ,   cstring_char_t          ch
 ,   size_t                  n
@@ -451,7 +466,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createN(
  * \retval CSTRING_RC_INVALIDARENA an invalid arena specification was given in the \c flags parameter
  * \retval CSTRING_RC_CUSTOMARENANOTSUPPORTED A custom arena was specified, which is not yet supported
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_createEx(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createEx(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   cstring_flags_t         flags
@@ -481,7 +498,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createEx(
  * \retval CSTRING_RC_INVALIDARENA an invalid arena specification was given in the \c flags parameter
  * \retval CSTRING_RC_CUSTOMARENANOTSUPPORTED A custom arena was specified, which is not yet supported
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_createLenEx(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLenEx(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  cch
@@ -500,7 +519,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenEx(
  *
  * \retval CSTRING_RC_SUCCESS the capacity was destroyed
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_destroy(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_destroy(
     struct cstring_t*       pcs
 );
 
@@ -523,14 +544,19 @@ CSTRING_EXTERN_C CSTRING_RC cstring_destroy(
  *   work for strings allocated via realloc()
  */
 
-CSTRING_EXTERN_C CSTRING_RC cstring_yield2(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_yield2(
     struct cstring_t*       pcs
 ,   cstring_char_t**        pPayload
 ,   void**                  pRaw
 );
 
 #ifdef CSTRING_OBSOLETE
-CSTRING_EXTERN_C CSTRING_RC cstring_yield(
+
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_yield(
     struct cstring_t*       pcs
 ,   cstring_char_t**        ppBuff
 );
@@ -552,7 +578,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_yield(
  * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked borrowed (CSTRING_F_MEMORY_IS_BORROWED)
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_setCapacity(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_setCapacity(
     struct cstring_t*       pcs
 ,   size_t                  capacity
 );
@@ -574,7 +602,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacity(
  *   refer to (part of) the payload of \c pcs, and the function will still
  *   operate correctly to produce the logically desired result.
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_assign(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assign(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 );
@@ -597,7 +627,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assign(
  * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked borrowed (CSTRING_F_MEMORY_IS_BORROWED)
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_assignLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  cch
@@ -615,7 +647,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLen(
  * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked borrowed (CSTRING_F_MEMORY_IS_BORROWED)
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_copy(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_copy(
     struct cstring_t*       pcs
 ,   struct cstring_t const* pcsSrc
 );
@@ -632,7 +666,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_copy(
  * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked borrowed (CSTRING_F_MEMORY_IS_BORROWED)
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_append(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_append(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 );
@@ -655,7 +691,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_append(
  * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked borrowed (CSTRING_F_MEMORY_IS_BORROWED)
  * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the operation
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_appendLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendLen(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   s
 ,   size_t                  cch
@@ -672,7 +710,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLen(
  * \retval CSTRING_RC_SUCCESS cstring instance contents were truncated (or the truncation length was out of bounds)
  * \retval CSTRING_RC_READONLY the cstring instance is marked readonly (CSTRING_F_MEMORY_IS_READONLY)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_truncate(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_truncate(
     struct cstring_t*       pcs
 ,   size_t                  len
 );
@@ -689,7 +729,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_truncate(
  * \retval CSTRING_RC_READONLY one or both instances are marked readonly (CSTRING_F_MEMORY_IS_READONLY)
  * \retval CSTRING_RC_BORROWED one or both instances are marked fixed (CSTRING_F_MEMORY_IS_BORROWED)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_swap(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_swap(
     struct cstring_t*       pcs1
 ,   struct cstring_t*       pcs2
 );
@@ -712,7 +754,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_swap(
  *
  * \pre (NULL != pcs)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_readline(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_readline(
     FILE*               stm
 ,   struct cstring_t*   pcs
 ,   size_t*             numRead /* = NULL */
@@ -734,7 +778,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_readline(
  *
  * \pre (NULL != pcs)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_writeline(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_writeline(
     FILE*                   stm
 ,   struct cstring_t const* pcs
 ,   size_t*                 numWritten /* = NULL */
@@ -754,7 +800,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_writeline(
  *
  * \pre (NULL != pcs)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_write(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_write(
     FILE*                   stm
 ,   struct cstring_t const* pcs
 ,   size_t*                 numWritten /* = NULL */
@@ -765,7 +813,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_write(
  * \pre (NULL != pcs)
  * \pre (NULL != s)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_insert(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_insert(
     struct cstring_t*       pcs
 ,   int                     index
 ,   cstring_char_t const*   s
@@ -776,7 +826,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insert(
  * \pre (NULL != pcs)
  * \pre (NULL != s || 0 == cch)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_insertLen(
     struct cstring_t*       pcs
 ,   int                     index
 ,   cstring_char_t const*   s
@@ -797,7 +849,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_insertLen(
  * \pre (NULL != pcs)
  * \pre (NULL != s)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_replace(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replace(
     struct cstring_t*       pcs
 ,   int                     index
 ,   size_t                  len
@@ -819,7 +873,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replace(
  * \pre (NULL != pcs)
  * \pre (NULL != s || 0 == cch)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replaceLen(
     struct cstring_t*       pcs
 ,   int                     index
 ,   size_t                  len
@@ -840,7 +896,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_replaceLen(
  *
  * \pre (NULL != pcs)
  */
-CSTRING_EXTERN_C CSTRING_RC cstring_replaceAll(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_replaceAll(
     struct cstring_t*       pcs
 ,   cstring_char_t const*   f
 ,   cstring_char_t const*   t
@@ -854,7 +912,9 @@ typedef int (*cstring_allocFailHandler)(void* pv, size_t cb, cstring_flags_t fla
 
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_createLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      cch
@@ -866,7 +926,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_createLenFn(
 );
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_setCapacityFn(
     struct cstring_t*           pcs
 ,   size_t                      capacity
 ,   cstring_allocFailHandler    pfnAllocFailHandler
@@ -874,14 +936,18 @@ CSTRING_EXTERN_C CSTRING_RC cstring_setCapacityFn(
 );
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_assignFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   cstring_allocFailHandler    pfnAllocFailHandler
 ,   void*                       param
 );
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_assignLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      cch
@@ -890,7 +956,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_assignLenFn(
 );
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   cstring_allocFailHandler    pfnAllocFailHandler
@@ -898,7 +966,9 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendFn(
 );
 
 /** This is an experimental feature */
-CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_appendLenFn(
     struct cstring_t*           pcs
 ,   cstring_char_t const*       s
 ,   size_t                      cch
@@ -908,7 +978,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER)
@@ -919,7 +989,7 @@ CSTRING_EXTERN_C CSTRING_RC cstring_appendLenFn(
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////
- * String Access Shims
+ * string access shims
  */
 
 #ifdef __cplusplus
@@ -1130,7 +1200,7 @@ namespace stlsoft
 #endif /* __cplusplus */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Compiler warnings
+ * compiler warnings
  */
 
 #if defined(_MSC_VER)
@@ -1140,7 +1210,7 @@ namespace stlsoft
 #endif /* compiler */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Obsolete
+ * obsolete
  */
 
 #ifdef CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY

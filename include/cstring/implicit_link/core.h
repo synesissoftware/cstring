@@ -4,11 +4,11 @@
  * Purpose: Implicit linking for the cstring.core library.
  *
  * Created: 18th August 2005
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -60,24 +60,24 @@
 #define CSTRING_INCL_CSTRING_IMPLICIT_LINK_H_CORE
 
 /* /////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_CORE_MAJOR     3
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_CORE_MINOR     0
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_CORE_REVISION  1
-# define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_CORE_EDIT      12
+# define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_CORE_EDIT      13
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/internal/implicit_link/base_.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Implicit linking
+ * implicit linking
  */
 
 #ifdef CSTRING_IMPLICIT_LINK_SUPPORT

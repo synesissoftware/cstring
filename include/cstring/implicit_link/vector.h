@@ -4,11 +4,11 @@
  * Purpose: Implicit linking for the cstring.vector library.
  *
  * Created: 27th January 2012
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2012-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -60,24 +60,24 @@
 #define CSTRING_INCL_CSTRING_IMPLICIT_LINK_H_VECTOR
 
 /* /////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_VECTOR_MAJOR       1
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_VECTOR_MINOR       0
 # define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_VECTOR_REVISION    1
-# define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_VECTOR_EDIT        2
+# define CSTRING_VER_CSTRING_IMPLICIT_LINK_H_VECTOR_EDIT        3
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/internal/implicit_link/base_.h>
 
 /* /////////////////////////////////////////////////////////////////////////
- * Implicit linking
+ * implicit linking
  */
 
 #ifdef CSTRING_IMPLICIT_LINK_SUPPORT

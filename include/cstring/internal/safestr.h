@@ -4,11 +4,11 @@
  * Purpose: Internal utility header for the cstring API.
  *
  * Created: 13th May 2008
- * Updated: 16th December 2020
+ * Updated: 20th February 2021
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2020, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2021, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2008-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -47,18 +47,18 @@
 #define CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Version
+ * version
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MAJOR       1
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MINOR       0
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_REVISION    1
-# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        2
+# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        3
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Includes
+ * includes
  */
 
 #include <cstring/cstring.h>
@@ -71,14 +71,18 @@
 #elif defined(__DMC__)
 #elif defined(__GNUC__)
 #elif defined(__INTEL_COMPILER)
+
 # if defined(_MSC_VER) && \
      _MSC_VER >= 1400
+
 #  define CSTRING_SAFE_STR_USE_crtdefs_h_
 # endif /* _MSC_VER >= 1400 */
 #elif defined(__MWERKS__)
 #elif defined(__WATCOMC__)
 #elif defined(_MSC_VER)
+
 # if _MSC_VER >= 1400
+
 #  define CSTRING_SAFE_STR_USE_crtdefs_h_
 # endif /* _MSC_VER >= 1400 */
 #elif defined(__COMO__)
@@ -90,12 +94,14 @@
 #endif /* CSTRING_SAFE_STR_USE_crtdefs_h_ */
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Feature detection
+ * feature detection
  */
 
 #ifdef __STDC_SECURE_LIB__
+
 # if defined(__STDC_WANT_SECURE_LIB__) && \
      __STDC_WANT_SECURE_LIB__ == 1
+
 #  define CSTRING_USING_SAFE_STR_FUNCTIONS
 # endif /* __STDC_WANT_SECURE_LIB__ == 1 */
 #endif /* __STDC_SECURE_LIB__ */
