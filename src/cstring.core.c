@@ -85,7 +85,7 @@
  * debugging
  */
 
-#define cstring_assert(expr)        assert(expr)
+#define CSTRING_ASSERT(expr)                                assert(expr)
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
@@ -167,8 +167,8 @@ convert_negative_index(
 ,   size_t*             realIndex
 )
 {
-    cstring_assert(NULL != pcs);
-    cstring_assert(index < 0);
+    CSTRING_ASSERT(NULL != pcs);
+    CSTRING_ASSERT(index < 0);
 
     ++index;
 
@@ -391,7 +391,7 @@ cstring_init(
     struct cstring_t* pcs
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     pcs->len        =   0;
     pcs->ptr        =   NULL;
@@ -412,7 +412,7 @@ cstring_create(
     size_t          cch;
     CSTRING_RC      rc;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     cch =   (0 == len) ? 1u : len;
     cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
@@ -446,7 +446,7 @@ cstring_createLen(
     size_t      cch;
     CSTRING_RC  rc;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     cch =   sizeof(cstring_char_t) * ((0 == len) ? 1u : len);
     cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
@@ -481,11 +481,11 @@ cstring_createN(
 
     CSTRING_RC rc = cstring_createLen(pcs, s_empty, n);
 
-    if(CSTRING_RC_SUCCESS == rc)
+    if (CSTRING_RC_SUCCESS == rc)
     {
         size_t i;
 
-        cstring_assert(n == pcs->len);
+        CSTRING_ASSERT(n == pcs->len);
 
         for (i = 0; i != n; ++i)
         {
@@ -539,7 +539,7 @@ cstring_createLenFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (NULL != pfnAllocFailHandler)
     {
@@ -630,7 +630,7 @@ cstring_destroy(
 {
     CSTRING_RC  rc  =   CSTRING_RC_SUCCESS;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags))
     {
@@ -665,8 +665,8 @@ cstring_yield(
 ,   cstring_char_t**    ppBuff
 )
 {
-    cstring_assert(NULL != pcs);
-    cstring_assert(NULL != ppBuff);
+    CSTRING_ASSERT(NULL != pcs);
+    CSTRING_ASSERT(NULL != ppBuff);
 
     *ppBuff = NULL;
 
@@ -698,10 +698,10 @@ cstring_yield2(
 ,   void**              pRaw
 )
 {
-    cstring_assert(NULL != pcs);
-    cstring_assert(NULL != pPayload);
-    cstring_assert(NULL != pRaw);
-    cstring_assert((void**)pPayload != pRaw);
+    CSTRING_ASSERT(NULL != pcs);
+    CSTRING_ASSERT(NULL != pPayload);
+    CSTRING_ASSERT(NULL != pRaw);
+    CSTRING_ASSERT((void**)pPayload != pRaw);
 
     *pPayload   =   NULL;
     *pRaw       =   NULL;
@@ -748,7 +748,7 @@ cstring_setCapacityFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -833,7 +833,7 @@ cstring_assignFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -935,7 +935,7 @@ cstring_assignLenFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -1018,8 +1018,8 @@ cstring_copy(
 ,   struct cstring_t const*   pcsSrc
 )
 {
-    cstring_assert(NULL != pcs);
-    cstring_assert(NULL != pcsSrc);
+    CSTRING_ASSERT(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcsSrc);
 
     return cstring_assignLen(pcs, pcsSrc->ptr, pcsSrc->len);
 }
@@ -1044,7 +1044,7 @@ cstring_appendFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -1152,8 +1152,8 @@ cstring_appendLenFn(
 ,   void*                       param
 )
 {
-    cstring_assert(NULL != pcs);
-    cstring_assert(NULL != s || 0 == len);
+    CSTRING_ASSERT(NULL != pcs);
+    CSTRING_ASSERT(NULL != s || 0 == len);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -1247,7 +1247,7 @@ cstring_truncate(
 ,   size_t              len
 )
 {
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (CSTRING_F_MEMORY_IS_READONLY & pcs->flags)
     {
@@ -1271,8 +1271,8 @@ cstring_swap(
 ,   struct cstring_t* pcs2
 )
 {
-    cstring_assert(NULL != pcs1);
-    cstring_assert(NULL != pcs2);
+    CSTRING_ASSERT(NULL != pcs1);
+    CSTRING_ASSERT(NULL != pcs2);
 
     if ((CSTRING_F_MEMORY_IS_READONLY & pcs1->flags) ||
         (CSTRING_F_MEMORY_IS_READONLY & pcs2->flags))
@@ -1311,7 +1311,7 @@ cstring_readline(
     int     previous = '\0';
     size_t  numRead_;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numRead)
     {
@@ -1378,7 +1378,7 @@ cstring_write_(
     int     r;
     size_t  numWritten_;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numWritten)
     {
@@ -1457,7 +1457,7 @@ cstring_insertLen(
 {
     size_t  realIndex;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (index < 0)
     {
@@ -1529,7 +1529,7 @@ cstring_replaceLen(
 {
     size_t  realIndex;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (index < 0)
     {
@@ -1596,7 +1596,7 @@ cstring_replaceAll(
 {
     size_t  numReplaced_;
 
-    cstring_assert(NULL != pcs);
+    CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numReplaced)
     {
