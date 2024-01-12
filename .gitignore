@@ -1,32 +1,127 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
 
-# Precompiled Headers
-*.gch
-*.pch
+# directories (by name)
 
-# Libraries
-*.lib
+/.git-old/
+/.vs/
+/.vscode/
+
+/_build/
+/_internal/
+
+/bin/
+/ipch/
+/lib/
+
+/include/b64/
+/include/shwild/
+/include/xcontract/
+/include/xcover/
+/include/xtests/
+
+/src/b64/
+/src/shwild/
+/src/xcontract/
+/src/xcover/
+/src/xtests/
+
+Debug Multithreaded Dll/
+Debug Multithreaded/
+Debug/
+DebugDll/
+DebugMTDLL/
+DebugMt/
+DebugNox/
+DebugUNIX/
+DebugUnix/
+Release Multithreaded Dll/
+Release Multithreaded/
+Release/
+ReleaseDll/
+ReleaseMTDLL/
+ReleaseMt/
+ReleaseNox/
+ReleaseUnix/
+UDebug/
+UDebugMt/
+URelease/
+UReleaseMt/
+Unicode Debug Multithreaded Dll/
+Unicode Debug Multithreaded/
+Unicode Release Multithreaded Dll/
+Unicode Release Multithreaded/
+
+Win32/
+x64/
+
+
+# directories (by pattern)
+
+/dox/*/
+/include-*/
+
+
+# files (by name)
+
+.DS_Store
+.ruby-version
+.update_deps
+
+list_changes.cmd
+logging-bailout.txt
+prepare.cmd
+sh.exe.stackdump
+update_deps.cmd
+
+build/CMakeCache.txt
+
+build/makefile.tmpl
+build/makefile.tools.xml
+
+include/stlsoft/dos2unix.has.been.performed
+include/stlsoft/internal/dos2unix.has.been.performed
+
+
+# files (by pattern)
+
+RCa0*
+RCb0*
+
+*~
 *.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
 *.app
-*.i*86
-*.x86_64
-*.hex
+*.aps
+*.b64
+*.bak
+*.dll
+*.dylib
+*.exe
+*.gch
+*.idb
+*.ilk
+*.ipch
+*.lib
+*.log
+*.ncb
+*.o
+*.obj
+*.opensdf
+*.opt
+*.org
+*.out
+*.pch
+*.pdb
+*.res
+*.sbr
+*.scc
+*.sdf
+*.so
+*.suo
+*.swp
+*.tlog
+*.tmp
+*.unsuccessfulbuild
+*.vcproj*.user
+*.vcxproj*.user
+*.xcuserstate
+*.zip
 
-# Debug files
-*.dSYM/

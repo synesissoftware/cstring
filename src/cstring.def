@@ -1,0 +1,33 @@
+
+EXPORTS
+	DllGetVersion=cstringdll_DllGetVersion          @1
+
+	cstring_init                                    @11
+	cstring_create                                  @12
+	cstring_createLen                               @13
+	cstring_createEx                                @14
+	cstring_createLenEx                             @15
+	cstring_destroy                                 @16
+	cstring_yield=cstringdll_yield                  @17
+	cstring_setCapacity                             @18
+	cstring_assign                                  @19
+	cstring_assignLen                               @20
+	cstring_copy                                    @21
+	cstring_append                                  @22
+	cstring_appendLen                               @23
+	cstring_truncate                                @24
+	cstring_swap                                    @25
+	cstring_getStatusCodeString                     @26
+	cstring_yield2=cstringdll_yield2                @27
+	cstring_getStatusCodeStringLength               @28
+
+	cstring_createLenFn                             @31
+	cstring_setCapacityFn                           @32
+	cstring_assignFn                                @33
+	cstring_assignLenFn                             @34
+	cstring_appendFn                                @35
+	cstring_appendLenFn                             @36
+
+; deprecated items by name
+	cstring_error=cstring_getStatusCodeStringLength @399
+
