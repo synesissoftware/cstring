@@ -78,7 +78,7 @@ include(GNUInstallDirs)
 # ##########################################################
 # STLSoft
 
-add_definitions(-DSHWILD_NO_STLSOFT)
+# add_definitions(-DCSTRING_NO_STLSOFT)
 
 
 # ##########################################################

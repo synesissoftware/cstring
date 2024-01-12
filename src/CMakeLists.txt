@@ -32,14 +32,14 @@ endif(WIN32)
 #[====[
 ]====]
 
-set(SHWILD_PUBLIC_HEADERS
+set(CSTRING_PUBLIC_HEADERS
     "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/${PROJECT_NAME_LOWER}.h"
-    "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/${PROJECT_NAME_LOWER}.hpp"
+    "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/cstring.vector.h"
 )
 
 set_target_properties(cstring PROPERTIES
     OUTPUT_NAME "cstring"
-    PUBLIC_HEADER "${SHWILD_PUBLIC_HEADERS}"
+    PUBLIC_HEADER "${CSTRING_PUBLIC_HEADERS}"
 )
 
 target_include_directories(cstring PUBLIC
@@ -71,7 +71,7 @@ install(TARGETS cstring
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/shwild
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cstring
 )
 
 # ############################## end of file ############################# #
