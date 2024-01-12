@@ -124,24 +124,6 @@ namespace
     using ::xtests::cpp::util::temp_file;
 
 
-    static FILE* fopen_or_throw(char const* fileName, char const* mode /* = "r" */)
-    {
-#ifdef CSTRING_USING_SAFE_STR_FUNCTIONS
-        FILE*   f;
-
-        if (0 != ::fopen_s(&f, fileName, mode))
-#else /* ? CSTRING_USING_SAFE_STR_FUNCTIONS */
-        FILE*   f = ::fopen(fileName, mode);
-
-        if (NULL == f)
-#endif /* CSTRING_USING_SAFE_STR_FUNCTIONS */
-        {
-            throw platformstl::platform_exception((std::string("Could not open file '") + fileName + "'").c_str(), platformstl::system_traits<char>::get_last_error());
-        }
-
-        return f;
-    }
-
     int setup(void*)
     {
         return 0;
