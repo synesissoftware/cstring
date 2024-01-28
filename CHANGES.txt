@@ -1,0 +1,644 @@
+============================================================================
+cstring - Changes
+
+; Updated:  28th January 2024
+
+============================================================================
+
+   **************************************
+   *  Change key:                       *
+   *                                    *
+   *   ~  means something has changed   *
+   *   +  means a new addition          *
+   *   -  means removal of something    *
+   *   *  means a general bullet-point  *
+   *                                    *
+   **************************************
+
+
+
+Version 4.0.9 (28th January 2024)
+
+ ~ improved CMake support;
+ ~ CMake language standards now C-11 and C++14;
+ ~ fixed typo defect in definition of CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY;
+ + project boilerplate files:
+    + AUTHORS.md;
+    + CHANGES.txt;
+    + FAQ.md;
+    + HISTORY.md;
+    + NEWS.md;
+
+
+============================================================================
+
+Version 4.0.8 (12th January 2024)
+
+ + added cstring.vector API;
+ + added API function cstring_write();
+ + wide string support (indicated via CSTRING_USE_WIDE_STRINGS);
+ + partial CMake support;
+ + added result code CSTRING_RC_REQUESTTOOLARGE;
+ + added component test test.component.cstring_writeline;
+ + added scratch test test.scratch.cstring_vector;
+ + added unit test test.unit.cstring.cstring_vector;
+
+
+============================================================================
+
+Version 3.6.2 (20th February 2012)
+==================================
+
+Summary:
+--------
+
+ * added CSTRING_RC_SYSTEMSPECIFICFAILURE
+ * all makefiles now build cstring.3.core*.(lib|a) rather than cstring.3*.(lib|a) : this was erroneously omitted from the 3.6.1 release
+
+Details:
+--------
+
+General:
+
+ ~ include/cstring/cstring.h:
+    + added CSTRING_RC_SYSTEMSPECIFICFAILURE
+    ~ makefiles now build cstring.3.core*.(lib|a) rather than cstring.3*.(lib|a)
+
+ ~ src/cstring.core.c:
+    + added CSTRING_RC_SYSTEMSPECIFICFAILURE
+
+Distribution:
+
+Makefiles / Project-files:
+
+ ~ build/ar/makefile:
+ ~ build/bc55/makefile:
+ ~ build/bc551/makefile:
+ ~ build/bc56/makefile:
+ ~ build/bc564/makefile:
+ ~ build/bc582/makefile:
+ ~ build/bc59x/makefile:
+ ~ build/bc61x/makefile:
+ ~ build/como433.unix/makefile:
+ ~ build/como433.win32/makefile:
+ ~ build/cw7.unix/makefile:
+ ~ build/cw7.win32/makefile:
+ ~ build/cw8.unix/makefile:
+ ~ build/cw8.win32/makefile:
+ ~ build/dm/makefile:
+ ~ build/gcc295.unix/makefile:
+ ~ build/gcc295.win32/makefile:
+ ~ build/gcc32.unix/makefile:
+ ~ build/gcc32.win32/makefile:
+ ~ build/gcc33.unix/makefile:
+ ~ build/gcc33.win32/makefile:
+ ~ build/gcc34.unix/makefile:
+ ~ build/gcc34.win32/makefile:
+ ~ build/gcc40.mac.x64/makefile:
+ ~ build/gcc40.mac/makefile:
+ ~ build/gcc40.unix/makefile:
+ ~ build/gcc41.unix/makefile:
+ ~ build/gcc42.unix/makefile:
+ ~ build/gcc43.unix/makefile:
+ ~ build/gcc44.unix/makefile:
+ ~ build/icl10.win32/makefile:
+ ~ build/icl11.win32/makefile:
+ ~ build/icl6.win32/makefile:
+ ~ build/icl7.win32/makefile:
+ ~ build/icl8.win32/makefile:
+ ~ build/icl9.win32/makefile:
+ ~ build/ow12.win32/makefile:
+ ~ build/ow13.win32/makefile:
+ ~ build/sunpro59x.unix/makefile:
+ ~ build/vc10.unixem/makefile:
+ ~ build/vc10.x64/makefile:
+ ~ build/vc10/makefile:
+ ~ build/vc42/makefile:
+ ~ build/vc5/makefile:
+ ~ build/vc6.unixem/makefile:
+ ~ build/vc6/makefile:
+ ~ build/vc7/makefile:
+ ~ build/vc71/makefile:
+ ~ build/vc8.unixem/makefile:
+ ~ build/vc8.x64/makefile:
+ ~ build/vc8/makefile:
+ ~ build/vc9.unixem/makefile:
+ ~ build/vc9.x64/makefile:
+ ~ build/vc9/makefile:
+    ~ makefiles now build cstring.3.core*.(lib|a) rather than cstring.3*.(lib|a)
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+Test.Component:
+
+Test.Scratch:
+
+Depends on:
+
+ STLSoft 1.9.111 (for test programs only)
+ xTests 0.16.2 (for test programs only)
+ shwild 0.9.20 (for test programs only)
+
+
+
+Version 3.6.1 (24th January 2012)
+=================================
+
+Summary:
+--------
+
+ * added CSTRING_F_MEMORY_CAN_GROW_TO_HEAP flag, which allows a borrowed buffer to grow (into the heap)
+ * renamed output library to cstring.core.* (in preparation for coming 4.x expansions)
+ * added string access shims for CSTRING_RC
+ * added cstring_getStatusCodeStringLength()
+ * renamed cstring_error() => cstring_getStatusCodeString()
+ * added VC10 solution and project files
+ * added VC9 solution and project files
+ * added test.unit.cstring.auto_buffer
+ * added test.unit.cstring.cstring_getStatusCodeString
+ * added test.scratch.auto_buffer
+ * full Win64 compatibility
+ * fixed up minor documentation mistakes
+
+Details:
+--------
+
+General:
+
+ ~ include/cstring/cstring.h:
+    + added CSTRING_F_MEMORY_CAN_GROW_TO_HEAP, which allows a borrowed buffer to grow (into the heap)
+    ~ renamed cstring_error() => cstring_getStatusCodeString()
+    + added cstring_getStatusCodeStringLength()
+    + added string access shims for CSTRING_RC
+    ~ fixed up minor documentation mistakes
+    ~ trivial spacing changes
+
+ ~ include/cstring/implicit_link.h:
+    + now supports VC++10 implicit-linking
+    ~ renamed output library to cstring.core.*
+
+ ~ src/cstring.core.c:
+    ~ renamed src/cstring.c to src/cstring.core.c
+    + added CSTRING_F_MEMORY_CAN_GROW_TO_HEAP, which allows a borrowed buffer to grow (into the heap)
+    ~ renamed cstring_error() => cstring_getStatusCodeString()
+    + added cstring_getStatusCodeStringLength()
+    ~ tidying compiler pragmas
+    ~ compiler compatibility
+    ~ Win64 compatibility
+    ~ trivial formatting changes
+    ~ trivial spacing changes
+
+ ~ src/cstring.def:
+    ~ renamed cstring_error() => cstring_getStatusCodeString()
+    + added cstring_getStatusCodeStringLength()
+
+Distribution:
+
+Makefiles / Project-files:
+
+ ~ build/bc55/makefile:
+ ~ build/bc551/makefile:
+ ~ build/bc56/makefile:
+ ~ build/bc564/makefile:
+ ~ build/bc582/makefile:
+ ~ build/bc59x/makefile:
+ ~ build/bc61x/makefile:
+ ~ build/como433.unix/makefile:
+ ~ build/como433.win32/makefile:
+ ~ build/cw7.unix/makefile:
+ ~ build/cw7.win32/makefile:
+ ~ build/cw8.unix/makefile:
+ ~ build/cw8.win32/makefile:
+ ~ build/dm/makefile:
+ ~ build/gcc295.unix/makefile:
+ ~ build/gcc295.win32/makefile:
+ ~ build/gcc32.unix/makefile:
+ ~ build/gcc32.win32/makefile:
+ ~ build/gcc33.unix/makefile:
+ ~ build/gcc33.win32/makefile:
+ ~ build/gcc34.unix/makefile:
+ ~ build/gcc34.win32/makefile:
+ ~ build/gcc40.mac.x64/makefile:
+ ~ build/gcc40.mac/makefile:
+ ~ build/gcc40.unix/makefile:
+ ~ build/gcc41.unix/makefile:
+ ~ build/gcc42.unix/makefile:
+ ~ build/gcc43.unix/makefile:
+ ~ build/gcc44.unix/makefile:
+ ~ build/icl10.win32/makefile:
+ ~ build/icl11.win32/makefile:
+ ~ build/icl6.win32/makefile:
+ ~ build/icl7.win32/makefile:
+ ~ build/icl8.win32/makefile:
+ ~ build/icl9.win32/makefile:
+ ~ build/ow12.win32/makefile:
+ ~ build/ow13.win32/makefile:
+ ~ build/sunpro59x.unix/makefile:
+ ~ build/vc42/makefile:
+ ~ build/vc5/makefile:
+ ~ build/vc6.unixem/makefile:
+ ~ build/vc6/makefile:
+ ~ build/vc7/makefile:
+ ~ build/vc71/makefile:
+ ~ build/vc8.unixem/makefile:
+ ~ build/vc8.x64/makefile:
+ ~ build/vc8/makefile:
+ ~ build/vc9.unixem/makefile:
+ ~ build/vc9.x64/makefile:
+ ~ build/vc9/makefile:
+    + added test.scratch.auto_buffer
+    + added test.scratch.HGLOBAL_on_x64
+    + added test.unit.cstring.auto_buffer
+    + added test.unit.cstring.cstring_getStatusCodeString
+    ~ corrections to all makefiles to ensure all targets and intermediates are cleaned
+    ~ minor correction to makefiles (to ensure compile.test.unit builds all unit test source)
+
+ + build/vc10.unixem/makefile:
+ + build/vc10.x64/makefile:
+ + build/vc10/makefile:
+    + VC++ 10 compatibility
+
+ + cstring.vc10.sln:
+    + added VC++10 solution file
+
+ ~ cstring.vc6.dsw:
+    ~ renamed output library from cstring.V.* to cstring.V.core.*
+    ~ moved VC6 project file build/vc6 to projects/cstring.core/vc6, and renamed from cstring.dsp to cstring.core.dsp
+    + added test.unit.cstring.auto_buffer
+    ~ updated to correctly reflect all projects
+
+ + cstring.vc9.sln:
+    ~ renamed output library from cstring.V.* to cstring.V.core.*
+    ~ moved VC9 project file build/vc9 to projects/cstring.core/vc9, and renamed from cstring.vcproj to cstring.core.vcproj
+    + added test.unit.cstring.auto_buffer
+    + added VC9 solution and project files
+
+ ~ projects/cstring.core/vc6/cstring.core.dsp:
+    ~ renamed outputs to cstring.core.*
+    ~ moved VC6 project file build/vc6 to projects/cstring.core/vc6, and renamed from cstring.dsp to cstring.core.dsp
+
+ + projects/cstring.core/vc9/cstring.core.vcproj:
+    + added x64 platform to configurations
+    ~ renamed outputs to cstring.core.*
+    ~ moved VC6 project file build/vc9 to projects/cstring.core/vc9, and renamed from cstring.vcproj to cstring.core.vcproj
+    + added VC9 solution and project files
+
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+ + test/unit/test.unit.cstring.1/vc10/test.unit.cstring.1.vcxproj:
+    + added VC++10 project files
+
+ + test/unit/test.unit.cstring.1/vc9/test.unit.cstring.1.vcproj:
+    + added VC9 solution and project files
+
+ + test/unit/test.unit.cstring.2/vc10/test.unit.cstring.2.vcxproj:
+    + added VC++10 project files
+
+ + test/unit/test.unit.cstring.2/vc9/test.unit.cstring.2.vcproj:
+    + added VC9 solution and project files
+
+ + test/unit/test.unit.cstring.auto_buffer/implicit_link.cpp:
+ + test/unit/test.unit.cstring.auto_buffer/test.unit.cstring.auto_buffer.cpp:
+ + test/unit/test.unit.cstring.auto_buffer/vc10/test.unit.cstring.auto_buffer.vcxproj:
+ + test/unit/test.unit.cstring.auto_buffer/vc6/test.unit.cstring.auto_buffer.dsp:
+ + test/unit/test.unit.cstring.auto_buffer/vc9/test.unit.cstring.auto_buffer.vcproj:
+    + added test.unit.cstring.auto_buffer
+
+ + test/unit/test.unit.cstring.cstring_getStatusCodeString/implicit_link.cpp:
+ + test/unit/test.unit.cstring.cstring_getStatusCodeString/test.unit.cstring.cstring_getStatusCodeString.cpp:
+ + test/unit/test.unit.cstring.cstring_getStatusCodeString/vc6/test.unit.cstring.cstring_getStatusCodeString.dsp:
+ + test/unit/test.unit.cstring.cstring_getStatusCodeString/vc9/test.unit.cstring.cstring_getStatusCodeString.vcproj:
+ + test/unit/test.unit.cstring.cstring_getStatusCodeString/vc10/test.unit.cstring.cstring_getStatusCodeString.vcxproj:
+    + added test.unit.cstring.cstring_getStatusCodeString
+
+Test.Component:
+
+ + test/component/test.component.cstring_readline/vc9/test.component.cstring_readline.vcproj:
+    + added VC9 solution and project files
+
+Test.Scratch:
+
+ ~ test/scratch/test.scratch.cstring/test.scratch.cstring.c:
+    ~ renamed cstring_error() => cstring_getStatusCodeString()
+
+ + test/scratch/test.scratch.cstring/vc9/test.scratch.cstring.vcproj:
+    + added VC9 solution and project files
+
+ + test/scratch/test.scratch.cstring/vc10/test.scratch.cstring.vcxproj:
+    + added VC10 solution and project files
+
+ ~ test/scratch/test.scratch.cstring_create/test.scratch.cstring_create.c:
+    ~ renamed cstring_error() => cstring_getStatusCodeString()
+
+ + test/scratch/test.scratch.cstring_create/vc9/test.scratch.cstring_create.vcproj:
+    + added VC9 solution and project files
+
+ + test/scratch/test.scratch.cstring_create/vc10/test.scratch.cstring_create.vcxproj:
+    + added VC10 solution and project files
+
+Depends on:
+
+ STLSoft 1.9.111 (for test programs only)
+ xTests 0.16.2 (for test programs only)
+ shwild 0.9.20 (for test programs only)
+
+
+
+Version 3.5.4 (22nd January 2012)
+=================================
+
+Summary:
+--------
+
+ * Win64-compatibility
+ * added test.scratch.HGLOBAL_on_x64 project
+ * VC++ 10 compatibility
+
+Details:
+--------
+
+General:
+
+ ~ src/cstring.c:
+    ~ tidying compiler pragmas
+    ~ compiler compatibility
+    ~ Win64 compatibility
+
+Distribution:
+
+Makefiles / Project-files:
+
+ ~ build/icl9.win32/makefile:
+    + VC++ 10 compatibility
+
+ ~ cstring.vc6.dsw:
+    ~ updated to correctly reflect all projects
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+Test.Component:
+
+Test.Scratch:
+
+ + test/scratch/cstring.test.scratch.vc9.sln:
+ + test/scratch/test.scratch.HGLOBAL_on_x64/implicit_link.cpp:
+ + test/scratch/test.scratch.HGLOBAL_on_x64/test.scratch.HGLOBAL_on_x64.cpp:
+ + test/scratch/test.scratch.HGLOBAL_on_x64/vc9/test.scratch.HGLOBAL_on_x64.vcproj:
+    + added test/scratch/test.scratch.HGLOBAL_on_x64
+
+Depends on:
+
+ STLSoft 1.9.111 (for test programs only)
+ xTests 0.16.2 (for test programs only)
+ shwild 0.9.20 (for test programs only)
+
+
+
+Version 3.5.3 (11th January 2010)
+=================================
+
+Summary:
+--------
+
+ * trivial formatting changes
+
+Details:
+--------
+
+General:
+
+ ~ include/cstring/cstring.h:
+    ~ trivial spacing changes
+
+ ~ src/cstring/cstring.c:
+    ~ trivial spacing changes
+
+Distribution:
+
+Makefiles / Project-files:
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+Test.Component:
+
+Test.Scratch:
+
+Depends on:
+
+ STLSoft 1.9.87 (for test programs only)
+ xTests 0.13 (for test programs only)
+ shwild 0.9 (for test programs only)
+
+
+
+Version 3.5.2 (11th July 2009)
+==============================
+
+Summary:
+--------
+
+ * fixed implicit link defects
+ * completed Win64 compatibility
+ * minor adjustments to compiler warnings
+
+Details:
+--------
+
+General:
+
+ ~ include/cstring/cstring.h:
+    ~ Win64 constants
+    ~ suppresses VC++ C4514 warning
+
+ ~ include/cstring/implicit_link.h:
+    ~ fixed implicit link defects
+
+Distribution:
+
+Makefiles / Project-files:
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+Test.Component:
+
+Test.Scratch:
+
+Depends on:
+
+ STLSoft 1.9.85 (for test programs only)
+ xTests 0.13 (for test programs only)
+ shwild 0.9 (for test programs only)
+
+
+
+Version 3.5.1 (10th July 2009)
+==============================
+
+Summary:
+--------
+
+ * added new API functions for cstring I/O, replacing and inserting substrings, and initialisation
+ * added compatibility with Borland C/C++ 5.8.2, 5.9 and 6.1, Intel C/C++ 9-11, and GCC 4.1-4.4
+ * added three unit/component test programs
+
+Details:
+--------
+
+General:
+
+ + added cstring_readline() and cstring_writeline() functions, for FILE* I/O
+ + added cstring_createN() function, which creates a string with N repetitions of a given character
+ + added cstring_insert() and cstring_insertLen() functions, which insert into a string
+ + added cstring_replace(), cstring_replaceLen(), cstring_replaceAll() (sub-)string replacement functions
+ + added STLSoft string access shims (though still no dependency on STLSoft for library)
+ + CSTRING_RC_INVALIDSTREAM, CSTRING_RC_EOF, CSTRING_RC_INVALIDSECTION, CSTRING_RC_IOERROR return codes
+ + compatibility with Borland C/C++ 5.8.2, 5.9 and 6.1, Intel C/C++ 9, 10 and 11, GCC 4.1-4.4
+ + added test.unit.cstring.1
+ + added test.unit.cstring.2
+ + added test.component.cstring_readline
+
+Distribution:
+
+Makefiles / Project-files:
+
+ ~ wholesale changes, incorporating all changes to source & test programs
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+ + added test.unit.cstring.1
+ + added test.unit.cstring.2
+
+Test.Component:
+
+ + added test.component.cstring_readline
+
+Test.Scratch:
+
+ ~ moved/renamed test/C to test/scratch/test.scratch.cstring
+ ~ moved/renamed test/cstring_dynload_test to test/scratch/test.scratch.cstring.dynload
+ ~ moved/renamed test/cstring_test to test/scratch/test.scratch.cstring_create
+
+Depends on:
+
+ STLSoft 1.9.85 (for test programs only)
+ xTests 0.13 (for test programs only)
+ shwild 0.9 (for test programs only)
+
+
+
+Version 3.4.4 (4th May 2008)
+=============================
+
+Summary:
+--------
+
+ * additional error codes in API
+ * compatible with Win64
+ * compatible with Safe String library
+
+Details:
+--------
+
+General:
+
+ + CSTRING_RC enumerator CSTRING_RC_ARENAOVERLOADED
+
+ ~ compatible with Win64
+ ~ compatible with Safe String library
+
+ + implicit linking with bc582, vc8 x64, vc8 IA64, vc9, vc9 x64, vc9 IA64
+
+Distribution:
+
+Makefiles / Project-files:
+
+ + vc8_x64
+ + vc9
+ + vc9_x64
+
+Examples:
+
+Test:
+
+Test.Unit:
+
+Test.Component:
+
+Test.Scratch:
+
+Depends on:
+
+
+
+
+Version 3.4.3 (26th January 2007)
+---------------------------------
+
+    + now roots the distribution under cstring-X.Y, e.g. cstring-3.4.3
+
+Version 3.4.2 (30th April 2006)
+-------------------------------
+
+    Only minor edits, and little fixes.
+
+Version 3.4.1 (7th October 2005)
+--------------------------------
+
+    ~ The makefiles now build libraries whose names are comprised of the
+      major version number, e.g. cstring.3.vc6.lib, in addition to the one
+      created in previous cstring versions: e.g. cstring.vc6.lib
+    + Type cstring_flags_t is defined to disambiguate flags params from
+      size params (which use the size_t)
+    + Added CSTRING_RC_CANNOTYIELDFROMSO return code, used when trying to
+      yield a string from a dynamic library implementation of the library
+      that has been allocated using realloc().
+    ~ cstring_yield() has been deprecated, in favour of cstring_yield2().
+      If you want the old behaviour, you must define CSTRING_OBSOLETE.
+
+
+Version 3.3.1 (8th August 2005)
+------------------------------
+
+    ~ Changed the memory allocation algorithm, such that each reallocation
+      is at least twice the size of the extant block
+    + Now dynamically loads the CoTaskMemRealloc function from OLE32.DLL,
+      so easing the linking burden when working with a variety of compilers.
+
+
+Version 3.2.1 (29th July 2005)
+------------------------------
+
+    This is the first public release of this formerly proprietary library
+    from Synesis Software (http://synesis.com.au/). It is a plain-C library,
+    and is platform/compiler independent. When compiled under Win32 it
+    provides the facility to use Win32 Global, Process Heap and COM Task
+    Allocator memory, rather than the default C library realloc().
+
+
+=============================== end of file ================================
+

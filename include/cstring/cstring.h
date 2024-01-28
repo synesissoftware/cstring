@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 12th January 2024
+ * Updated: 28th January 2024
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -54,8 +54,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 5
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     75
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 6
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     76
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -106,13 +106,14 @@
 # define CSTRING_VER_4_0_6      0x04000600
 # define CSTRING_VER_4_0_7      0x04000700
 # define CSTRING_VER_4_0_8      0x04000881
+# define CSTRING_VER_4_0_9      0x04000981
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-#define CSTRING_VER             CSTRING_VER_4_0_8
+#define CSTRING_VER             CSTRING_VER_4_0_9
 
 #define CSTRING_VER_MAJOR       4
 #define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    8
+#define CSTRING_VER_REVISION    9
 
 /* /////////////////////////////////////////////////////////////////////////
  * includes
@@ -293,7 +294,7 @@ typedef struct cstring_t                                    cstring_t;
 #if defined(WIN32) || \
     defined(WIN64)
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
-# define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMOR            Y (0x0200)  /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
+# define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)  /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY              (0x0400)    /*!< Uses COM Task Allocator for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 #endif /* WIN32 || WIN64 */
 #if defined(CSTRING_USE_SYNESIS_APIS)

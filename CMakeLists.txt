@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  11th January 2024
+# Updated:  28th January 2024
 #
 # ######################################################################## #
 
@@ -60,10 +60,10 @@ message(NOTICE "Generating CMake build scripts for ${PROJECT_NAME} ${PROJECT_VER
 
 # adhere strictly to C and C++ standards plus extensions. These are actually
 # useless since we do not compile anything; they merely state our intention.
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON) # GNU extensions and POSIX standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
@@ -97,7 +97,9 @@ include(CTest)
 
 if(BUILD_TESTING)
 
-    set(xTests_REQUIRED_VERSION_ 0.21.1)
+    message("-- enabled building of tests ...")
+
+    set(xTests_REQUIRED_VERSION_ 0.21.2)
 
     find_package(xTests ${xTests_REQUIRED_VERSION_} REQUIRED)
 
@@ -113,6 +115,8 @@ endif()
 option(BUILD_EXAMPLES "Build examples" ON)
 if(BUILD_EXAMPLES)
 
+    message("-- enabled building of examples ...")
+
     add_subdirectory(examples)
 endif()
 
@@ -121,20 +125,12 @@ endif()
 # install
 
 
-install(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/include/cstring/internal
-    DESTINATION include/cstring/
-    FILES_MATCHING
-    PATTERN "*.h*"
-)
-
-
 # ##########################################################
 # export
 
 include(CMakePackageConfigHelpers)
 
-string(TOLOWER ${PROJECT_NAME} EXPORT_NAME)
+set(EXPORT_NAME ${PROJECT_NAME_LOWER})
 
 configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${EXPORT_NAME}-config.cmake.in

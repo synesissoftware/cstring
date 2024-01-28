@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 28th November 2023
+ * Updated: 28th January 2024
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2024, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2012-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
 # define CSTRING_VER_CSTRING_H_VECTOR_REVISION  2
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      5
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      6
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ struct cstring_vector_t
 typedef struct cstring_vector_t cstring_vector_t;
 #endif /*!__cplusplus*/
 
-#define cstring_vector_t_DEFAULT			                { 0, NULL, 0, 0 }
+#define cstring_vector_t_DEFAULT                            { 0, NULL, 0, 0 }
 
 #define cstring_vector_DEFAULT_CAPACITY                     (~(size_t)(0))
 

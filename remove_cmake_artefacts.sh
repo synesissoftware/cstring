@@ -32,8 +32,8 @@ while [[ $# -gt 0 ]]; do
         --help)
             cat << EOF
 cstring is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such
-Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
-Copyright (c) 2005-2023, Matthew Wilson and Sean Kelly
+Copyright (c) 2019-2024, Matthew Wilson and Synesis Information Systems
+Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
 Removes all known CMake artefacts
 
 $ScriptPath [ ... flags/options ... ]
