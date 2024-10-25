@@ -47,6 +47,7 @@
 #ifndef CSTRING_INCL_CSTRING_H_CSTRING
 #define CSTRING_INCL_CSTRING_H_CSTRING
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * version
  */
@@ -54,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 6
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     76
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 7
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     77
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -107,13 +108,15 @@
 # define CSTRING_VER_4_0_7      0x04000700
 # define CSTRING_VER_4_0_8      0x04000881
 # define CSTRING_VER_4_0_9      0x04000981
+# define CSTRING_VER_4_0_10     0x04000aff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-#define CSTRING_VER             CSTRING_VER_4_0_9
+#define CSTRING_VER             CSTRING_VER_4_0_10
 
 #define CSTRING_VER_MAJOR       4
 #define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    9
+#define CSTRING_VER_REVISION    10
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * includes
@@ -121,6 +124,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * documentation
@@ -138,10 +142,13 @@
  */
 
 #ifdef __cplusplus
+
 # define CSTRING_EXTERN_C                                   extern "C"
 #else /* ? __cplusplus */
+
 # define CSTRING_EXTERN_C                                   extern
 #endif /* ? __cplusplus */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
@@ -178,6 +185,7 @@ enum CSTRING_RC
 typedef enum CSTRING_RC                                     CSTRING_RC;
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * character encoding
  */
@@ -196,6 +204,7 @@ typedef enum CSTRING_RC                                     CSTRING_RC;
 # endif /* CSTRING_USE_WIDE_STRINGS */
 #endif /* CSTRING_NO_USE_WIDE_STRINGS */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * typedefs
  */
@@ -204,8 +213,10 @@ typedef enum CSTRING_RC                                     CSTRING_RC;
  * \ingroup group__cstring_api
  */
 #ifdef CSTRING_USE_WIDE_STRINGS
+
 typedef wchar_t                                             cstring_char_t;
 #else /* ? CSTRING_USE_WIDE_STRINGS */
+
 typedef char                                                cstring_char_t;
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
@@ -240,6 +251,7 @@ typedef struct cstring_t                                    cstring_t;
  */
 #define cstring_t_DEFAULT                                   { 0, NULL, 0, 0 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * custom settings
  */
@@ -249,6 +261,7 @@ typedef struct cstring_t                                    cstring_t;
 #  define CSTRING_USE_SYNESIS_APIS
 # endif /* _SYNSOFT_INCL_H_MLMEMORY */
 #endif /* !CSTRING_NO_USE_SYNESIS_APIS */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * macros
@@ -265,6 +278,7 @@ typedef struct cstring_t                                    cstring_t;
  */
 
 #define CSTRING_FROM_END(x)                                 (-1 - (int)(x))
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * flags
@@ -304,8 +318,8 @@ typedef struct cstring_t                                    cstring_t;
 
 #define CSTRING_F_CUSTOMARENA_CC_CDECL                      (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
 #define CSTRING_F_CUSTOMARENA_CC_STDCALL                    (0x0040)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
-
 /** @} */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * API functions
@@ -891,11 +905,12 @@ cstring_replaceAll(
 ,   size_t*                 numReplaced /* = NULL */
 );
 
+
 /* ////////////////////////////////////////////////////////////////////// */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
-typedef int (*cstring_allocFailHandler)(void* pv, size_t cb, cstring_flags_t flags, void* param);
 
+typedef int (*cstring_allocFailHandler)(void* pv, size_t cb, cstring_flags_t flags, void* param);
 
 /** This is an experimental feature */
 CSTRING_EXTERN_C
@@ -963,6 +978,7 @@ cstring_appendLenFn(
 );
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
  */
@@ -973,6 +989,7 @@ cstring_appendLenFn(
 # endif /* compiler */
 # pragma warning(disable : 4514) /* unreferenced inline function has been removed */
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * string access shims
@@ -1113,7 +1130,6 @@ c_str_ptr_a(
 }
 
 
-
 inline
 char const*
 c_str_data_a(
@@ -1182,8 +1198,8 @@ namespace stlsoft
 
 } /* namespace stlsoft */
 # endif /* !_STLSOFT_NO_NAMESPACE */
-
 #endif /* __cplusplus */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
@@ -1194,6 +1210,7 @@ namespace stlsoft
 /* #  pragma warning(pop) */
 # endif /* compiler */
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * obsolete
@@ -1210,6 +1227,7 @@ namespace stlsoft
 #ifdef CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY
 # define CSTRING_F_USE_WIN32_COM_TASK_MEMORY                CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY
 #endif
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * inclusion control

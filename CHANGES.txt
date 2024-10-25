@@ -17,6 +17,14 @@ cstring - Changes
 
 
 
+Version 4.0.10 (25th October 2024)
+
+ * Substantial CMake improvements;
+ * MinGW compatibility;
+
+
+============================================================================
+
 Version 4.0.9 (28th January 2024)
 
  ~ improved CMake support;
