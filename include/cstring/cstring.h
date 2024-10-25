@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 28th January 2024
+ * Updated: 25th October 2024
  *
  * Home:    http://synesis.com.au/software/
  *
