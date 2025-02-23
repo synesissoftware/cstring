@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
                 {
                     int const e = errno;
 
-                    fprintf(stderr, "%s: could not open file '%s': \n", arg0, input_path, strerror(e));
+                    fprintf(stderr, "%s: could not open file '%s': %s\n", arg0, input_path, strerror(e));
 
                     return EXIT_FAILURE;
                 }

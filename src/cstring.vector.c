@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring.vector API
  *
  * Created: 16th June 1994
- * Updated: 28th November 2023
+ * Updated: 23rd February 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -63,17 +63,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
 #define CSTRING_VECTOR_DEF_CAPACITY_                        (8)
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * debugging
  */
 
 #define CSTRING_VECTOR_ASSERT(expr)                         assert(expr)
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
@@ -89,6 +92,7 @@
 #  endif /* !__COMO__ */
 # endif /* _MSC_VER >= 1310 */
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -112,6 +116,7 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
 # define index index_disambiguated_1
 #endif
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * cstring.vector API functions
@@ -420,6 +425,7 @@ cstring_vector_readLines(
 
     return rc;
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings

@@ -4,11 +4,11 @@
  * Purpose: Definition of DllMain for the Win32 platform
  *
  * Created: 19th August 2005
- * Updated: 28th November 2023
+ * Updated: 23rd February 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2005-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -54,6 +54,7 @@
 # include <winerror.h>
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compatibility
  */
@@ -72,6 +73,7 @@
 /* # error This file is only used for DLL builds */
 #endif /* dll */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * Windows types and declarations
  */
@@ -89,8 +91,8 @@ typedef void            *LPVOID;
 #define DLL_PROCESS_ATTACH                                  (1)
 #define DLL_THREAD_ATTACH                                   (2)
 #define DLL_THREAD_DETACH                                   (3)
-
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * declarations
@@ -112,6 +114,7 @@ CSTRING_EXTERN_C CSTRING_RC cstringdll_yield(
     struct cstring_t*   pcs
 ,   char**              ppBuff
 );
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * DllMain
@@ -137,6 +140,7 @@ BOOL WINAPI DllMain(
 
     return 1;
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * DllGetVersion
@@ -174,6 +178,7 @@ HRESULT WINAPI cstringdll_DllGetVersion(struct cstringdll_DllVersionInfo* pdvi)
         return S_OK;
     }
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * cstringdll_yield
@@ -213,6 +218,7 @@ CSTRING_EXTERN_C CSTRING_RC cstringdll_yield2(
         return cstring_yield2(pcs, pPayload, pRaw);
     }
 }
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

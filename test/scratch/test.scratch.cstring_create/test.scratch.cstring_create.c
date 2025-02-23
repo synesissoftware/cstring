@@ -12,12 +12,18 @@
  * forward declarations
  */
 
-/* ////////////////////////////////////////////////////////////////////// */
 
-int main()
+/* /////////////////////////////////////////////////////////////////////////
+ * main()
+ */
+
+int main(int argc, char* argv[])
 {
     cstring_t   cs;
     CSTRING_RC  rc  =   cstring_create(&cs, "String-#1");
+
+    ((void)&argc);
+    ((void)&argv);
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -37,6 +43,7 @@ int main()
 
     return 0;
 }
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

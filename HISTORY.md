@@ -4,6 +4,20 @@
 ----
 
 
+23rd February 2025 - 4.0.11 released
+------------------------------------
+
+ * Boilerplate;
+ * Simplication of dependencies;
+
+
+25th October 2024 - 4.0.10 released
+-----------------------------------
+
+ * Substantial CMake improvements;
+ * MinGW compatibility;
+
+
 28th January 2024 - 4.0.9 released
 -----------------------------------
 

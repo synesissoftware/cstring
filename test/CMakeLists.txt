@@ -1,37 +1,35 @@
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-if (APPLE)
-
-    message("adding '/usr/local/include' to include-directories for 'test'")
-
-    include_directories("/usr/local/include")
-endif()
-
-
-# include_directories(${OPENBSD_LOCALBASE}/include)
-
-# include(CheckIncludeFiles)
-# CHECK_INCLUDE_FILES("<shwild/shwild.h>" HAVE_shwild_h LANGUAGE CXX)
-# if (not HAVE_shwild_h)
-#     message(FATAL_ERROR "cannot locate header 'shwild/shwild.h'")
-# endif()
-
-# CHECK_INCLUDE_FILES("<stlsoft/stlsoft.h>" HAVE_stlsoft_h LANGUAGE CXX)
-# if (not HAVE_stlsoft_h)
-#     message(FATAL_ERROR "cannot locate header 'stlsoft/stlsoft.h'")
-# endif()
-
-
 if(UNIX)
 
-    add_definitions(-DUNIX)
-    add_definitions(-Dunix)
-endif()
+	add_definitions(-DUNIX)
+	add_definitions(-Dunix)
+endif(UNIX)
 
 if(WIN32)
 
-    message(FATAL_ERROR "Use of CMake on Windows not currently supported")
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+		message (STATUS "Compiling for 64-bit Windows")
+
+		add_definitions(-DWIN64)
+	else()
+
+		message (STATUS "Compiling for 32-bit Windows")
+
+		add_definitions(-DWIN32)
+	endif()
+
+	# suppress implicit-link file
+	add_definitions(-DCSTRING_INCL_CSTRING_H_IMPLICIT_LINK)
+endif(WIN32)
+
+if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
+
+	add_compile_options("/Zc:__cplusplus")
+
+	add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
 

@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 28th November 2023
+ * Updated: 23rd February 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -67,6 +67,7 @@
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
@@ -81,11 +82,13 @@
 # define CSTRING_USE_WINAPI_
 #endif
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * debugging
  */
 
 #define CSTRING_ASSERT(expr)                                assert(expr)
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
@@ -102,6 +105,7 @@
 # endif /* _MSC_VER >= 1310 */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * character encoding
  */
@@ -117,6 +121,7 @@
 # define cstring_strncpy_                                   strncpy
 # define cstring_strstr_                                    strstr
 #endif /* CSTRING_USE_WIDE_STRINGS */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -145,6 +150,7 @@ strncpy_safe(
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
 # define index index_disambiguated_1
 #endif
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * utility functions
@@ -252,6 +258,7 @@ cstring_memcpy_safe_(
         memcpy(dst, src, cb);
     }
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * allocation functions
@@ -375,6 +382,7 @@ cstring_realloc_(
 {
     return cstring_realloc_2(pv, cch, flags, prc, NULL, NULL);
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * API
@@ -1365,6 +1373,7 @@ cstring_swap(
     }
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * file functions
  */
@@ -1497,6 +1506,7 @@ cstring_write(
 {
     return cstring_write_(stm, pcs, numWritten, "%.*s");
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * search/replace functions
@@ -1857,6 +1867,7 @@ win32_comtask_realloc(
 /* ////////////////////////////////////////////////////////////////////// */
 
 #endif /* CSTRING_USE_WINAPI_ */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
