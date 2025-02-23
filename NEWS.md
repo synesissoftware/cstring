@@ -3,6 +3,7 @@
 
 | Date                  | News Item                                                     |
 | --------------------- | ------------------------------------------------------------- |
+| 23rd February 2025    | Release of cstring 4.0.11                                     |
 | 25th October 2024     | Release of cstring 4.0.10                                     |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
 | 28th January 2024     | Release of cstring 4.0.9                                      |

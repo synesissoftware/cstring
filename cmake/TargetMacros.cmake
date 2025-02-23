@@ -13,10 +13,10 @@ macro(define_target_compile_options target_name)
 	set(X_MSVC_CUSTOM_WARNINGS_ "")
 
 	if(X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED)
-			foreach(warning ${X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED})
+		foreach(warning ${X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED})
 
-					list(APPEND X_MSVC_CUSTOM_WARNINGS_ "/wd${warning}")
-			endforeach()
+			list(APPEND X_MSVC_CUSTOM_WARNINGS_ "/wd${warning}")
+		endforeach()
 	endif()
 
 	target_compile_options(${target_name}

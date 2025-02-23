@@ -4,7 +4,7 @@
  * Purpose: Implementation file for the test.scratch.auto_buffer project.
  *
  * Created: 28th July 2011
- * Updated: 26th October 2024
+ * Updated: 23rd February 2025
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -25,11 +25,6 @@
 /* Standard C header files */
 #include <stdio.h>
 #include <stdlib.h>
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * forward declarations
- */
 
 
 /* /////////////////////////////////////////////////////////////////////////

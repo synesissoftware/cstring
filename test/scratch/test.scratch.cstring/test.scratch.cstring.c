@@ -4,7 +4,7 @@
  * Purpose: Implementation file for the test.scratch.cstring project.
  *
  * Created: 7th July 2005
- * Updated: 26th October 2024
+ * Updated: 23rd February 2025
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -35,13 +35,16 @@
 static int run_unittests(void);
 
 #if defined(WIN32)
+
 static int on_allocFail(void *pv, size_t cb, cstring_flags_t flags, void *param);
 #endif /* WIN32 */
 
-
-/* ////////////////////////////////////////////////////////////////////// */
-
 static void play_with_string(struct cstring_t *pcs);
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * main()
+ */
 
 int main(int argc, char *argv[])
 {
@@ -146,7 +149,11 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-/* ////////////////////////////////////////////////////////////////////// */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * function implementations
+ */
 
 static void play_with_string(struct cstring_t *pcs)
 {
@@ -284,8 +291,6 @@ static void play_with_string(struct cstring_t *pcs)
     cstring_destroy(&cs2);
 }
 
-/* ////////////////////////////////////////////////////////////////////// */
-
 static int run_unittests(void)
 {
     cstring_t   cs1;
@@ -381,6 +386,7 @@ Failure:
 }
 
 #if defined(WIN32)
+
 static int on_allocFail(void *pv, size_t cb, cstring_flags_t flags, void *param)
 {
     fprintf(stderr, "Allocation failed: pv=%p, cb=%lu, flags=0x%08x, param=%p\n", pv, (unsigned long)cb, (unsigned)flags, param);

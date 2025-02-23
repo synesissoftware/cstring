@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  ...
-# Updated:  26th October 2024
+# Updated:  23rd February 2025
 #
 # ######################################################################## #
 
@@ -75,11 +75,6 @@ target_include_directories(core
 		$<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(core
-	PRIVATE
-		$<$<STREQUAL:${STLSOFT_INCLUDE_DIR},>:STLSoft::STLSoft>
-)
-
 target_compile_options(core
 	PRIVATE
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
@@ -108,7 +103,6 @@ install(
 	FILES_MATCHING
 	PATTERN "*.h*"
 )
-
 
 
 # ############################## end of file ############################# #

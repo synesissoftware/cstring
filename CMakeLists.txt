@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  25th October 2024
+# Updated:  23rd February 2025
 #
 # ######################################################################## #
 
@@ -75,7 +75,7 @@ endif(MSVC)
 
 
 # ##########################################################
-# dependencies, includes, options
+# dependencies, features, includes, and options
 
 # ################################################
 # includes - 1
@@ -86,7 +86,7 @@ include(TargetMacros)
 
 
 # ################################################
-# dependencies and options
+# dependencies, features, and options
 
 option(BUILD_EXAMPLES "Build examples" ON)
 
@@ -95,38 +95,52 @@ option(BUILD_EXAMPLES "Build examples" ON)
 # dependencies
 #
 # required:
-# - STLSoft;
+# - STLSoft - required for testing;
+# - xTests - required for testing;
 #
 # optional:
-# - xTests - required for testing;
 
 
 # ############################
 # STLSoft
+#
+# We provide flexibility here, as in:
+# 1. if a CMake variable STLSOFT is provided then it is used; otherwise
+# 2. if an environment variable STLSOFT is provided then it then it is used;
+#    otherwise
+# 3. if the package STLSoft (via find_package()) is found then it is used;
+#    otherwise
+# 4. we abort
 
-if(DEFINED STLSOFT)
+if(BUILD_TESTING)
 
-	message("-- STLSOFT provided as CMake variable with value '${STLSOFT}'")
+	if(DEFINED STLSOFT)
 
-	set(STLSOFT_INCLUDE_DIR ${STLSOFT}/include)
-elseif(DEFINED ENV{STLSOFT})
+		message("-- STLSOFT provided as CMake variable with value '${STLSOFT}'")
 
-	message("-- STLSOFT provided as environment variable with value '$ENV{STLSOFT}'")
+		set(STLSOFT_INCLUDE_DIR ${STLSOFT}/include)
+	elseif(DEFINED ENV{STLSOFT})
 
-	set(STLSOFT_INCLUDE_DIR $ENV{STLSOFT}/include)
-else()
+		message("-- STLSOFT provided as environment variable with value '$ENV{STLSOFT}'")
 
-	set(STLSoft_REQUIRED_VERSION_ 1.11)
+		set(STLSOFT_INCLUDE_DIR $ENV{STLSOFT}/include)
+	else()
 
-	find_package(STLSoft ${STLSoft_REQUIRED_VERSION_} REQUIRED)
+		set(STLSoft_REQUIRED_VERSION_ 1.11)
 
-	message("-- CMake package STLSoft found (version ${STLSoft_VERSION}; ${STLSoft_REQUIRED_VERSION_} requested)")
-endif()
+		find_package(STLSoft ${STLSoft_REQUIRED_VERSION_} REQUIRED)
 
-if(DEFINED STLSOFT_INCLUDE_DIR)
+		message("-- CMake package STLSoft found (version ${STLSoft_VERSION}; ${STLSoft_REQUIRED_VERSION_} requested)")
+	endif()
 
-	include_directories(${STLSOFT_INCLUDE_DIR})
-endif()
+	if(DEFINED STLSOFT_INCLUDE_DIR)
+
+		include_directories(${STLSOFT_INCLUDE_DIR})
+
+		add_compile_definitions(HAS_STLSOFT)
+		add_compile_definitions(HAS_STLSoft)
+	endif()
+endif(BUILD_TESTING)
 
 
 # ############################
@@ -134,7 +148,7 @@ endif()
 
 if(BUILD_TESTING)
 
-	set(xTests_REQUIRED_VERSION_ 0.25)
+	set(xTests_REQUIRED_VERSION_ 0.26)
 
 	find_package(xTests ${xTests_REQUIRED_VERSION_} REQUIRED)
 
@@ -157,9 +171,7 @@ include(GNUInstallDirs)
 # targets
 
 # ################################################
-# main library
-
-# add_definitions(-DCSTRING_NO_STLSOFT)
+# main libraries
 
 add_subdirectory(src)
 

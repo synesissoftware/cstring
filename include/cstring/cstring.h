@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 25th October 2024
+ * Updated: 23rd February 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2024, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 7
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     77
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 8
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     78
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -109,13 +109,14 @@
 # define CSTRING_VER_4_0_8      0x04000881
 # define CSTRING_VER_4_0_9      0x04000981
 # define CSTRING_VER_4_0_10     0x04000aff
+# define CSTRING_VER_4_0_11     0x04000bff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-#define CSTRING_VER             CSTRING_VER_4_0_10
+#define CSTRING_VER             CSTRING_VER_4_0_11
 
 #define CSTRING_VER_MAJOR       4
 #define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    10
+#define CSTRING_VER_REVISION    11
 
 
 /* /////////////////////////////////////////////////////////////////////////
