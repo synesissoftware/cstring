@@ -1,2 +1,3 @@
 list(APPEND X_GCC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED format format-extra-args)
+list(APPEND X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED 4127 4473 4996)
 define_automated_test_program(test_scratch_cstring_vector test.scratch.cstring_vector.c)
