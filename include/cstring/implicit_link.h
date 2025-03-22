@@ -4,11 +4,11 @@
  * Purpose: Implicit linking for cstring APIs.
  *
  * Created: 18th August 2005
- * Updated: 28th November 2023
+ * Updated: 23rd March 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -66,7 +66,7 @@
 # define CSTRING_VER_CSTRING_H_IMPLICIT_LINK_MAJOR      4
 # define CSTRING_VER_CSTRING_H_IMPLICIT_LINK_MINOR      0
 # define CSTRING_VER_CSTRING_H_IMPLICIT_LINK_REVISION   1
-# define CSTRING_VER_CSTRING_H_IMPLICIT_LINK_EDIT       17
+# define CSTRING_VER_CSTRING_H_IMPLICIT_LINK_EDIT       18
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -86,23 +86,30 @@
  * architecture discrimination
  */
 
-#if defined(__amd64__) || \
-    defined(__amd64) || \
-    defined(_AMD64_) || \
-    defined(_M_AMD64) || \
-    defined(_M_X64)
+#if 0
+#elif 0 ||\
+      defined(__amd64__) ||\
+      defined(__amd64) ||\
+      defined(_AMD64_) | \
+      defined(_M_AMD64) ||\
+      defined(_M_X64) ||\
+      0
 
 # define CSTRING_ARCH_IS_X64
-#elif defined(__ia64__) || \
-      defined(__ia64) || \
-      defined(_IA64_) || \
-      defined(_M_IA64)
+#elif 0 ||\
+      defined(__ia64__) ||\
+      defined(__ia64) ||\
+      defined(_IA64_) ||\
+      defined(_M_IA64) ||\
+      0
 
 # define CSTRING_ARCH_IS_IA64
-#elif defined(__i386__) || \
-      defined(__i386) || \
-      defined(_X86_) || \
-      defined(_M_IX86)
+#elif 0 ||\
+      defined(__i386__) ||\
+      defined(__i386) ||\
+      defined(_X86_) ||\
+      defined(_M_IX86) ||\
+      0
 
 # define CSTRING_ARCH_IS_X86
 #endif /* _M_?? */
@@ -111,8 +118,11 @@
  * implicit linking
  */
 
-#if defined(_WIN32) || \
-    defined(_WIN64)
+#if 0
+#elif 0 ||\
+      defined(_WIN32) ||\
+      defined(_WIN64) ||\
+      0
 
 # if defined(__BORLANDC__) || \
      /* defined(__DMC__) || */ \
@@ -126,8 +136,11 @@
 #  endif /* compiler */
 # endif /* compiler */
 
-#if defined(CSTRING_IMPLICIT_LINK_SUPPORT) && \
-    defined(CSTRING_NO_IMPLICIT_LINK)
+#if 0
+#elif 1 &&\
+      defined(CSTRING_IMPLICIT_LINK_SUPPORT) &&\
+      defined(CSTRING_NO_IMPLICIT_LINK) &&\
+      1
 
 # undef CSTRING_IMPLICIT_LINK_SUPPORT
 #endif /* CSTRING_IMPLICIT_LINK_SUPPORT && CSTRING_NO_IMPLICIT_LINK */
