@@ -33,19 +33,33 @@ T.B.C.
 
 ### API / core library
 
-The C API is based around the `cstring_t` structure, defined as follows:
-
-```C
-struct cstring_t
-{
+The C API is based around two structures:
+* `cstring_t`, which represents a resizeable string instance; and
+  ```C
+  struct cstring_t
+  {
     size_t          len;        /*!< Number of characters.                              */
     cstring_char_t* ptr;        /*!< Pointer to the string. If capacity is 0, the value
-                                     value of this member is undetermined.              */
+                                     of this member is undetermined.                    */
     size_t          capacity;   /*!< Number of bytes available.                         */
     cstring_flags_t flags;      /*!< Flags. This field belongs to the implementation,
                                      and must not be modified by any application code.  */
-};
-```
+  };
+  ```
+* `cstring_vector_t`, which represents a sequence of `cstring_t` instances;
+  ```C
+  struct cstring_vector_t
+  {
+    size_t          len;        /*!< Number of strings.                                 */
+    cstring_t*      ptr;        /*!< Pointer to the first string. If capacity is 0, the
+                                     value of this member is undetermined.              */
+    size_t          capacity;   /*!< Number of instances available.                     */
+    cstring_flags_t flags;      /*!< Flags. This field belongs to the implementation,
+                                     and must not be modified by any application code.  */
+  };
+  ```
+ the  structure, defined as follows:
+
 
 **Creation/destruction functions**:
 
