@@ -1,27 +1,22 @@
 # cstring <!-- omit in toc -->
 
-
-# cstring
 **C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
 
 
 ## Table of Contents <!-- omit in toc -->
 
-- [cstring](#cstring)
-- [cstring](#cstring-1)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Installation](#installation)
-  - [Components](#components)
-    - [API / core library](#api--core-library)
-  - [Examples](#examples)
-  - [Project Information](#project-information)
-    - [Where to get help](#where-to-get-help)
-    - [Contribution guidelines](#contribution-guidelines)
-    - [Dependencies](#dependencies)
-      - [Tests-only Dependencies](#tests-only-dependencies)
-    - [Related projects](#related-projects)
-    - [License](#license)
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Components](#components)
+  - [API / core library](#api--core-library)
+- [Examples](#examples)
+- [Project Information](#project-information)
+  - [Where to get help](#where-to-get-help)
+  - [Contribution guidelines](#contribution-guidelines)
+  - [Dependencies](#dependencies)
+    - [Tests-only Dependencies](#tests-only-dependencies)
+  - [Related projects](#related-projects)
+  - [License](#license)
 
 
 ## Introduction
@@ -99,7 +94,7 @@ Examples are provided in the ```examples``` directory, along with a markdown des
 
 ### Contribution guidelines
 
-Defecesynesissoftware/cstring.
+Defect reports, feature requests, and pull requests are welcome on https://github.com/synesissoftware/cstring.
 
 
 ### Dependencies
@@ -109,7 +104,7 @@ Defecesynesissoftware/cstring.
 
 For unit-testing, **cstring** depends on:
 
-* [**STLSoft 1.10**](http://github.com/synesissoftware/STLSoft-1.10/);
+* [**STLSoft 1.11**](http://github.com/synesissoftware/STLSoft-1.11/);
 * [**xTests**](http://github.com/synesissoftware/xTests/);
 
 
