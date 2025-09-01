@@ -1,12 +1,11 @@
-# cstring
-C-style strings
+# cstring <!-- omit in toc -->
 
 
 # cstring
 **C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
 
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [cstring](#cstring)
 - [cstring](#cstring-1)

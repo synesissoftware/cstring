@@ -1,40 +1,39 @@
-============================================================================
 cstring - Changes
+=================
 
-; Updated:  23rd February 2025
+; Updated:  31st August 2025
 
-============================================================================
 
-   **************************************
-   *  Change key:                       *
-   *                                    *
-   *   ~  means something has changed   *
-   *   +  means a new addition          *
-   *   -  means removal of something    *
-   *   *  means a general bullet-point  *
-   *                                    *
-   **************************************
+    ************************************
+    * Change key:                      *
+    *                                  *
+    *  ~  means something has changed  *
+    *  +  means a new addition         *
+    *  -  means removal of something   *
+    *  *  means a general bullet-point *
+    *                                  *
+    ************************************
 
 
 
 Version 4.0.11 (23rd February 2025)
+===================================
 
  * Boilerplate;
  * Simplication of dependencies;
 
 
-============================================================================
 
 
 Version 4.0.10 (25th October 2024)
+==================================
 
  * Substantial CMake improvements;
  * MinGW compatibility;
 
 
-============================================================================
-
 Version 4.0.9 (28th January 2024)
+=================================
 
  ~ improved CMake support;
  ~ CMake language standards now C-11 and C++14;
@@ -47,9 +46,8 @@ Version 4.0.9 (28th January 2024)
     + NEWS.md;
 
 
-============================================================================
-
 Version 4.0.8 (12th January 2024)
+=================================
 
  + added cstring.vector API;
  + added API function cstring_write();
@@ -60,8 +58,6 @@ Version 4.0.8 (12th January 2024)
  + added scratch test test.scratch.cstring_vector;
  + added unit test test.unit.cstring.cstring_vector;
 
-
-============================================================================
 
 Version 3.6.2 (20th February 2012)
 ==================================

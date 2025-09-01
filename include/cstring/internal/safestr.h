@@ -4,11 +4,11 @@
  * Purpose: Internal utility header for the cstring API.
  *
  * Created: 13th May 2008
- * Updated: 28th November 2023
+ * Updated: 23rd March 2025
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2008-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -54,7 +54,7 @@
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MAJOR       1
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MINOR       0
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_REVISION    1
-# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        3
+# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        4
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,8 @@
 # undef CSTRING_SAFE_STR_USE_crtdefs_h_
 #endif /* CSTRING_SAFE_STR_USE_crtdefs_h_ */
 
-#if defined(__BORLANDC__)
+#if 0
+#elif defined(__BORLANDC__)
 #elif defined(__DMC__)
 #elif defined(__GNUC__)
 #elif defined(__INTEL_COMPILER)
