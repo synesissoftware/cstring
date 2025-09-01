@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 22nd March 2025
+ * Updated: 1st September 2025
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 8
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     79
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 9
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     80
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -110,13 +110,39 @@
 # define CSTRING_VER_4_0_9      0x04000981
 # define CSTRING_VER_4_0_10     0x04000aff
 # define CSTRING_VER_4_0_11     0x04000bff
+# define CSTRING_VER_4_0_12     0x04000cff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-#define CSTRING_VER             CSTRING_VER_4_0_11
+/** \def CSTRING_VER_MAJOR
+ * The major version number of **BDUT**
+ */
 
-#define CSTRING_VER_MAJOR       4
-#define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    11
+/** \def CSTRING_VER_MINOR
+ * The minor version number of **BDUT**
+ */
+
+/** \def CSTRING_VER_PATCH
+ * The patch version number of **BDUT**
+ */
+
+/** \def CSTRING_VER
+ * The current composite version number of **BDUT**
+ */
+
+#define CSTRING_VER_MAJOR                                   4
+#define CSTRING_VER_MINOR                                   0
+#define CSTRING_VER_PATCH                                   12
+#define CSTRING_VER_ALPHABETA                               0xFF
+
+#define CSTRING_VER \
+    (0\
+        |   (   CSTRING_VER_MAJOR      << 24   ) \
+        |   (   CSTRING_VER_MINOR      << 16   ) \
+        |   (   CSTRING_VER_PATCH      <<  8   ) \
+        |   (   CSTRING_VER_ALPHABETA  <<  0   ) \
+    )
+
+#define CSTRING_VER_REVISION                                CSTRING_VER_PATCH
 
 
 /* /////////////////////////////////////////////////////////////////////////
