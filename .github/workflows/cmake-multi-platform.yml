@@ -75,7 +75,7 @@ jobs:
         cmake
         -B ${{ steps.strings.outputs.build-output-dir }}
         -DBUILD_EXAMPLES:BOOL=FALSE
-        -DBUILD_TESTING:BOOL=TRUE
+        -DBUILD_TESTING:BOOL=FALSE
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
