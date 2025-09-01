@@ -8,7 +8,7 @@
 [![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml)
 -->
 
-**C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
+Extensible dynamic character strings - and arrays of strings - in **C**, for Unix and Windows.
 
 
 ## Table of Contents <!-- omit in toc -->
@@ -29,12 +29,12 @@
 
 ## Introduction
 
-T.B.C.
+**C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
 
 
 ## Installation
 
-T.B.C.
+**ctring** comes with **CMake** configuration/build files.
 
 
 ## Components

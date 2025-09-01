@@ -133,7 +133,7 @@ if(BUILD_TESTING)
 		message("-- CMake package STLSoft found (version ${STLSoft_VERSION}; ${STLSoft_REQUIRED_VERSION_} requested)")
 	endif()
 
-	if(DEFINED STLSOFT_INCLUDE_DIR)
+	if(DEFINED STLSOFT_INCLUDE_DIR OR DEFINED STLSoft_FOUND)
 
 		include_directories(${STLSOFT_INCLUDE_DIR})
 
@@ -246,7 +246,7 @@ install( FILES
 # ##########################################################
 # completion
 
-message(NOTICE "Generating CMake build scripts for ${PROJECT_NAME} ${PROJECT_VERSION}, for C${CMAKE_C_STANDARD} C++${CMAKE_CXX_STANDARD}")
+message(NOTICE "Generating CMake build scripts for ${PROJECT_NAME} ${PROJECT_VERSION}, for C${CMAKE_C_STANDARD} C++${CMAKE_CXX_STANDARD}, with build type ${CMAKE_BUILD_TYPE}")
 
 
 # ############################## end of file ############################# #

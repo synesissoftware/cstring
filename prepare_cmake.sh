@@ -7,6 +7,7 @@ CMakeDir=${SIS_CMAKE_BUILD_DIR:-$Dir/_build}
 [[ -n "$MSYSTEM" ]] && DefaultMakeCmd=mingw32-make.exe || DefaultMakeCmd=make
 MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
 
+
 Configuration=Release
 ExamplesDisabled=0
 MinGW=0
