@@ -1,0 +1,3 @@
+cstring is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such
+Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+Copyright (c) 2008-2019, Matthew Wilson and Synesis Software
