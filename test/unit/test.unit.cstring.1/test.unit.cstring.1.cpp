@@ -10,15 +10,24 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * test component header file include(s)
+ * compatibility
  */
 
 #define CSTRING_OBSOLETE
-#include <cstring/cstring.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * includes
+ */
+
+/* /////////////////////////////////////
+ * test component header file include(s)
+ */
+
+#include <cstring/cstring.h>
+
+/* /////////////////////////////////////
+ * general includes
  */
 
 /* xTests header files */
