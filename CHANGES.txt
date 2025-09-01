@@ -20,6 +20,9 @@ Version 4.0.12 (1st September 2025)
 ===================================
 
  * Documentation;
+ * CMake helper scripts now define default make command as "mingw32-make.exe" if recognise MinGW;
+ * *.sh : ~ moved info-lines into ./.sis/script_info_lines.txt;
+ * . . .
 
 
 Version 4.0.11 (23rd February 2025)
