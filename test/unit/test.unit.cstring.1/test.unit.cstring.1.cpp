@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 12th January 2024
+ * Updated: 2nd September 2025
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -16,25 +16,24 @@
 #define CSTRING_OBSOLETE
 #include <cstring/cstring.h>
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * includes
  */
 
 /* xTests header files */
-#include <xtests/xtests.h>
+#include <xtests/terse-api.h>
 
 /* STLSoft header files */
 #ifdef WIN32
 # include <comstl/memory/functions.h>
 #endif
-#include <platformstl/exception/platformstl_exception.hpp>
-#include <platformstl/filesystem/file_lines.hpp>
-#include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C header files */
 #include <stdio.h>
 #include <stdlib.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
@@ -66,8 +65,8 @@ namespace
     static void test_2_9(void);
     static void test_2_10(void);
     static void test_2_11(void);
-
 } // anonymous namespace
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
@@ -77,6 +76,7 @@ const char TEST_FILE_NAME[] = "test.unit.cstring.1.txt";
 
 const size_t    APPEND_ITERATIONS   =   1000000u;
 const size_t    ASSIGN_ITERATIONS   =   100000u;
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -88,6 +88,7 @@ const size_t    ASSIGN_ITERATIONS   =   100000u;
 # endif /* compiler */
 # pragma warning(disable : 4702)
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * main
@@ -136,6 +137,7 @@ int main(int argc, char **argv)
     return retCode;
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -146,15 +148,18 @@ int main(int argc, char **argv)
 # endif /* compiler */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
 
 #ifdef CSTRING_USE_WIDE_STRINGS
+
 # define CSTRING_T_(x)                                      L ## x
 # define XTESTS_TEST_STRING_EQUAL_                          XTESTS_TEST_WIDE_STRING_EQUAL
 # define XTESTS_TEST_STRING_EQUAL_N_                        XTESTS_TEST_WIDE_STRING_EQUAL_N
 #else /* ? CSTRING_USE_WIDE_STRINGS */
+
 # define CSTRING_T_(x)                                      x
 # define XTESTS_TEST_STRING_EQUAL_                          XTESTS_TEST_MULTIBYTE_STRING_EQUAL
 # define XTESTS_TEST_STRING_EQUAL_N_                        XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N
@@ -177,10 +182,10 @@ static void test_1_0()
 {
     cstring_t str = cstring_t_DEFAULT;
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, stlsoft::apply_const_ptr(str.ptr));
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, stlsoft::apply_const_ptr(str.ptr));
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_GE(str.len, str.capacity);
 }
 
 static void test_1_1()
@@ -189,10 +194,10 @@ static void test_1_1()
 
     cstring_init(&str);
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, str.ptr);
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_GE(str.len, str.capacity);
 }
 
 static void test_1_2()
@@ -206,17 +211,17 @@ static void test_1_2()
     }
     else
     {
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(10u, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_NE(NULL, str.ptr);
+        TEST_INT_GE(10u, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 }
 
@@ -232,18 +237,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -257,18 +262,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -282,18 +287,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -307,18 +312,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -332,18 +337,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -357,18 +362,18 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_INTEGER_GREATER(0u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GT(0u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -382,8 +387,8 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(5u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(5u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[0]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[1]);
@@ -391,15 +396,15 @@ static void test_1_3()
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[3]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[4]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[5]);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(5u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(5u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 
@@ -413,8 +418,8 @@ static void test_1_3()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(5u, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(5u, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[0]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[1]);
@@ -422,15 +427,15 @@ static void test_1_3()
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[3]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[4]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[5]);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(5u, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(5u, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }
 }
@@ -450,18 +455,18 @@ static void test_1_4()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(cch, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(cch, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 
@@ -480,20 +485,20 @@ static void test_1_4()
             }
             else
             {
-                XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-                XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+                TEST_INT_EQ(cch, str.len);
+                TEST_PTR_NE(NULL, str.ptr);
                 XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
-                XTESTS_TEST_INTEGER_GREATER(cch, str.capacity);
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+                TEST_INT_GT(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
             }
         }}
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -509,18 +514,18 @@ static void test_1_4()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(cch, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(cch, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 }
@@ -540,18 +545,18 @@ static void test_1_5()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(cch, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(cch, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 
@@ -570,20 +575,20 @@ static void test_1_5()
             }
             else
             {
-                XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-                XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+                TEST_INT_EQ(cch, str.len);
+                TEST_PTR_NE(NULL, str.ptr);
                 XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+                TEST_INT_GE(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
             }
         }}
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -599,18 +604,18 @@ static void test_1_5()
         }
         else
         {
-            XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-            XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+            TEST_INT_EQ(cch, str.len);
+            TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(cch, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 }
@@ -631,20 +636,20 @@ static void test_1_6()
             }
             else
             {
-                XTESTS_TEST_INTEGER_EQUAL(i + 1, str.len);
-                XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+                TEST_INT_EQ(i + 1, str.len);
+                TEST_PTR_NE(NULL, str.ptr);
                 XTESTS_TEST_STRING_EQUAL_N_(alphabet, str.ptr, int(i));
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i + 1, str.capacity);
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+                TEST_INT_GE(i + 1, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
             }
         }}
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     {
@@ -660,20 +665,20 @@ static void test_1_6()
             }
             else
             {
-                XTESTS_TEST_INTEGER_EQUAL(i + 1, str.len);
-                XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+                TEST_INT_EQ(i + 1, str.len);
+                TEST_PTR_NE(NULL, str.ptr);
                 XTESTS_TEST_STRING_EQUAL_N_(alphabet, str.ptr, int(i));
-                XTESTS_TEST_INTEGER_GREATER(i, str.capacity);
-                XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+                TEST_INT_GT(i, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
             }
         }}
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 }
 
@@ -683,27 +688,27 @@ static void test_1_7()
         cstring_t str = cstring_t_DEFAULT;
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 0u));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
+        TEST_INT_EQ(0u, str.len);
+        TEST_INT_EQ(0u, str.capacity);
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 1u));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
+        TEST_INT_EQ(0u, str.len);
+        TEST_INT_EQ(0u, str.capacity);
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100u));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
+        TEST_INT_EQ(0u, str.len);
+        TEST_INT_EQ(0u, str.capacity);
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100000u));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
+        TEST_INT_EQ(0u, str.len);
+        TEST_INT_EQ(0u, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     {
@@ -719,7 +724,7 @@ static void test_1_7()
 
                 if (i < 26u)
                 {
-                    XTESTS_TEST_INTEGER_EQUAL(i, str.len);
+                    TEST_INT_EQ(i, str.len);
                 }
 
                 if (0u == i)
@@ -731,10 +736,10 @@ static void test_1_7()
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 }
 
@@ -752,9 +757,9 @@ static void test_1_8()
         {
             cstring_appendLen(&str, CSTRING_T_("~"), 1);
 
-            XTESTS_TEST_INTEGER_EQUAL(i + 1, str.len);
-            XTESTS_TEST_POINTER_EQUAL(p, str.ptr);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(c, str.capacity);
+            TEST_INT_EQ(i + 1, str.len);
+            TEST_PTR_EQ(p, str.ptr);
+            TEST_INT_GE(c, str.capacity);
         }}
 
         cstring_truncate(&str, 0u);
@@ -762,10 +767,10 @@ static void test_1_8()
 
     cstring_destroy(&str);
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, str.ptr);
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_EQ(0, str.flags);
 }
 
 static void test_1_9()
@@ -780,14 +785,14 @@ static void test_2_0()
 
     cstring_init(&str);
 
-    XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+    TEST_INT_GE(str.len, str.capacity);
 
     cstring_destroy(&str);
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, str.ptr);
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_EQ(0, str.flags);
 }
 
 static void test_2_1()
@@ -800,16 +805,16 @@ static void test_2_1()
 
         cstring_create(&str, s);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 }
 
@@ -823,16 +828,16 @@ static void test_2_2()
 
         cstring_createLen(&str, s, i);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 }
 
@@ -847,16 +852,16 @@ static void test_2_3()
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -878,25 +883,25 @@ static void test_2_3()
         {
             XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
 
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+            TEST_INT_GE(i, str.len);
             XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
         else
         {
             XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 
@@ -911,17 +916,17 @@ static void test_2_3()
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, ::GlobalSize(str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -933,17 +938,17 @@ static void test_2_3()
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -955,17 +960,17 @@ static void test_2_3()
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 #endif /* WIN32 */
 }
@@ -981,16 +986,16 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -1012,25 +1017,25 @@ static void test_2_4()
         {
             XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
 
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+            TEST_INT_GE(i, str.len);
             XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+            TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
         else
         {
             XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
 
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-            XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-            XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-            XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+            TEST_INT_EQ(0u, str.len);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
         }
     }}
 
@@ -1045,17 +1050,17 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, ::GlobalSize(str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -1067,17 +1072,17 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -1089,17 +1094,17 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(i, str.len);
+        TEST_INT_GE(i, str.len);
         XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 #endif /* WIN32 */
 }
@@ -1119,25 +1124,25 @@ static void test_2_5()
         {
             cstring_assignLen(&str, s.c_str(), i);
 
-            XTESTS_TEST_INTEGER_EQUAL(i, str.len);
-            XTESTS_TEST_POINTER_EQUAL(p, str.ptr);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(c, str.capacity);
+            TEST_INT_EQ(i, str.len);
+            TEST_PTR_EQ(p, str.ptr);
+            TEST_INT_GE(c, str.capacity);
         }}
 
         cstring_truncate(&str, 0u);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_NE(NULL, str.ptr);
         XTESTS_TEST_INTEGER_NOT_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     cstring_destroy(&str);
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, str.ptr);
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_EQ(0, str.flags);
 }
 
 static void test_2_6()
@@ -1155,25 +1160,25 @@ static void test_2_6()
         {
             cstring_assign(&str, s.c_str() + i);
 
-            XTESTS_TEST_INTEGER_EQUAL(s.size() - i, str.len);
-            XTESTS_TEST_POINTER_EQUAL(p, str.ptr);
-            XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(c, str.capacity);
+            TEST_INT_EQ(s.size() - i, str.len);
+            TEST_PTR_EQ(p, str.ptr);
+            TEST_INT_GE(c, str.capacity);
         }}
 
         cstring_truncate(&str, 0u);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_NE(NULL, str.ptr);
         XTESTS_TEST_INTEGER_NOT_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0, str.flags);
     }}
 
     cstring_destroy(&str);
 
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-    XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-    XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-    XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+    TEST_INT_EQ(0u, str.len);
+    TEST_PTR_EQ(NULL, str.ptr);
+    TEST_INT_EQ(0u, str.capacity);
+    TEST_INT_EQ(0, str.flags);
 }
 
 static void test_2_7()
@@ -1187,35 +1192,35 @@ static void test_2_7()
         CSTRING_RC              rc      =   cstring_assign(&str1, s);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(cch, str1.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str1.ptr);
+        TEST_INT_EQ(cch, str1.len);
+        TEST_PTR_NE(NULL, str1.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str1.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str1.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str1.len, str1.capacity);
+        TEST_INT_GE(cch, str1.capacity);
+        TEST_INT_GE(str1.len, str1.capacity);
 
         rc = cstring_copy(&str2, &str1);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(cch, str2.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str2.ptr);
+        TEST_INT_EQ(cch, str2.len);
+        TEST_PTR_NE(NULL, str2.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str2.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str2.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str2.len, str2.capacity);
+        TEST_INT_GE(cch, str2.capacity);
+        TEST_INT_GE(str2.len, str2.capacity);
 
-        XTESTS_TEST_POINTER_NOT_EQUAL(str1.ptr, str2.ptr);
+        TEST_PTR_NE(str1.ptr, str2.ptr);
 
         cstring_destroy(&str1);
         cstring_destroy(&str2);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str1.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str1.flags);
+        TEST_INT_EQ(0u, str1.len);
+        TEST_PTR_EQ(NULL, str1.ptr);
+        TEST_INT_EQ(0u, str1.capacity);
+        TEST_INT_EQ(0, str1.flags);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str2.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str2.flags);
+        TEST_INT_EQ(0u, str2.len);
+        TEST_PTR_EQ(NULL, str2.ptr);
+        TEST_INT_EQ(0u, str2.capacity);
+        TEST_INT_EQ(0, str2.flags);
     }}
 }
 
@@ -1228,18 +1233,18 @@ static void test_2_8()
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
 
-        XTESTS_TEST_POINTER_EQUAL(NULL, stlsoft::apply_const_ptr(stlsoft::apply_const_ptr(str.ptr)));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_PTR_EQ(NULL, stlsoft::apply_const_ptr(stlsoft::apply_const_ptr(str.ptr)));
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
 
-        XTESTS_TEST_POINTER_EQUAL(NULL, p);
+        TEST_PTR_EQ(NULL, p);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -1251,30 +1256,30 @@ static void test_2_8()
         cstring_char_t*         p;
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+        TEST_INT_EQ(cch, str.len);
+        TEST_PTR_NE(NULL, str.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(cch, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         rc = cstring_yield(&str, &p);
 
         stlsoft::scoped_handle<void*>   scoper(p, ::free);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
 
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, p);
+        TEST_PTR_NE(NULL, p);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(p));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, stlsoft::apply_const_ptr(str.ptr));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, stlsoft::apply_const_ptr(str.ptr));
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 }
 
@@ -1288,18 +1293,18 @@ static void test_2_9()
 
         XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
 
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
 
-        XTESTS_TEST_POINTER_EQUAL(NULL, p);
+        TEST_PTR_EQ(NULL, p);
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }
 
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
@@ -1312,30 +1317,30 @@ static void test_2_9()
         void*                   raw;
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(cch, str.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str.ptr);
+        TEST_INT_EQ(cch, str.len);
+        TEST_PTR_NE(NULL, str.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str.len, str.capacity);
+        TEST_INT_GE(cch, str.capacity);
+        TEST_INT_GE(str.len, str.capacity);
 
         rc = cstring_yield2(&str, &p, &raw);
 
         stlsoft::scoped_handle<void*>   scoper(raw, ::free);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_POINTER_EQUAL(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_PTR_EQ(NULL, str.ptr);
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
 
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, p);
+        TEST_PTR_NE(NULL, p);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(p));
 
         cstring_destroy(&str);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, stlsoft::apply_const_ptr(str.ptr));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str.flags);
+        TEST_INT_EQ(0u, str.len);
+        TEST_PTR_EQ(NULL, stlsoft::apply_const_ptr(str.ptr));
+        TEST_INT_EQ(0u, str.capacity);
+        TEST_INT_EQ(0, str.flags);
     }}
 }
 
@@ -1350,55 +1355,53 @@ static void test_2_10()
         CSTRING_RC              rc      =   cstring_assign(&str1, s);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(cch, str1.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str1.ptr);
+        TEST_INT_EQ(cch, str1.len);
+        TEST_PTR_NE(NULL, str1.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str1.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str1.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str1.len, str1.capacity);
+        TEST_INT_GE(cch, str1.capacity);
+        TEST_INT_GE(str1.len, str1.capacity);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str2.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str2.flags);
+        TEST_INT_EQ(0u, str2.len);
+        TEST_PTR_EQ(NULL, str2.ptr);
+        TEST_INT_EQ(0u, str2.capacity);
+        TEST_INT_EQ(0, str2.flags);
 
         rc = cstring_swap(&str2, &str1);
 
         XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str1.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str1.flags);
+        TEST_INT_EQ(0u, str1.len);
+        TEST_PTR_EQ(NULL, str1.ptr);
+        TEST_INT_EQ(0u, str1.capacity);
+        TEST_INT_EQ(0, str1.flags);
 
-        XTESTS_TEST_INTEGER_EQUAL(cch, str2.len);
-        XTESTS_TEST_POINTER_NOT_EQUAL(NULL, str2.ptr);
+        TEST_INT_EQ(cch, str2.len);
+        TEST_PTR_NE(NULL, str2.ptr);
         XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str2.ptr));
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(cch, str2.capacity);
-        XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(str2.len, str2.capacity);
+        TEST_INT_GE(cch, str2.capacity);
+        TEST_INT_GE(str2.len, str2.capacity);
 
-        XTESTS_TEST_POINTER_NOT_EQUAL(str1.ptr, str2.ptr);
+        TEST_PTR_NE(str1.ptr, str2.ptr);
 
         cstring_destroy(&str1);
         cstring_destroy(&str2);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str1.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str1.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str1.flags);
+        TEST_INT_EQ(0u, str1.len);
+        TEST_PTR_EQ(NULL, str1.ptr);
+        TEST_INT_EQ(0u, str1.capacity);
+        TEST_INT_EQ(0, str1.flags);
 
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.len);
-        XTESTS_TEST_POINTER_EQUAL(NULL, str2.ptr);
-        XTESTS_TEST_INTEGER_EQUAL(0u, str2.capacity);
-        XTESTS_TEST_INTEGER_EQUAL(0, str2.flags);
+        TEST_INT_EQ(0u, str2.len);
+        TEST_PTR_EQ(NULL, str2.ptr);
+        TEST_INT_EQ(0u, str2.capacity);
+        TEST_INT_EQ(0, str2.flags);
     }}
 }
 
 static void test_2_11()
 {
 }
-
-
-
 } // anonymous namespace
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 
