@@ -1,27 +1,30 @@
 # cstring <!-- omit in toc -->
 
+![Language](https://img.shields.io/badge/C-00599C?style=flat&logo=c%2B%2B&logoColor=white)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
+[![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
+<!--
+[![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml)
+-->
 
-# cstring
 **C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
 
 
 ## Table of Contents <!-- omit in toc -->
 
-- [cstring](#cstring)
-- [cstring](#cstring-1)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Installation](#installation)
-  - [Components](#components)
-    - [API / core library](#api--core-library)
-  - [Examples](#examples)
-  - [Project Information](#project-information)
-    - [Where to get help](#where-to-get-help)
-    - [Contribution guidelines](#contribution-guidelines)
-    - [Dependencies](#dependencies)
-      - [Tests-only Dependencies](#tests-only-dependencies)
-    - [Related projects](#related-projects)
-    - [License](#license)
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Components](#components)
+  - [API / core library](#api--core-library)
+- [Examples](#examples)
+- [Project Information](#project-information)
+  - [Where to get help](#where-to-get-help)
+  - [Contribution guidelines](#contribution-guidelines)
+  - [Dependencies](#dependencies)
+    - [Tests-only Dependencies](#tests-only-dependencies)
+  - [Related projects](#related-projects)
+  - [License](#license)
 
 
 ## Introduction
@@ -38,19 +41,33 @@ T.B.C.
 
 ### API / core library
 
-The C API is based around the `cstring_t` structure, defined as follows:
-
-```C
-struct cstring_t
-{
+The C API is based around two structures:
+* `cstring_t`, which represents a resizeable string instance; and
+  ```C
+  struct cstring_t
+  {
     size_t          len;        /*!< Number of characters.                              */
     cstring_char_t* ptr;        /*!< Pointer to the string. If capacity is 0, the value
-                                     value of this member is undetermined.              */
+                                     of this member is undetermined.                    */
     size_t          capacity;   /*!< Number of bytes available.                         */
     cstring_flags_t flags;      /*!< Flags. This field belongs to the implementation,
                                      and must not be modified by any application code.  */
-};
-```
+  };
+  ```
+* `cstring_vector_t`, which represents a sequence of `cstring_t` instances;
+  ```C
+  struct cstring_vector_t
+  {
+    size_t          len;        /*!< Number of strings.                                 */
+    cstring_t*      ptr;        /*!< Pointer to the first string. If capacity is 0, the
+                                     value of this member is undetermined.              */
+    size_t          capacity;   /*!< Number of instances available.                     */
+    cstring_flags_t flags;      /*!< Flags. This field belongs to the implementation,
+                                     and must not be modified by any application code.  */
+  };
+  ```
+ the  structure, defined as follows:
+
 
 **Creation/destruction functions**:
 
@@ -99,7 +116,7 @@ Examples are provided in the ```examples``` directory, along with a markdown des
 
 ### Contribution guidelines
 
-Defecesynesissoftware/cstring.
+Defect reports, feature requests, and pull requests are welcome on https://github.com/synesissoftware/cstring.
 
 
 ### Dependencies
@@ -109,7 +126,7 @@ Defecesynesissoftware/cstring.
 
 For unit-testing, **cstring** depends on:
 
-* [**STLSoft 1.10**](http://github.com/synesissoftware/STLSoft-1.10/);
+* [**STLSoft 1.11**](http://github.com/synesissoftware/STLSoft-1.11/);
 * [**xTests**](http://github.com/synesissoftware/xTests/);
 
 
