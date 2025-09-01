@@ -137,6 +137,7 @@
 		"xloctime": "cpp",
 		"xmemory": "cpp",
 		"xstring": "cpp",
+		"xtests.internal.string.c": "cpp",
 		"xtr1common": "cpp",
 		"xtree": "cpp",
 		"xutility": "cpp",

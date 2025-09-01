@@ -4,7 +4,7 @@
  * Purpose: Implementation file for the test.scratch.cstring project.
  *
  * Created: 7th July 2005
- * Updated: 23rd February 2025
+ * Updated: 23rd March 2025
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
             }
         }
 
-#if defined(WIN32)
+#if 0
+#elif defined(WIN32)
         printf("\n========================================\n");
         printf("cstring_createLenEx(CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY):\n");
         {
@@ -385,7 +386,8 @@ Failure:
     return EXIT_FAILURE;
 }
 
-#if defined(WIN32)
+#if 0
+#elif defined(WIN32)
 
 static int on_allocFail(void *pv, size_t cb, cstring_flags_t flags, void *param)
 {

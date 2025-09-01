@@ -1,7 +1,15 @@
-# cstring - History
+# cstring - History <!-- omit in toc -->
 
 
 ----
+
+
+1st September 2025 - 4.0.12 released
+------------------------------------
+
+ * CMake helper scripts now define default make command as "mingw32-make.exe" if recognise MinGW;
+ * *.sh : ~ moved info-lines into ./.sis/script_info_lines.txt;
+ * . . .
 
 
 23rd February 2025 - 4.0.11 released

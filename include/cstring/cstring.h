@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 23rd February 2025
+ * Updated: 1st September 2025
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 8
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     78
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 9
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     80
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -110,13 +110,39 @@
 # define CSTRING_VER_4_0_9      0x04000981
 # define CSTRING_VER_4_0_10     0x04000aff
 # define CSTRING_VER_4_0_11     0x04000bff
+# define CSTRING_VER_4_0_12     0x04000cff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-#define CSTRING_VER             CSTRING_VER_4_0_11
+/** \def CSTRING_VER_MAJOR
+ * The major version number of **BDUT**
+ */
 
-#define CSTRING_VER_MAJOR       4
-#define CSTRING_VER_MINOR       0
-#define CSTRING_VER_REVISION    11
+/** \def CSTRING_VER_MINOR
+ * The minor version number of **BDUT**
+ */
+
+/** \def CSTRING_VER_PATCH
+ * The patch version number of **BDUT**
+ */
+
+/** \def CSTRING_VER
+ * The current composite version number of **BDUT**
+ */
+
+#define CSTRING_VER_MAJOR                                   4
+#define CSTRING_VER_MINOR                                   0
+#define CSTRING_VER_PATCH                                   12
+#define CSTRING_VER_ALPHABETA                               0xFF
+
+#define CSTRING_VER \
+    (0\
+        |   (   CSTRING_VER_MAJOR      << 24   ) \
+        |   (   CSTRING_VER_MINOR      << 16   ) \
+        |   (   CSTRING_VER_PATCH      <<  8   ) \
+        |   (   CSTRING_VER_ALPHABETA  <<  0   ) \
+    )
+
+#define CSTRING_VER_REVISION                                CSTRING_VER_PATCH
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -192,9 +218,12 @@ typedef enum CSTRING_RC                                     CSTRING_RC;
  */
 
 #ifndef CSTRING_USE_WIDE_STRINGS
-# if defined(_WIN32) && \
-     defined(UNICODE) && \
-     defined(_UNICODE)
+# if 0
+# elif 1 &&\
+       defined(_WIN32) &&\
+       defined(UNICODE) &&\
+       defined(_UNICODE) &&\
+       1
 #  define CSTRING_USE_WIDE_STRINGS
 # endif /* _WIN32 && UNICODE && _UNICODE */
 #endif /* !CSTRING_USE_WIDE_STRINGS */
@@ -306,8 +335,11 @@ typedef struct cstring_t                                    cstring_t;
 
 #define CSTRING_F_ARENA_MASK                                (0xff00)
 #define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
-#if defined(WIN32) || \
-    defined(WIN64)
+#if 0
+#elif 0 ||\
+      defined(WIN32) ||\
+      defined(WIN64) ||\
+      0
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)  /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY              (0x0400)    /*!< Uses COM Task Allocator for all memory (de-)allocation (Windows only); arena parameter is ignored. */
@@ -363,8 +395,9 @@ cstring_getStatusCodeStringLength(
  *
  * \see cstring_getStatusCodeString
  */
-#if defined(_MSC_VER) && \
-    _MSC_VER >= 1400
+#if 0
+#elif defined(_MSC_VER) && \
+      _MSC_VER >= 1400
 __declspec(deprecated("cstring_error() is deprecated, and may be removed in a future version: instead use cstring_getStatusCodeString()"))
 #endif /* compiler */
 CSTRING_EXTERN_C
@@ -911,7 +944,12 @@ cstring_replaceAll(
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 
-typedef int (*cstring_allocFailHandler)(void* pv, size_t cb, cstring_flags_t flags, void* param);
+typedef int (*cstring_allocFailHandler)(
+    void*           pv
+,   size_t          cb
+,   cstring_flags_t flags
+,   void*           param
+);
 
 /** This is an experimental feature */
 CSTRING_EXTERN_C
