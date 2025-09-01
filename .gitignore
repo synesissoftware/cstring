@@ -32,32 +32,43 @@
 /src/xcover/
 /src/xtests/
 
-Debug Multithreaded DLL/
 Debug Multithreaded Dll/
-Debug Multithreaded pseudoUNIX/
+Debug Multithreaded DLL/
 Debug Multithreaded pseudoUnix/
+Debug Multithreaded pseudoUNIX/
 Debug Multithreaded/
 Debug/
-DebugDLLUNIX/
 DebugDll/
+DebugDLLUNIX/
 DebugMt/
+DebugMTDLL/
+DebugNox/
 DebugUnix/
-Release Multithreaded DLL/
+DebugUNIX/
 Release Multithreaded Dll/
-Release Multithreaded pseudoUNIX/
+Release Multithreaded DLL/
 Release Multithreaded pseudoUnix/
+Release Multithreaded pseudoUNIX/
 Release Multithreaded/
 Release/
-ReleaseDLLUNIX/
 ReleaseDll/
+ReleaseDLLUNIX/
 ReleaseMt/
+ReleaseMTDLL/
+ReleaseNox/
 ReleaseUnix/
+UDebug/
+UDebugMt/
+Unicode Debug Multithreaded Dll/
 Unicode Debug Multithreaded DLL/
 Unicode Debug Multithreaded/
 Unicode Debug/
+Unicode Release Multithreaded Dll/
 Unicode Release Multithreaded DLL/
 Unicode Release Multithreaded/
 Unicode Release/
+URelease/
+UReleaseMt/
 
 vc9/
 
