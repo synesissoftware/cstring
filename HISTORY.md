@@ -1,4 +1,4 @@
-# cstring - History
+# cstring - History <!-- omit in toc -->
 
 
 ----

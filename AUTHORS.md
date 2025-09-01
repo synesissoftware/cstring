@@ -1,4 +1,4 @@
-# STLSoft - Authors
+# cstring - Authors
 
 ## Major Contributors:
 
