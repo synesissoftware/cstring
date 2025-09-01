@@ -1,7 +1,7 @@
 cstring - Changes
 =================
 
-; Updated:  31st August 2025
+; Updated:  1st September 2025
 
 
     ************************************
@@ -16,13 +16,19 @@ cstring - Changes
 
 
 
+Version 4.0.12 (1st September 2025)
+===================================
+
+ * CMake helper scripts now define default make command as "mingw32-make.exe" if recognise MinGW;
+ * *.sh : ~ moved info-lines into ./.sis/script_info_lines.txt;
+ * . . .
+
+
 Version 4.0.11 (23rd February 2025)
 ===================================
 
  * Boilerplate;
  * Simplication of dependencies;
-
-
 
 
 Version 4.0.10 (25th October 2024)
