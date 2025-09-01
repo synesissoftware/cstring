@@ -84,6 +84,7 @@ target_compile_options(core
 		$<$<CXX_COMPILER_ID:GNU>:
 
 			-Wno-array-bounds # needed for experimental features
+			-Wno-stringop-overflow # needed for experimental features
 		>
 		$<$<CXX_COMPILER_ID:MSVC>:
 
