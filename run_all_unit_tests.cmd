@@ -3,22 +3,20 @@
 SETLOCAL
 
 SET SCRIPT_DIRECTORY=%~dp0
+SET SCRIPT_PATH_DOC=%~n0[%~x0]
 
 FOR %%a IN (%*) DO (
 	IF /I {--help}=={%%a} (
+		IF EXIST "%SCRIPT_DIRECTORY%.sis\script_info_lines.txt" (
+
+					type "%SCRIPT_DIRECTORY%.sis\script_info_lines.txt"
+		)
 		ECHO ^
-cstring is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such ^
-
-Copyright ^(c^) 2019-2025, Matthew Wilson and Synesis Information Systems ^
-
-Copyright ^(c^) 2008-2019, Matthew Wilson and Synesis Software ^
-
 Runs all ^(matching^) component-test and unit-test programs ^
-
 
 ^
 
-%SCRIPT_DIRECTORY% [ ... flags/options ... ] ^
+%SCRIPT_PATH_DOC% [ ... flags/options ... ] ^
 
 ^
 
