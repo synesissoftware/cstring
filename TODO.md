@@ -6,7 +6,7 @@
 * [ ] Boilerplate:
   * [ ] EOFs;
   * [ ] .txt => .md;
-  * [ ] layouyt
+  * [ ] layout
 * [ ] CMake:
   * [ ] custom definitions:
     * [ ] `_BUILD_AS_UNIX` / `_BUILD_AS_WIN32`;
@@ -18,10 +18,18 @@
   * [ ] **shwild** dependency (testing only)
   * [ ] . . .
 * [ ] Examples:
+  * [ ] Moved all appropriate scratch-tests to be examples;
   * [ ] . . .
 * [ ] Tests:
-  * [ ] Scratch:
+  * [ ] Component;
+    * [ ] . . .;
+  * [ ] Performance;
+    * [ ] . . .;
+  * [ ] Scratch;
     * [ ] **libver**;
+    * [ ] Moved all appropriate scratch-tests to be component-/unit-tests;
+  * [ ] Unit;
+    * [ ] . . .;
   * [ ] . . .
 * [ ] Delete Visual Studio 98 files;
 * [ ] Delete Visual Studio 2003+ files;
