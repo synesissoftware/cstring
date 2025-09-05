@@ -9,9 +9,9 @@ FOR %%a IN (%*) DO (
 		ECHO ^
 cstring is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such ^
 
-Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems ^
+Copyright ^(c^) 2019-2025, Matthew Wilson and Synesis Information Systems ^
 
-Copyright (c) 2008-2019, Matthew Wilson and Synesis Software ^
+Copyright ^(c^) 2008-2019, Matthew Wilson and Synesis Software ^
 
 Runs all ^(matching^) component-test and unit-test programs ^
 
