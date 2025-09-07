@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 
       [ -f "$Dir/.sis/script_info_lines.txt" ] && cat "$Dir/.sis/script_info_lines.txt"
       cat << EOF
-Runs all (matching) component-test and unit-test programs
+Runs all (matching) performance-test and scratch-test programs
 
 $ScriptPath [ ... flags/options ... ]
 
@@ -85,7 +85,7 @@ if [ $RunMake -ne 0 ]; then
 
   if [ $ListOnly -eq 0 ]; then
 
-    echo "Executing build (via command \`$MakeCmd\`) and then running all component and unit test programs"
+    echo "Executing build (via command \`$MakeCmd\`) and then running all scratch (and performance) test programs"
 
     mkdir -p $CMakeDir || exit 1
 
@@ -108,13 +108,13 @@ if [ $status -eq 0 ]; then
 
   if [ $ListOnly -ne 0 ]; then
 
-    echo "Listing all component and unit test programs"
+    echo "Listing all scratch (and performance) test programs"
   else
 
-    echo "Running all component and unit test programs"
+    echo "Running all scratch (and performance) test programs"
   fi
 
-  for f in $(find $CMakeDir -type f '(' -name 'test_unit*' -o -name 'test.unit.*' -o -name 'test_component*' -o -name 'test.component.*' ')' -exec test -x {} \; -print)
+  for f in $(find $CMakeDir -type f '(' -name 'test_scratch*' -o -name 'test.scratch.*' -o -name 'test_performance*' -o -name 'test.performance.*' ')' -exec test -x {} \; -print)
   do
 
     if [ $ListOnly -ne 0 ]; then
@@ -133,14 +133,12 @@ if [ $status -eq 0 ]; then
       echo "executing $f:"
     fi
 
-    if $f --verbosity=$Verbosity; then
+    if $f; then
 
       :
     else
 
       status=$?
-
-      break 1
     fi
   done
 fi

@@ -9,7 +9,6 @@ MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
 
 ListOnly=0
 RunMake=1
-Verbosity=${XTESTS_VERBOSITY:-${TEST_VERBOSITY:-3}}
 
 
 # ##########################################################
@@ -26,16 +25,11 @@ while [[ $# -gt 0 ]]; do
 
       RunMake=0
       ;;
-    --verbosity)
-
-      shift
-      Verbosity=$1
-      ;;
     --help)
 
       [ -f "$Dir/.sis/script_info_lines.txt" ] && cat "$Dir/.sis/script_info_lines.txt"
       cat << EOF
-Runs all (matching) component-test and unit-test programs
+Runs all example programs
 
 $ScriptPath [ ... flags/options ... ]
 
@@ -50,9 +44,6 @@ Flags/options:
     -M
     --no-make
         does not execute CMake and make before running tests
-
-    --verbosity <verbosity>
-        specifies an explicit verbosity for the unit-test(s)
 
 
     standard flags:
@@ -85,7 +76,7 @@ if [ $RunMake -ne 0 ]; then
 
   if [ $ListOnly -eq 0 ]; then
 
-    echo "Executing build (via command \`$MakeCmd\`) and then running all component and unit test programs"
+    echo "Executing build (via command \`$MakeCmd\`) and then running all example programs"
 
     mkdir -p $CMakeDir || exit 1
 
@@ -108,13 +99,13 @@ if [ $status -eq 0 ]; then
 
   if [ $ListOnly -ne 0 ]; then
 
-    echo "Listing all component and unit test programs"
+    echo "Listing all example programs"
   else
 
-    echo "Running all component and unit test programs"
+    echo "Running all example programs"
   fi
 
-  for f in $(find $CMakeDir -type f '(' -name 'test_unit*' -o -name 'test.unit.*' -o -name 'test_component*' -o -name 'test.component.*' ')' -exec test -x {} \; -print)
+  for f in $(find $CMakeDir/examples -type f -exec test -x {} \; -print)
   do
 
     if [ $ListOnly -ne 0 ]; then
@@ -124,24 +115,10 @@ if [ $status -eq 0 ]; then
       continue
     fi
 
-    if [ $Verbosity -ge 3 ]; then
+    echo
+    echo "executing $f:"
 
-      echo
-    fi
-    if [ $Verbosity -ge 2 ]; then
-
-      echo "executing $f:"
-    fi
-
-    if $f --verbosity=$Verbosity; then
-
-      :
-    else
-
-      status=$?
-
-      break 1
-    fi
+    $f
   done
 fi
 

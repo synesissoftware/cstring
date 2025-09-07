@@ -1,12 +1,12 @@
 # cstring - TODO <!-- omit in toc -->
 
 * [ ] README:
-  * [ ] badges;
+  * [x] badges;
   * [ ] intro examples;
 * [ ] Boilerplate:
   * [ ] EOFs;
   * [ ] .txt => .md;
-  * [ ] layouyt
+  * [ ] layout
 * [ ] CMake:
   * [ ] custom definitions:
     * [ ] `_BUILD_AS_UNIX` / `_BUILD_AS_WIN32`;
@@ -18,21 +18,29 @@
   * [ ] **shwild** dependency (testing only)
   * [ ] . . .
 * [ ] Examples:
+  * [ ] Moved all appropriate scratch-tests to be examples;
   * [ ] . . .
 * [ ] Tests:
-  * [ ] Scratch:
+  * [ ] Component;
+    * [ ] . . .;
+  * [ ] Performance;
+    * [ ] . . .;
+  * [ ] Scratch;
     * [ ] **libver**;
+    * [ ] Moved all appropriate scratch-tests to be component-/unit-tests;
+  * [ ] Unit;
+    * [ ] . . .;
   * [ ] . . .
 * [ ] Delete Visual Studio 98 files;
 * [ ] Delete Visual Studio 2003+ files;
 * [ ] Build scripts:
   * [ ] remove project/copyright information and pick up from a project-specific file;
 * [ ] GitHub Actions:
-  * [ ] macOS;
+  * [x] macOS;
   * [ ] Unix;
-  * [ ] Windows;
+  * [x] Windows;
   * [ ] Debug configuration;
-  * [ ] Release configuration;
+  * [x] Release configuration;
 * [ ] Performance testing and optimisation:
   * [ ] Quantify performance;
   * [ ] Compare with other popular implementations;
