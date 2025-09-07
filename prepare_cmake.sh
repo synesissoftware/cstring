@@ -4,14 +4,20 @@ ScriptPath=$0
 Dir=$(cd $(dirname "$ScriptPath"); pwd)
 Basename=$(basename "$ScriptPath")
 CMakeDir=${SIS_CMAKE_BUILD_DIR:-$Dir/_build}
-[[ -n "$MSYSTEM" ]] && DefaultMakeCmd=mingw32-make.exe || DefaultMakeCmd=make
-MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
+if [[ -n "$MSYSTEM" ]]; then
 
+  DefaultMakeCmd=mingw32-make.exe
+  MinGW=1
+else
+
+  DefaultMakeCmd=make
+fi
+MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
 
 Configuration=Release
 ExamplesDisabled=0
 MSVC_MT=0
-MinGW=0
+MinGW="${MinGW:=0}"
 RunMake=0
 STLSoftDirGiven=
 TestingDisabled=0
@@ -88,7 +94,8 @@ Flags/options:
         disables building of tests (by setting BUILD_TESTING=OFF)
 
     --mingw
-        uses explicitly the "MinGW Makefiles" generator
+        uses explicitly the "MinGW Makefiles" generator, and defaults the
+        make-command to "mingw32-make.exe"
 
     --msvc-mt
         when using Visual C++ (MSVC), the static runtime library will be
@@ -165,6 +172,7 @@ else
     -B $CMakeDir \
     || (cd ->/dev/null ; exit 1)
 fi
+
 
 status=0
 
