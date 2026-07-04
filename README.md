@@ -4,6 +4,14 @@
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
+[![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml)
+
+Extensible dynamic character strings - and arrays of strings - in **C**, for Unix and Windows.
+
+![Language](https://img.shields.io/badge/C-00599C?style=flat&logo=c%2B%2B&logoColor=white)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
+[![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
 <!--
 [![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml)
 -->
@@ -13,7 +21,6 @@
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Introduction](#introduction)
 - [Installation](#installation)
 - [Components](#components)
   - [API / core library](#api--core-library)
@@ -27,14 +34,9 @@
   - [License](#license)
 
 
-## Introduction
-
-T.B.C.
-
-
 ## Installation
 
-T.B.C.
+**ctring** comes with **CMake** configuration/build files.
 
 
 ## Components

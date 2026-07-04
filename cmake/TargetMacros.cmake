@@ -61,6 +61,11 @@ function(define_automated_test_program program_name entry_point_source_name)
 	endif(WIN32)
 
 	define_target_compile_options(${program_name})
+
+	add_test(
+		NAME ${program_name}
+		COMMAND ${program_name}
+	)
 endfunction(define_automated_test_program)
 
 
