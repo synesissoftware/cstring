@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  7th September 2025
+# Updated:  2nd August 2026
 #
 # ######################################################################## #
 
@@ -66,6 +66,11 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 if(MSVC)
 
+	if(MSVC_VERSION LESS 1800)
+
+		add_compile_options("/wd4996")
+	endif()
+
 	if(MSVC_VERSION LESS 1930)
 
 		set(CMAKE_C_STANDARD 90)
@@ -89,6 +94,7 @@ endif(MSVC)
 # ##########################################################
 # dependencies, features, includes, and options
 
+
 # ################################################
 # includes - 1
 
@@ -100,7 +106,17 @@ include(TargetMacros)
 # ################################################
 # dependencies, features, and options
 
+
+# ######################################
+# options
+
 option(BUILD_EXAMPLES "Build examples" ON)
+
+option(BUILD_TESTING "Build tests" ON)
+
+
+# ######################################
+# features
 
 
 # ######################################

@@ -35,6 +35,14 @@ endif()
 
 foreach(d c cpp)
 
+	if(NO_CSTRING_CPP_API)
+
+		if ("${d}" EQUAL "cpp")
+
+			continue()
+		endif()
+	endif()
+
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${d}")
 
 		add_subdirectory(${d})
