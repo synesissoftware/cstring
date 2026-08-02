@@ -102,9 +102,18 @@ static int main_(int /* argc */, char ** /*argv*/)
     CSTRING_RC (*_yield)(cstring_t* pcs, char** );
     CSTRING_RC (*_createEx)(cstring_t* , char const* , size_t , void* , size_t );
 
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif /* __GNUC__ */
+
     (FARPROC&)(_create)     =   ::GetProcAddress(hinst, "cstring_create");
     (FARPROC&)(_createEx)   =   ::GetProcAddress(hinst, "cstring_createEx");
     (FARPROC&)(_yield)      =   ::GetProcAddress(hinst, "cstring_yield");
+
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
     if (NULL != _create &&
         NULL != _yield)
