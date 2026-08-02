@@ -180,20 +180,23 @@ endif(BUILD_TESTING)
 # ############################
 # shwild (optional)
 
-if(NOT (NO_SHWILD))
+if(BUILD_TESTING)
 
-	if(BUILD_TESTING)
+	if(NOT (NO_SHWILD))
 
-		find_package(shwild QUIET)
+		if(BUILD_TESTING)
 
-		if(shwild_FOUND)
+			find_package(shwild QUIET)
 
-			message("-- CMake package shwild found (version ${shwild_VERSION})")
+			if(shwild_FOUND)
 
-			add_compile_definitions(XTESTS_HAS_SHWILD)
-		endif(shwild_FOUND)
-	endif(BUILD_TESTING)
-endif()
+				message("-- CMake package shwild found (version ${shwild_VERSION})")
+
+				add_compile_definitions(XTESTS_HAS_SHWILD)
+			endif(shwild_FOUND)
+		endif(BUILD_TESTING)
+	endif()
+endif(BUILD_TESTING)
 
 
 # ############################
