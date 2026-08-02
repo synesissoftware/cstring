@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 10
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     81
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     82
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -114,19 +114,19 @@
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
- * The major version number of **BDUT**
+ * The major version number of **cstring**
  */
 
 /** \def CSTRING_VER_MINOR
- * The minor version number of **BDUT**
+ * The minor version number of **cstring**
  */
 
 /** \def CSTRING_VER_PATCH
- * The patch version number of **BDUT**
+ * The patch version number of **cstring**
  */
 
 /** \def CSTRING_VER
- * The current composite version number of **BDUT**
+ * The current composite version number of **cstring**
  */
 
 #define CSTRING_VER_MAJOR                                   4
