@@ -1,4 +1,4 @@
-# cstring - News
+# cstring - News <!-- omit in toc -->
 
 
 | Date                  | News Item                                                     |

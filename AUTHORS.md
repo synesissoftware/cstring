@@ -1,4 +1,4 @@
-# cstring - Authors
+# cstring - Authors <!-- omit in toc -->
 
 ## Major Contributors:
 
