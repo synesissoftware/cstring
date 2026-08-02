@@ -155,8 +155,11 @@ jobs:
       shell: bash
       run: |
         set -euo pipefail
+        # Prefer CMAKE_PREFIX_PATH (find_package) over prepare_cmake -s /
+        # -DSTLSOFT: xTests::core links STLSoft::STLSoft, which only exists
+        # when the STLSoft CMake package is imported.
         export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
-        ./prepare_cmake.sh --no-cpp -m -s "${{ env.SIS_DEPS }}"
+        ./prepare_cmake.sh --no-cpp -m
 
     - name: Run unit tests
       shell: bash
