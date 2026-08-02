@@ -15,7 +15,13 @@
 
 - [Installation](#installation)
 - [Components](#components)
-  - [API / core library](#api--core-library)
+  - [Types](#types)
+  - [String API](#string-api)
+    - [Status and capacity](#status-and-capacity)
+    - [Creation/destruction functions](#creationdestruction-functions)
+    - [Modification functions\*\*](#modification-functions)
+    - [File functions\*\*](#file-functions)
+  - [Vector API](#vector-api)
 - [Examples](#examples)
 - [Project Information](#project-information)
   - [Where to get help](#where-to-get-help)
@@ -33,7 +39,7 @@ Detailed instructions - via **CMake**, via bundling - are provided in the accomp
 ## Components
 
 
-### API / core library
+### Types
 
 The C API is based around two structures:
 * `cstring_t`, which represents a resizeable string instance; and
@@ -62,36 +68,60 @@ The C API is based around two structures:
   ```
 
 
-**Creation/destruction functions**:
+### String API
 
-* `cstring_init()` - initialises an instance to default values (and does not required a following call to `cstring_destroy()`);
-* `cstring_create()` - creates an instance from a C-style string;
-* `cstring_createLen()` - creates an instance from a (portion of a) C-style string;
-* `cstring_createN()` - creates an instance from a a number of repetitions of a `char` value;
-* `cstring_createEx()` - creates an instance with special characteristics (such as using stack memory, ...);
-* `cstring_createExLen()` - creates an instance with special characteristics (such as using stack memory, ...);
-* `cstring_destroy()`
+Defined in **cstring/cstring.h**:
 
-**Modification functions**:
 
-* `cstring_assign()` - T.B.C.;
-* `cstring_assignLen()` - T.B.C.;
-* `cstring_copy()` - T.B.C.;
-* `cstring_append()` - T.B.C.;
-* `cstring_appendLen()` - T.B.C.;
-* `cstring_insert()` - T.B.C.;
-* `cstring_insertLen()` - T.B.C.;
-* `cstring_replace()` - T.B.C.;
-* `cstring_replaceLen()` - T.B.C.;
-* `cstring_replaceAll()` - T.B.C.;
-* `cstring_truncate()` - T.B.C.;
-* `cstring_swap()` - T.B.C.;
+#### Status and capacity
 
-**File functions**:
+* `cstring_getStatusCodeString()` — returns a nul-terminated description of a `CSTRING_RC` code;
+* `cstring_setCapacity()` — adjusts capacity (subject to fixed / borrowed / readonly rules);
+* `cstring_yield2()` — yields ownership of the payload (and raw buffer) to the caller;
 
-* `cstring_readline()` - reads in a line of text from the given text stream;
-* `cstring_write()` - writes a string to the given text stream;
-* `cstring_writeline()` - writes a line of text to the given text stream;
+#### Creation/destruction functions
+
+* `cstring_init()` — initialises an instance to default values (and does not require a following call to `cstring_destroy()`);
+* `cstring_create()` — creates an instance from a C-style string;
+* `cstring_createLen()` — creates an instance from a (portion of a) C-style string;
+* `cstring_createN()` — creates an instance from a number of repetitions of a character value;
+* `cstring_createEx()` — creates an instance with special characteristics (borrowed buffer, allocator flags, …);
+* `cstring_createLenEx()` — as `cstring_createEx()`, from a fixed number of characters;
+* `cstring_destroy()` — releases resources and resets the instance;
+
+#### Modification functions**
+
+* `cstring_assign()` — assigns a C-style string (may reallocate);
+* `cstring_assignLen()` — assigns a fixed character count (embedded NULs allowed);
+* `cstring_copy()` — copies one `cstring_t` into another;
+* `cstring_append()` — appends a C-style string;
+* `cstring_appendLen()` — appends a fixed character count;
+* `cstring_insert()` — inserts a C-style string at an index (`CSTRING_FROM_END` supported);
+* `cstring_insertLen()` — inserts a fixed character count at an index;
+* `cstring_replace()` — replaces a section at an index with a C-style string;
+* `cstring_replaceLen()` — replaces a section at an index with a fixed character count;
+* `cstring_replaceAll()` — replaces all occurrences of one substring with another;
+* `cstring_truncate()` — shortens the logical length (capacity unchanged);
+* `cstring_swap()` — swaps the contents of two instances;
+
+#### File functions**
+
+* `cstring_readline()` — reads a line of text from the given text stream into the instance;
+* `cstring_write()` — writes the string to the given text stream;
+* `cstring_writeline()` — writes the string followed by a newline to the given text stream;
+
+
+### Vector API
+
+Defined in **cstring/cstring.vector.h**:
+
+* `cstring_vector_init()` — initialises a vector, optionally with a minimum capacity;
+* `cstring_vector_create()` — creates a vector of a given initial size (elements default-initialised);
+* `cstring_vector_destroy()` — destroys each element and frees the vector buffer;
+* `cstring_vector_truncate()` — shortens the vector, destroying trailing elements;
+* `cstring_vector_insertAt()` — inserts one or more `cstring_t` instances at a position;
+* `cstring_vector_append()` / `cstring_vector_prepend()` — macros over `cstring_vector_insertAt()`;
+* `cstring_vector_readLines()` — reads lines from a stream into the vector;
 
 
 ## Examples
