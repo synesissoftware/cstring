@@ -107,9 +107,9 @@ static int main_(int /* argc */, char ** /*argv*/)
 # pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif /* __GNUC__ */
 
-    (FARPROC&)(_create)     =   ::GetProcAddress(hinst, "cstring_create");
-    (FARPROC&)(_createEx)   =   ::GetProcAddress(hinst, "cstring_createEx");
-    (FARPROC&)(_yield)      =   ::GetProcAddress(hinst, "cstring_yield");
+    _create     =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char const*)>(::GetProcAddress(hinst, "cstring_create"));
+    _createEx   =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char const*, size_t, void*, size_t)>(::GetProcAddress(hinst, "cstring_createEx"));
+    _yield      =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char**)>(::GetProcAddress(hinst, "cstring_yield"));
 
 #if defined(__GNUC__)
 # pragma GCC diagnostic pop

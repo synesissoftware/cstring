@@ -10,7 +10,7 @@
 * Suppressed MinGW `-Wcast-function-type` on `GetProcAddress` cast in **cstring.core.c**;
 * Fixed MinGW `size_t` printf format in **example.c.cstring_create** (formerly **test.scratch.cstring_create**);
 * Moved scratch programs (except **libver**) into **examples/** as `example.c.*` / `example.cpp.*` with `main.c` / `main.cpp` and per-example **README.md**;
-* **example.cpp.cstring.dynload**: use `stlsoft::integer_to_decimal_string` with `static_cast<int>(rc)` (avoids MSVC C4996 and enum static-assert);
+* **example.cpp.cstring.dynload**: use `stlsoft::integer_to_decimal_string` with `static_cast<int>(rc)` (avoids MSVC C4996 and enum static-assert); replace `(FARPROC&)` punning with `reinterpret_cast` (MinGW `-Wstrict-aliasing`);
 * Added **prepare_cmake.sh** `--no-cpp` / CMake `NO_CSTRING_CPP_API`;
 * CI job for `--no-cpp` builds and unit-tests;
 * Converted unit-tests **test.unit.cstring.2**, **test.unit.cstring.auto_buffer**, and **test.unit.cstring.cstring_getStatusCodeString** from C++ to C (so they build under `NO_CSTRING_CPP_API`);
