@@ -311,7 +311,7 @@ static void test_replaceLen(void)
 
     if (CSTRING_RC_SUCCESS != rc)
     {
-        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create string", cstring_error(rc));
+        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create string", cstring_getStatusCodeString(rc));
     }
     else
     {

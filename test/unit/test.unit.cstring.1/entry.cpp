@@ -216,7 +216,7 @@ static void test_1_2()
 
     if (CSTRING_RC_SUCCESS != rc)
     {
-        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not set capacity", cstring_error(rc));
+        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not set capacity", cstring_getStatusCodeString(rc));
     }
     else
     {
@@ -242,7 +242,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -267,7 +267,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -292,7 +292,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -317,7 +317,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -342,7 +342,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -367,7 +367,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -392,7 +392,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -423,7 +423,7 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -460,7 +460,7 @@ static void test_1_4()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -490,7 +490,7 @@ static void test_1_4()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_error(rc));
+                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
             }
             else
             {
@@ -519,7 +519,7 @@ static void test_1_4()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -550,7 +550,7 @@ static void test_1_5()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -580,7 +580,7 @@ static void test_1_5()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_error(rc));
+                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
             }
             else
             {
@@ -609,7 +609,7 @@ static void test_1_5()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_error(rc));
+            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
@@ -641,7 +641,7 @@ static void test_1_6()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append", cstring_error(rc));
+                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append", cstring_getStatusCodeString(rc));
             }
             else
             {
@@ -670,7 +670,7 @@ static void test_1_6()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append (with length)", cstring_error(rc));
+                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append (with length)", cstring_getStatusCodeString(rc));
             }
             else
             {
