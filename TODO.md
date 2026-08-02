@@ -1,5 +1,34 @@
 # cstring - TODO <!-- omit in toc -->
 
+
+## Table of Contents <!-- omit in toc -->
+
+- [Functional improvements](#functional-improvements)
+- [Performance improvements](#performance-improvements)
+- [Packaging improvements](#packaging-improvements)
+
+
+## Functional improvements
+
+* [ ] Examples:
+  * [ ] . . .
+* [ ] Tests:
+  * [ ] Scratch:
+    * [ ] **libver**;
+  * [ ] . . .
+* [x] ~~~Delete Visual Studio 98 files~~~ - ✅;
+* [x] ~~~Delete Visual Studio 2003+ files~~~ - ✅;
+
+
+## Performance improvements
+
+* [ ] Performance testing and optimisation:
+  * [ ] Quantify performance;
+  * [ ] Compare with other popular implementations;
+
+
+## Packaging improvements
+
 * [ ] README:
   * [x] badges;
   * [ ] intro examples;
@@ -17,45 +46,21 @@
   * [ ] `/MT` build option for Visual C++;
   * [ ] **shwild** dependency (testing only)
   * [ ] . . .
-* [ ] Examples:
-  * [ ] Moved all appropriate scratch-tests to be examples;
-  * [ ] . . .
-* [ ] Tests:
-  * [ ] Component;
-    * [ ] . . .;
-  * [ ] Performance;
-    * [ ] . . .;
-  * [ ] Scratch;
-    * [ ] **libver**;
-    * [ ] Moved all appropriate scratch-tests to be component-/unit-tests;
-  * [ ] Unit;
-    * [ ] . . .;
-  * [ ] . . .
-* [ ] Delete Visual Studio 98 files;
-* [ ] Delete Visual Studio 2003+ files;
-* [ ] Build scripts:
-  * [ ] remove project/copyright information and pick up from a project-specific file;
+* [ ] Doxygen;
+* [x] ~~~Build scripts: remove project/copyright information and pick up from a project-specific file~~~ - ✅;
 * [ ] GitHub Actions:
   * [x] macOS;
   * [ ] Unix;
   * [x] Windows;
   * [ ] Debug configuration;
-  * [x] Release configuration;
-* [ ] Performance testing and optimisation:
-  * [ ] Quantify performance;
-  * [ ] Compare with other popular implementations;
-* [ ] Doxygen;
-* [ ] Website;
-* [ ] Makefiles:
-  * [ ] Compress all GCC-related into one;
-  * [ ] Compress all MSVC-related into one;
-  * [ ] . . .
+  * [ ] Release configuration;
+* [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;
   * [ ] HomeBrew;
   * [ ] . . .
+* [ ] Website;
 * [ ] . . .
 
 
 <!-- ########################### end of file ########################### -->
-

@@ -8,10 +8,19 @@
 
 Extensible dynamic character strings - and arrays of strings - in **C**, for Unix and Windows.
 
+![Language](https://img.shields.io/badge/C-00599C?style=flat&logo=c%2B%2B&logoColor=white)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
+[![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
+<!--
+[![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/cmake-multi-platform.yml)
+-->
+
+**C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
+
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Introduction](#introduction)
 - [Installation](#installation)
 - [Components](#components)
   - [API / core library](#api--core-library)
@@ -23,11 +32,6 @@ Extensible dynamic character strings - and arrays of strings - in **C**, for Uni
     - [Tests-only Dependencies](#tests-only-dependencies)
   - [Related projects](#related-projects)
   - [License](#license)
-
-
-## Introduction
-
-**C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such.
 
 
 ## Installation
