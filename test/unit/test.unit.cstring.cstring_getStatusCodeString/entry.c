@@ -20,6 +20,11 @@
  * includes
  */
 
+#ifdef XTESTS_HAS_SHWILD
+ /* shwild header files */
+# include <shwild/shwild.h>
+#endif /* XTESTS_HAS_SHWILD */
+
 /* xTests header files */
 #include <xtests/xtests.h>
 
@@ -144,6 +149,27 @@ static void test_known(void)
     {
         XTESTS_TEST_MULTIBYTE_STRING_NOT_EQUAL("<<unknown error>>", cstring_getStatusCodeString(knownCodes[i]));
     }}
+
+#ifdef XTESTS_HAS_SHWILD
+
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation completed successfully", cstring_getStatusCodeString(CSTRING_RC_SUCCESS));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("out of memory", cstring_getStatusCodeString(CSTRING_RC_OUTOFMEMORY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_getStatusCodeString(CSTRING_RC_FIXED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_getStatusCodeString(CSTRING_RC_BORROWED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_getStatusCodeString(CSTRING_RC_READONLY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_getStatusCodeString(CSTRING_RC_INVALIDARENA));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("custom arena functionality not currently supported", cstring_getStatusCodeString(CSTRING_RC_CUSTOMARENANOTSUPPORTED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the current capacity would be exceeded*", cstring_getStatusCodeString(CSTRING_RC_EXCEEDFIXEDCAPACITY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the current capacity would be exceeded*", cstring_getStatusCodeString(CSTRING_RC_EXCEEDBORROWEDCAPACITY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("yield operation from a dynamic-library version of cstring was not allowed", cstring_getStatusCodeString(CSTRING_RC_CANNOTYIELDFROMSO));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("cannot use arena parameter for both borrowed memory and custom arena", cstring_getStatusCodeString(CSTRING_RC_ARENAOVERLOADED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_getStatusCodeString(CSTRING_RC_INVALIDSTREAM));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("reached the end of stream", cstring_getStatusCodeString(CSTRING_RC_EOF));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_getStatusCodeString(CSTRING_RC_INVALIDSECTION));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("an I/O error occured", cstring_getStatusCodeString(CSTRING_RC_IOERROR));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("system-specific failure occurred", cstring_getStatusCodeString(CSTRING_RC_SYSTEMSPECIFICFAILURE));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("request exceeded inherent or runtime limit", cstring_getStatusCodeString(CSTRING_RC_REQUESTTOOLARGE));
+#endif /* XTESTS_HAS_SHWILD */
 }
 
 static void test_random(void)
@@ -169,6 +195,27 @@ static void test_known_deprecated(void)
     {
         XTESTS_TEST_MULTIBYTE_STRING_NOT_EQUAL("<<unknown error>>", cstring_error(knownCodes[i]));
     }}
+
+#ifdef XTESTS_HAS_SHWILD
+
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation completed successfully", cstring_error(CSTRING_RC_SUCCESS));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("out of memory", cstring_error(CSTRING_RC_OUTOFMEMORY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_error(CSTRING_RC_FIXED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_error(CSTRING_RC_BORROWED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the cstring *", cstring_error(CSTRING_RC_READONLY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_error(CSTRING_RC_INVALIDARENA));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("custom arena functionality not currently supported", cstring_error(CSTRING_RC_CUSTOMARENANOTSUPPORTED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the current capacity would be exceeded*", cstring_error(CSTRING_RC_EXCEEDFIXEDCAPACITY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("operation cannot procede because the current capacity would be exceeded*", cstring_error(CSTRING_RC_EXCEEDBORROWEDCAPACITY));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("yield operation from a dynamic-library version of cstring was not allowed", cstring_error(CSTRING_RC_CANNOTYIELDFROMSO));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("cannot use arena parameter for both borrowed memory and custom arena", cstring_error(CSTRING_RC_ARENAOVERLOADED));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_error(CSTRING_RC_INVALIDSTREAM));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("reached the end of stream", cstring_error(CSTRING_RC_EOF));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("*invalid*", cstring_error(CSTRING_RC_INVALIDSECTION));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("an I/O error occured", cstring_error(CSTRING_RC_IOERROR));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("system-specific failure occurred", cstring_error(CSTRING_RC_SYSTEMSPECIFICFAILURE));
+    XTESTS_TEST_MULTIBYTE_STRING_MATCHES("request exceeded inherent or runtime limit", cstring_error(CSTRING_RC_REQUESTTOOLARGE));
+#endif /* XTESTS_HAS_SHWILD */
 }
 
 static void test_random_deprecated(void)

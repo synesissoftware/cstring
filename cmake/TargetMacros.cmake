@@ -49,6 +49,7 @@ function(define_automated_test_program program_name entry_point_source_name)
 		PRIVATE
 			core
 			$<$<STREQUAL:${STLSOFT_INCLUDE_DIR},>:STLSoft::STLSoft>
+			$<$<BOOL:${shwild_FOUND}>:shwild::core>
 			$<IF:$<VERSION_LESS:${xTests_VERSION},"0.23">,xTests::xTests.core,xTests::core>
 	)
 

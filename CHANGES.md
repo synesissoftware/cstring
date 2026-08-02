@@ -14,6 +14,8 @@
 * Added **prepare_cmake.sh** `--no-cpp` / CMake `NO_CSTRING_CPP_API`;
 * CI job for `--no-cpp` builds and unit-tests;
 * Converted unit-tests **test.unit.cstring.2**, **test.unit.cstring.auto_buffer**, and **test.unit.cstring.cstring_getStatusCodeString** from C++ to C (so they build under `NO_CSTRING_CPP_API`);
+* Optional **shwild** recognition (`--no-shwild` / `NO_SHWILD`) for **xTests** pattern-match assertions;
+* Applied `XTESTS_TEST_MULTIBYTE_STRING_MATCHES` / `DOES_NOT_MATCH` in **cstring_getStatusCodeString** and **cstring.2** `test_createN` (when **shwild** is available);
 * Clarified dependencies documentation in **README.md**;
 
 

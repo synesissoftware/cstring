@@ -23,6 +23,11 @@
  * general includes
  */
 
+#ifdef XTESTS_HAS_SHWILD
+ /* shwild header files */
+# include <shwild/shwild.h>
+#endif /* XTESTS_HAS_SHWILD */
+
 /* xTests header files */
 #include <xtests/terse-api.h>
 
@@ -133,7 +138,15 @@ static void test_createN(void)
             TEST_PTR_NE(NULL, str.ptr);
             TEST_INT_GE(str.len, str.capacity);
 
+#ifdef XTESTS_HAS_SHWILD
+
+            /* created string must be entirely '~' */
+            TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
+            TEST_MS_DOES_NOT_MATCH("*[ ,.<>/?'\";:[{]}`!@#$%^&*()=_+\\\\|-]*", str.ptr);
+#else /* ? XTESTS_HAS_SHWILD */
+
             TEST_PTR_EQ(NULL, strpbrk(str.ptr, "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,<.>/?'\";:[{]}`!@#$%^&*()-_=+\\|"));
+#endif /* XTESTS_HAS_SHWILD */
 
             cstring_destroy(&str);
 

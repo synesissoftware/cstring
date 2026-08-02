@@ -19,6 +19,7 @@ ExamplesDisabled=0
 MSVC_MT=0
 MinGW="${MinGW:=0}"
 NO_cxx=0
+NO_shwild=0
 RunMake=0
 STLSoftDirGiven=
 TestingDisabled=0
@@ -58,6 +59,10 @@ while [[ $# -gt 0 ]]; do
     --no-cpp|--no-cxx|-C)
 
       NO_cxx=1
+      ;;
+    --no-shwild)
+
+      NO_shwild=1
       ;;
     --run-make|-m)
 
@@ -114,6 +119,10 @@ Flags/options:
         omits the C++ API, C++ examples, and remaining C++ tests (CMake
         NO_CSTRING_CPP_API). C unit-tests still require STLSoft and xTests
 
+    --no-shwild
+        prevents recognising shwild library (CMake NO_SHWILD); xTests
+        pattern-match assertions are then unavailable
+
     -m
     --run-make
         executes make after a successful running of CMake
@@ -158,6 +167,7 @@ echo "Executing CMake (in ${CMakeDir})"
 if [ $ExamplesDisabled -eq 0 ]; then CMakeBuildExamplesFlag="ON" ; else CMakeBuildExamplesFlag="OFF" ; fi
 if [ $MSVC_MT -eq 0 ]; then CMakeMsvcMtFlag="OFF" ; else CMakeMsvcMtFlag="ON" ; fi
 if [ $NO_cxx -eq 0 ]; then CMakeNoCppApiFlag="OFF" ; else CMakeNoCppApiFlag="ON" ; fi
+if [ $NO_shwild -eq 0 ]; then CMakeNoShwild="OFF" ; else CMakeNoShwild="ON" ; fi
 if [ -z $STLSoftDirGiven ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
 if [ $TestingDisabled -eq 0 ]; then CMakeBuildTestingFlag="ON" ; else CMakeBuildTestingFlag="OFF" ; fi
 if [ $VerboseMakefile -eq 0 ]; then CMakeVerboseMakefileFlag="OFF" ; else CMakeVerboseMakefileFlag="ON" ; fi
@@ -170,6 +180,7 @@ if [ $MinGW -ne 0 ]; then
     -DBUILD_TESTING:BOOL=$CMakeBuildTestingFlag \
     -DCMAKE_BUILD_TYPE=$Configuration \
     -DNO_CSTRING_CPP_API:BOOL=$CMakeNoCppApiFlag \
+    -DNO_SHWILD:BOOL=$CMakeNoShwild \
     -G "MinGW Makefiles" \
     -S $Dir \
     -B $CMakeDir \
@@ -184,6 +195,7 @@ else
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=$CMakeVerboseMakefileFlag \
     -DMSVC_USE_MT:BOOL=$CMakeMsvcMtFlag \
     -DNO_CSTRING_CPP_API:BOOL=$CMakeNoCppApiFlag \
+    -DNO_SHWILD:BOOL=$CMakeNoShwild \
     -S $Dir \
     -B $CMakeDir \
     || (cd ->/dev/null ; exit 1)

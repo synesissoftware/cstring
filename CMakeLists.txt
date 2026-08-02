@@ -129,7 +129,7 @@ option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" 
 # - xTests - required for testing;
 #
 # optional:
-# - (none)
+# - shwild - for enhanced match constructs in xTests (unless NO_SHWILD);
 #
 # note: NO_CSTRING_CPP_API skips C++ examples and remaining C++ tests; C
 #       unit-tests still require STLSoft and xTests.
@@ -175,6 +175,25 @@ if(BUILD_TESTING)
 		add_compile_definitions(HAS_STLSoft)
 	endif()
 endif(BUILD_TESTING)
+
+
+# ############################
+# shwild (optional)
+
+if(NOT (NO_SHWILD))
+
+	if(BUILD_TESTING)
+
+		find_package(shwild QUIET)
+
+		if(shwild_FOUND)
+
+			message("-- CMake package shwild found (version ${shwild_VERSION})")
+
+			add_compile_definitions(XTESTS_HAS_SHWILD)
+		endif(shwild_FOUND)
+	endif(BUILD_TESTING)
+endif()
 
 
 # ############################

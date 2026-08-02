@@ -129,9 +129,11 @@ The **C** API has no non-standard dependencies.
 | ---------- | ---- | --------- |
 | [**STLSoft**](https://github.com/synesissoftware/STLSoft) 1.11 | Test headers / remaining C++ tests and examples | ⚪ Tests only (`BUILD_TESTING`) |
 | [**xTests**](https://github.com/synesissoftware/xTests) (≥ 0.26) | Unit / component / scratch tests | ⚪ Tests only (`BUILD_TESTING`) |
+| [**shwild**](https://github.com/synesissoftware/shwild) | Enhanced pattern-match assertions in **xTests** | ⚪ Optional; tests only (unless `NO_SHWILD` / `--no-shwild`) |
 
-When supplying the `'--no-cpp'` to **prepare_cmake.sh**, - sets the CMake option `NO_CSTRING_CPP_API=ON` - C++ examples and remaining C++ tests are omitted; the **C** unit-tests still require **STLSoft** and **xTests**.
+When supplying `'--no-cpp'` to **prepare_cmake.sh** — sets the CMake option `NO_CSTRING_CPP_API=ON` — C++ examples and remaining C++ tests are omitted; the **C** unit-tests still require **STLSoft** and **xTests**.
 
+When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not recognised and pattern-match assertions are compiled out; other unit-tests still run.
 
 ### Related projects
 
