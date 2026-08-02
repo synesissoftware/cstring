@@ -15,7 +15,11 @@
 
 /* STLSoft header files */
 #include <stlsoft/stlsoft.h>
+#if _STLSOFT_VER >= 0x010a01ff
+#include <stlsoft/conversion/integer_to_string/integer_to_decimal_string.hpp>
+#else /* ? _STLSOFT_VER */
 #include <stlsoft/conversion/integer_to_string.hpp>
+#endif /* _STLSOFT_VER */
 #include <winstl/winstl.h>
 
 /* Standard C++ header files */
@@ -73,7 +77,11 @@ static char const* cstring_error_(CSTRING_RC rc)
 {
     static char s_sz[21];
 
+#if _STLSOFT_VER >= 0x010a01ff
+    return stlsoft::integer_to_decimal_string(&s_sz[0], STLSOFT_NUM_ELEMENTS(s_sz), rc);
+#else /* ? _STLSOFT_VER */
     return stlsoft::integer_to_string(&s_sz[0], STLSOFT_NUM_ELEMENTS(s_sz), rc);
+#endif /* _STLSOFT_VER */
 }
 
 #define cstring_error   cstring_error_
