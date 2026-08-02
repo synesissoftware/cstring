@@ -124,11 +124,15 @@ option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" 
 # ######################################
 # dependencies
 #
-# required:
-# - STLSoft - required for testing;
+# required (when BUILD_TESTING):
+# - STLSoft - required for testing (also used by remaining C++ tests/examples);
 # - xTests - required for testing;
 #
 # optional:
+# - (none)
+#
+# note: NO_CSTRING_CPP_API skips C++ examples and remaining C++ tests; C
+#       unit-tests still require STLSoft and xTests.
 
 
 # ############################

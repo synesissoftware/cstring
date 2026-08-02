@@ -111,7 +111,8 @@ Flags/options:
     -C
     --no-cpp
     --no-cxx
-        does not install, prepare, or use C++ API (which requires STLSoft)
+        omits the C++ API, C++ examples, and remaining C++ tests (CMake
+        NO_CSTRING_CPP_API). C unit-tests still require STLSoft and xTests
 
     -m
     --run-make

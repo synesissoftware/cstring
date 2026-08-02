@@ -1,6 +1,14 @@
 # **cstring** Changes <!-- omit in toc -->
 
 
+## 4.0.13 - 2nd August 2026
+
+* Added **prepare_cmake.sh** `--no-cpp` / CMake `NO_CSTRING_CPP_API`;
+* CI job for `--no-cpp` builds and unit-tests;
+* Converted unit-tests **test.unit.cstring.2**, **test.unit.cstring.auto_buffer**, and **test.unit.cstring.cstring_getStatusCodeString** from C++ to C (so they build under `NO_CSTRING_CPP_API`);
+* Clarified dependencies documentation in **README.md**;
+
+
 ## 4.0.12 - 2nd September 2025
 
 * GitHub Actions;

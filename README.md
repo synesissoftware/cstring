@@ -29,7 +29,6 @@ Extensible dynamic character strings - and arrays of strings - in **C**, for Uni
   - [Where to get help](#where-to-get-help)
   - [Contribution guidelines](#contribution-guidelines)
   - [Dependencies](#dependencies)
-    - [Tests-only Dependencies](#tests-only-dependencies)
   - [Related projects](#related-projects)
   - [License](#license)
 
@@ -123,13 +122,14 @@ Defect reports, feature requests, and pull requests are welcome on https://githu
 
 ### Dependencies
 
+The **C** API has no non-standard dependencies.
 
-#### Tests-only Dependencies
+| Dependency | Role | Required? |
+| ---------- | ---- | --------- |
+| [**STLSoft**](https://github.com/synesissoftware/STLSoft) 1.11 | Test headers / remaining C++ tests and examples | ⚪ Tests only (`BUILD_TESTING`) |
+| [**xTests**](https://github.com/synesissoftware/xTests) (≥ 0.26) | Unit / component / scratch tests | ⚪ Tests only (`BUILD_TESTING`) |
 
-For unit-testing, **cstring** depends on:
-
-* [**STLSoft 1.11**](http://github.com/synesissoftware/STLSoft-1.11/);
-* [**xTests**](http://github.com/synesissoftware/xTests/);
+When supplying the `'--no-cpp'` to **prepare_cmake.sh**, - sets the CMake option `NO_CSTRING_CPP_API=ON` - C++ examples and remaining C++ tests are omitted; the **C** unit-tests still require **STLSoft** and **xTests**.
 
 
 ### Related projects
