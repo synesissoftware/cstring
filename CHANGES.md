@@ -17,6 +17,15 @@
 * Optional **shwild** recognition (`--no-shwild` / `NO_SHWILD`) for **xTests** pattern-match assertions;
 * Applied `XTESTS_TEST_MULTIBYTE_STRING_MATCHES` / `DOES_NOT_MATCH` in **cstring_getStatusCodeString** and **cstring.2** `test_createN` (when **shwild** is available);
 * Clarified dependencies documentation in **README.md**;
+* Completed **README.md** Components descriptions (removed T.B.C.; added status/capacity helpers and **Vector API** section);
+* Filled **INSTALL.md** (CMake and bundled use);
+* Expanded **FAQ.md** (build, tests, `--no-cpp`, examples);
+* Normalised **AUTHORS.md** and **KNOWN_ISSUES.md** layout;
+* Added Doxygen packaging: **Doxyfile**, **doc/mainpage.md**, **generate_doxygen.sh** (and allowed tracking **doc/** in **.gitignore**);
+* Fixed `\file` path in **cstring.vector.h** for Doxygen;
+* Corrected version Doxygen comments in **cstring.h** (**BDUT** → **cstring**);
+* CMake custom definitions: consume `_BUILD_AS_UNIX` / `_BUILD_AS_WIN32` in **src**, **examples**, and **test**;
+* Refreshed **TODO.md**;
 
 
 ## 4.0.12 - 2nd September 2025
