@@ -76,12 +76,17 @@ namespace cstring
 static char const* cstring_error_(CSTRING_RC rc)
 {
     static char s_sz[21];
+    int const   i = static_cast<int>(rc);
 
 #if _STLSOFT_VER >= 0x010a01ff
-    return stlsoft::integer_to_decimal_string(&s_sz[0], STLSOFT_NUM_ELEMENTS(s_sz), rc);
+    return stlsoft::integer_to_decimal_string(
 #else /* ? _STLSOFT_VER */
-    return stlsoft::integer_to_string(&s_sz[0], STLSOFT_NUM_ELEMENTS(s_sz), rc);
+    return stlsoft::integer_to_string(
 #endif /* _STLSOFT_VER */
+        &s_sz[0]
+    ,   STLSOFT_NUM_ELEMENTS(s_sz)
+    ,   i
+    );
 }
 
 #define cstring_error   cstring_error_
