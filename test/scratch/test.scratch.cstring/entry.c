@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.cstring.c
+ * File:    test.scratch.cstring/entry.c
  *
  * Purpose: Implementation file for the test.scratch.cstring project.
  *

@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.1.cpp
+ * File:    test.unit.cstring.1/entry.cpp
  *
  * Purpose: Unit-tests for general functionality.
  *

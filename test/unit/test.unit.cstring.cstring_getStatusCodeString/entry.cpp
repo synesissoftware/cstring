@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.cstring_getStatusCodeString.cpp
+ * File:    test.unit.cstring.cstring_getStatusCodeString/entry.cpp
  *
  * Purpose: Unit-tests `cstring_error()`, `cstring_getStatusCodeString()`.
  *

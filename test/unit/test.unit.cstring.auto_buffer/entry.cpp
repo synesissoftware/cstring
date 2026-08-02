@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.auto_buffer.cpp
+ * File:    test.unit.cstring.auto_buffer/entry.cpp
  *
  * Purpose: Implementation file for the test.unit.cstring.auto_buffer project.
  *

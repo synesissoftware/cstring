@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.cstring.dynload.cpp
+ * File:    test.scratch.cstring.dynload/entry.cpp
  *
  * Purpose: Implementation file for the test.scratch.cstring.dynload project.
  *

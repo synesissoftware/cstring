@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.component.cstring_readline.cpp
+ * File:    test.component.cstring_readline/entry.cpp
  *
  * Purpose: Unit-tests `cstring_readline()`.
  *

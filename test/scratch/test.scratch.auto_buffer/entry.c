@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.auto_buffer.c
+ * File:    test.scratch.auto_buffer/entry.c
  *
  * Purpose: Implementation file for the test.scratch.auto_buffer project.
  *

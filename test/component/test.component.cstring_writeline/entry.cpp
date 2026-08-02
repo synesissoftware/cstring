@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.component.cstring_writeline.cpp
+ * File:    test.component.cstring_writeline/entry.cpp
  *
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
