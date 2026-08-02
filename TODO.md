@@ -30,12 +30,12 @@
 ## Packaging improvements
 
 * [ ] README:
-  * [ ] badges;
+  * [x] badges;
   * [ ] intro examples;
 * [ ] Boilerplate:
   * [ ] EOFs;
   * [ ] .txt => .md;
-  * [ ] layouyt
+  * [ ] layout
 * [ ] CMake:
   * [ ] custom definitions:
     * [ ] `_BUILD_AS_UNIX` / `_BUILD_AS_WIN32`;
@@ -49,9 +49,9 @@
 * [ ] Doxygen;
 * [x] ~~~Build scripts: remove project/copyright information and pick up from a project-specific file~~~ - ✅;
 * [ ] GitHub Actions:
-  * [ ] macOS;
+  * [x] macOS;
   * [ ] Unix;
-  * [ ] Windows;
+  * [x] Windows;
   * [ ] Debug configuration;
   * [ ] Release configuration;
 * [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;

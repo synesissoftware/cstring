@@ -4,12 +4,20 @@ ScriptPath=$0
 Dir=$(cd $(dirname "$ScriptPath"); pwd)
 Basename=$(basename "$ScriptPath")
 CMakeDir=${SIS_CMAKE_BUILD_DIR:-$Dir/_build}
-[[ -n "$MSYSTEM" ]] && DefaultMakeCmd=mingw32-make.exe || DefaultMakeCmd=make
+if [[ -n "$MSYSTEM" ]]; then
+
+  DefaultMakeCmd=mingw32-make.exe
+  MinGW=1
+else
+
+  DefaultMakeCmd=make
+fi
 MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
 
 Configuration=Release
 ExamplesDisabled=0
-MinGW=0
+MSVC_MT=0
+MinGW="${MinGW:=0}"
 RunMake=0
 STLSoftDirGiven=
 TestingDisabled=0
@@ -41,6 +49,10 @@ while [[ $# -gt 0 ]]; do
     --mingw)
 
       MinGW=1
+      ;;
+    --msvc-mt)
+
+      MSVC_MT=1
       ;;
     --run-make|-m)
 
@@ -82,7 +94,12 @@ Flags/options:
         disables building of tests (by setting BUILD_TESTING=OFF)
 
     --mingw
-        uses explicitly the "MinGW Makefiles" generator
+        uses explicitly the "MinGW Makefiles" generator, and defaults the
+        make-command to "mingw32-make.exe"
+
+    --msvc-mt
+        when using Visual C++ (MSVC), the static runtime library will be
+        selected; the default is the dynamic runtime library
 
     -m
     --run-make
@@ -126,6 +143,7 @@ cd $CMakeDir
 echo "Executing CMake (in ${CMakeDir})"
 
 if [ $ExamplesDisabled -eq 0 ]; then CMakeBuildExamplesFlag="ON" ; else CMakeBuildExamplesFlag="OFF" ; fi
+if [ $MSVC_MT -eq 0 ]; then CMakeMsvcMtFlag="OFF" ; else CMakeMsvcMtFlag="ON" ; fi
 if [ -z $STLSoftDirGiven ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
 if [ $TestingDisabled -eq 0 ]; then CMakeBuildTestingFlag="ON" ; else CMakeBuildTestingFlag="OFF" ; fi
 if [ $VerboseMakefile -eq 0 ]; then CMakeVerboseMakefileFlag="OFF" ; else CMakeVerboseMakefileFlag="ON" ; fi
@@ -149,10 +167,12 @@ else
     -DBUILD_TESTING:BOOL=$CMakeBuildTestingFlag \
     -DCMAKE_BUILD_TYPE=$Configuration \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=$CMakeVerboseMakefileFlag \
+    -DMSVC_USE_MT:BOOL=$CMakeMsvcMtFlag \
     -S $Dir \
     -B $CMakeDir \
     || (cd ->/dev/null ; exit 1)
 fi
+
 
 status=0
 

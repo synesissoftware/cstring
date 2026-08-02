@@ -133,8 +133,13 @@ if [ $status -eq 0 ]; then
       echo "executing $f:"
     fi
 
-    # NOTE: we do not break on fail, because, this being a unit-testing library, some tests actually fail intentionally
-    $f
+    if $f; then
+
+      :
+    else
+
+      status=$?
+    fi
   done
 fi
 
