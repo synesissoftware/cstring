@@ -4,9 +4,16 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "master", "dev", "gha" ]
+    branches:
+      - master
+      - dev
+      - boileplate
+      - rc1
+      - rc2
+      - rc3
+      - rc4
+      - rc5
   pull_request:
-    branches: [ "master", "dev", "gha" ]
 
 jobs:
   build:
@@ -90,3 +97,69 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+
+  no-cpp:
+    name: Build with --no-cpp
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies (STLSoft + shwild + xTests)
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        DEPS="${RUNNER_TEMP}/sis-deps"
+        STLSRC="${RUNNER_TEMP}/stlsoft-src"
+        STLBUILD="${RUNNER_TEMP}/stlsoft-build"
+        SHWSRC="${RUNNER_TEMP}/shwild-src"
+        SHWBUILD="${RUNNER_TEMP}/shwild-build"
+        XTSRC="${RUNNER_TEMP}/xtests-src"
+        XTBUILD="${RUNNER_TEMP}/xtests-build"
+
+        mkdir -p "$DEPS"
+
+        git clone --depth 1 https://github.com/synesissoftware/STLSoft "$STLSRC"
+        cmake -S "$STLSRC" -B "$STLBUILD" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="$DEPS" \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TESTING=OFF
+        cmake --build "$STLBUILD" --parallel
+        cmake --install "$STLBUILD"
+
+        git clone --depth 1 https://github.com/synesissoftware/shwild "$SHWSRC"
+        cmake -S "$SHWSRC" -B "$SHWBUILD" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="$DEPS" \
+          -DCMAKE_PREFIX_PATH="$DEPS" \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TESTING=OFF
+        cmake --build "$SHWBUILD" --parallel
+        cmake --install "$SHWBUILD"
+
+        git clone --depth 1 https://github.com/synesissoftware/xTests "$XTSRC"
+        cmake -S "$XTSRC" -B "$XTBUILD" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="$DEPS" \
+          -DCMAKE_PREFIX_PATH="$DEPS" \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TESTING=OFF
+        cmake --build "$XTBUILD" --parallel
+        cmake --install "$XTBUILD"
+
+        echo "SIS_DEPS=$DEPS" >> "$GITHUB_ENV"
+
+    - name: Configure and build via prepare_cmake.sh --no-cpp
+      shell: bash
+      run: |
+        set -euo pipefail
+        export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+        ./prepare_cmake.sh --no-cpp -m -s "${{ env.SIS_DEPS }}"
+
+    - name: Run unit tests
+      shell: bash
+      run: |
+        set -euo pipefail
+        SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_unit_tests.sh -M --unit-only

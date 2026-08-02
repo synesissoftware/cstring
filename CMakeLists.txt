@@ -114,6 +114,8 @@ option(BUILD_EXAMPLES "Build examples" ON)
 
 option(BUILD_TESTING "Build tests" ON)
 
+option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" OFF)
+
 
 # ######################################
 # features

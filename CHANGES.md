@@ -111,7 +111,7 @@
 
 ## 3.4.1 - 7th October 2005
 
-* Makefiles now build libraries whose names include the major version number, e.g. `cstring.3.vc6.lib`, in addition to the unversioned form, e.g. `cstring.vc6.lib`;
+* Makefiles now build libraries whose names include the major version number, e.g. **cstring.3.vc6.lib**, in addition to the unversioned form, e.g. **cstring.vc6.lib**;
 * Type `cstring_flags_t` is defined to disambiguate flags params from size params (which use `size_t`);
 * Added `CSTRING_RC_CANNOTYIELDFROMSO` return code, used when trying to yield a string from a dynamic library implementation that has been allocated using `realloc()`;
 * `cstring_yield()` has been deprecated in favour of `cstring_yield2()`; define `CSTRING_OBSOLETE` for the old behaviour;
@@ -120,14 +120,14 @@
 ## 3.3.1 - 8th August 2005
 
 * Changed the memory allocation algorithm such that each reallocation is at least twice the size of the extant block;
-* Now dynamically loads the `CoTaskMemRealloc` function from **OLE32.DLL**, easing the linking burden when working with a variety of compilers;
+* Now dynamically loads the `CoTaskMemRealloc()` function from **OLE32.DLL**, easing the linking burden when working with a variety of compilers;
 
 
 ## 3.2.1 - 29th July 2005
 
 * Initial public release of this formerly proprietary library from Synesis Software;
 * Plain-C library, platform/compiler independent;
-* When compiled under Win32, provides facility to use Win32 Global, Process Heap and COM Task Allocator memory, rather than the default C library `realloc()`;
+* When compiled under Win32, provides facility to use Win32 **Global**, **Process Heap** and **COM Task Allocator** memory, rather than the default C library `realloc()`;
 
 
 <!-- ########################### end of file ########################### -->
