@@ -1,13 +1,13 @@
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-if(UNIX)
+if(_BUILD_AS_UNIX)
 
 	add_definitions(-DUNIX)
 	add_definitions(-Dunix)
-endif(UNIX)
+endif(_BUILD_AS_UNIX)
 
-if(WIN32)
+if(_BUILD_AS_WIN32)
 
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
@@ -23,7 +23,7 @@ if(WIN32)
 
 	# suppress implicit-link file
 	add_definitions(-DCSTRING_INCL_CSTRING_H_IMPLICIT_LINK)
-endif(WIN32)
+endif(_BUILD_AS_WIN32)
 
 if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 
@@ -32,10 +32,11 @@ if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
-
 add_subdirectory(c)
-add_subdirectory(cpp)
+if(NOT NO_CSTRING_CPP_API)
+
+	add_subdirectory(cpp)
+endif()
 
 
 # ############################## end of file ############################# #
-

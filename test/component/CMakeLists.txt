@@ -1,3 +1,5 @@
-# SIS:AUTO_GENERATED: Remove this line if you edit the file, otherwise it will be overwritten
-add_subdirectory(test.component.cstring_readline)
-add_subdirectory(test.component.cstring_writeline)
+if(NOT NO_CSTRING_CPP_API)
+
+	add_subdirectory(test.component.cstring_readline)
+	add_subdirectory(test.component.cstring_writeline)
+endif()

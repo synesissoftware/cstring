@@ -1,2 +1,0 @@
-list(APPEND X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED 4477)
-define_example_program(test_scratch_cstring_create test.scratch.cstring_create.c)

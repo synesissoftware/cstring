@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  23rd February 2025
+# Updated:  2nd August 2026
 #
 # ######################################################################## #
 
@@ -46,8 +46,8 @@ string(REGEX MATCH "#${RX_WS}*define${RX_WS}+_?${RX_PROJ_TAG}_VER_MAJOR${RX_WS}+
 set(_VERSION_MAJOR ${CMAKE_MATCH_1})
 string(REGEX MATCH "#${RX_WS}*define${RX_WS}+_?${RX_PROJ_TAG}_VER_MINOR${RX_WS}+([0-9]+)" MINOR_DUMMY ${_header_file})
 set(_VERSION_MINOR ${CMAKE_MATCH_1})
-string(REGEX MATCH "#${RX_WS}*define${RX_WS}+_?${RX_PROJ_TAG}_VER_REVISION${RX_WS}+([0-9]+)" PATCH_DUMMY ${_header_file})
-set(_VERSION_PATCH ${CMAKE_MATCH_1})
+string(REGEX MATCH "#${RX_WS}*define${RX_WS}+_?${RX_PROJ_TAG}_VER_(PATCH|REVISION)${RX_WS}+([0-9]+)" PATCH_DUMMY ${_header_file})
+set(_VERSION_PATCH ${CMAKE_MATCH_2})
 
 # set project version number here
 set(PROJECT_VERSION_MAJOR ${_VERSION_MAJOR})
@@ -66,16 +66,34 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 if(MSVC)
 
+	if(MSVC_VERSION LESS 1800)
+
+		add_compile_options("/wd4996")
+	endif()
+
 	if(MSVC_VERSION LESS 1930)
 
 		set(CMAKE_C_STANDARD 90)
 		set(CMAKE_CXX_STANDARD 98)
 	endif()
+
+	if(MSVC_USE_MT)
+
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	endif(MSVC_USE_MT)
+else(MSVC)
+
+	if(MSVC_USE_MT)
+
+		# this here just to absorb warning about not using `MSVC_USE_MT` (to
+		# enable **prepare_cmake.sh** to be simple)
+	endif(MSVC_USE_MT)
 endif(MSVC)
 
 
 # ##########################################################
 # dependencies, features, includes, and options
+
 
 # ################################################
 # includes - 1
@@ -88,17 +106,33 @@ include(TargetMacros)
 # ################################################
 # dependencies, features, and options
 
+
+# ######################################
+# options
+
 option(BUILD_EXAMPLES "Build examples" ON)
+
+option(BUILD_TESTING "Build tests" ON)
+
+option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" OFF)
+
+
+# ######################################
+# features
 
 
 # ######################################
 # dependencies
 #
-# required:
-# - STLSoft - required for testing;
+# required (when BUILD_TESTING):
+# - STLSoft - required for testing (also used by remaining C++ tests/examples);
 # - xTests - required for testing;
 #
 # optional:
+# - shwild - for enhanced match constructs in xTests (unless NO_SHWILD);
+#
+# note: NO_CSTRING_CPP_API skips C++ examples and remaining C++ tests; C
+#       unit-tests still require STLSoft and xTests.
 
 
 # ############################
@@ -144,6 +178,28 @@ endif(BUILD_TESTING)
 
 
 # ############################
+# shwild (optional)
+
+if(BUILD_TESTING)
+
+	if(NOT (NO_SHWILD))
+
+		if(BUILD_TESTING)
+
+			find_package(shwild QUIET)
+
+			if(shwild_FOUND)
+
+				message("-- CMake package shwild found (version ${shwild_VERSION})")
+
+				add_compile_definitions(XTESTS_HAS_SHWILD)
+			endif(shwild_FOUND)
+		endif(BUILD_TESTING)
+	endif()
+endif(BUILD_TESTING)
+
+
+# ############################
 # xTests
 
 if(BUILD_TESTING)
@@ -169,6 +225,36 @@ include(GNUInstallDirs)
 
 # ##########################################################
 # targets
+
+# ################################################
+# custom definitions
+
+if(UNIX)
+
+	set(_BUILD_AS_UNIX 1)
+
+	message("-- Operating system Unix")
+else(UNIX)
+
+	if(WIN32)
+
+		if(USE_UNIXEM)
+
+			set(_BUILD_AS_UNIX 1)
+
+			message("-- Operating system Unix (synthesised on Windows)")
+		else(USE_UNIXEM)
+
+			set(_BUILD_AS_WIN32 1)
+
+			message("-- Operating system Windows")
+		endif(USE_UNIXEM)
+	else(WIN32)
+
+		message("-- Operating system unknown")
+	endif(WIN32)
+endif(UNIX)
+
 
 # ################################################
 # main libraries
@@ -216,7 +302,7 @@ set(EXPORT_NAME ${PROJECT_NAME_LOWER})
 configure_package_config_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/cmake/${EXPORT_NAME}-config.cmake.in
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${EXPORT_NAME}-config.cmake
-	INSTALL_DESTINATION ${LIB_INSTALL_DIR}/${EXPORT_NAME}/cmake
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/${EXPORT_NAME}/cmake
 )
 
 write_basic_package_version_file(

@@ -1,0 +1,3 @@
+list(APPEND X_GCC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED format format-extra-args)
+list(APPEND X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED 4127 4473 4996)
+define_example_program(example.c.cstring_vector main.c)

@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 1st September 2025
+ * Updated: 2nd August 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 9
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     80
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 10
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     82
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -114,24 +114,24 @@
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
- * The major version number of **BDUT**
+ * The major version number of **cstring**
  */
 
 /** \def CSTRING_VER_MINOR
- * The minor version number of **BDUT**
+ * The minor version number of **cstring**
  */
 
 /** \def CSTRING_VER_PATCH
- * The patch version number of **BDUT**
+ * The patch version number of **cstring**
  */
 
 /** \def CSTRING_VER
- * The current composite version number of **BDUT**
+ * The current composite version number of **cstring**
  */
 
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   12
+#define CSTRING_VER_PATCH                                   13
 #define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \

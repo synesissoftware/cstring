@@ -1,2 +1,2 @@
-# SIS:AUTO_GENERATED: Remove this line if you edit the file, otherwise it will be overwritten
-define_automated_test_program(test_unit_cstring_cstring_getStatusCodeString test.unit.cstring.cstring_getStatusCodeString.cpp)
+list(APPEND X_MSVC_CUSTOM_WARNINGS_TO_BE_SUPPRESSED 4996)
+define_automated_test_program(test_unit_cstring_cstring_getStatusCodeString entry.c)

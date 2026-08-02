@@ -1,8 +1,9 @@
-# cstring - News
+# cstring - News <!-- omit in toc -->
 
 
 | Date                  | News Item                                                     |
 | --------------------- | ------------------------------------------------------------- |
+| 2nd August 2026       | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) (modular CI, examples, Doxygen, documentation) |
 | 2nd September 2025    | Release of [cstring 4.0.12](https://github.com/synesissoftware/cstring/releases/tag/4.0.12) |
 | 23rd February 2025    | Release of cstring 4.0.11                                     |
 | 25th October 2024     | Release of cstring 4.0.10                                     |

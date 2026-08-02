@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 22nd March 2025
+ * Updated: 2nd August 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -1833,8 +1833,17 @@ win32_comtask_realloc(
 
         if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
         {
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif /* __GNUC__ */
+
             s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
             s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
+
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
             if (NULL == s_cstring_ole32_HINSTANCE ||
                 NULL == s_cstring_pfnCoTaskMemRealloc)

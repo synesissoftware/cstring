@@ -4,11 +4,11 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 1st September 2025
+ * Updated: 2nd August 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 2012-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -41,7 +41,7 @@
  * ////////////////////////////////////////////////////////////////////// */
 
 
-/** \file cstring/vector.h Definition of the cstring.vector API
+/** \file cstring/cstring.vector.h Definition of the cstring.vector API
  */
 
 #ifndef CSTRING_INCL_CSTRING_H_VECTOR
@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
 # define CSTRING_VER_CSTRING_H_VECTOR_REVISION  2
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      7
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      8
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
