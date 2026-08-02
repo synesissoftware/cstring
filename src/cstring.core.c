@@ -1833,8 +1833,17 @@ win32_comtask_realloc(
 
         if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
         {
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif /* __GNUC__ */
+
             s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
             s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
+
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
             if (NULL == s_cstring_ole32_HINSTANCE ||
                 NULL == s_cstring_pfnCoTaskMemRealloc)
