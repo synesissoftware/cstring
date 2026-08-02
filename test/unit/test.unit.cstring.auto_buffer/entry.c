@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.auto_buffer/entry.cpp
+ * File:    test.unit.cstring.auto_buffer/entry.c
  *
  * Purpose: Implementation file for the test.unit.cstring.auto_buffer project.
  *
  * Created: 28th July 2011
- * Updated: 12th January 2024
+ * Updated: 2nd August 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -15,6 +15,7 @@
 
 #include <cstring/cstring.h>
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * includes
  */
@@ -24,39 +25,31 @@
 
 /* STLSoft header files */
 #include <stlsoft/stlsoft.h>
-#ifdef WIN32
-# include <comstl/memory/functions.h>
-#endif
-#include <platformstl/exception/platformstl_exception.hpp>
-#include <platformstl/filesystem/file_lines.hpp>
-#include <platformstl/system/system_traits.hpp>
 
 /* Standard C header files */
 #include <stdlib.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
  */
 
-namespace
-{
+static void test_badFlags(void);
+static void test_createEx(void);
+static void test_createLenEx(void);
+static void test_setCapacity(void);
+static void test_assign(void);
+static void test_assignLen(void);
+static void test_append(void);
+static void test_appendLen(void);
 
-    static void test_badFlags(void);
-    static void test_createEx(void);
-    static void test_createLenEx(void);
-    static void test_setCapacity(void);
-    static void test_assign(void);
-    static void test_assignLen(void);
-    static void test_append(void);
-    static void test_appendLen(void);
-
-} // anonymous namespace
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
-const char TEST_FILE_NAME[] = "test.unit.cstring.auto_buffer.txt";
+static char const TEST_FILE_NAME[] = "test.unit.cstring.auto_buffer.txt";
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -68,6 +61,7 @@ const char TEST_FILE_NAME[] = "test.unit.cstring.auto_buffer.txt";
 # endif /* compiler */
 # pragma warning(disable : 4702)
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * main
@@ -101,6 +95,7 @@ int main(int argc, char **argv)
     return retCode;
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -111,12 +106,10 @@ int main(int argc, char **argv)
 # endif /* compiler */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
-
-namespace
-{
 
 static void test_badFlags(void)
 {
@@ -511,7 +504,4 @@ static void test_appendLen(void)
 }
 
 
-} // anonymous namespace
-
 /* ///////////////////////////// end of file //////////////////////////// */
-

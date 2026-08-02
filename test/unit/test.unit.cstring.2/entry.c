@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.2/entry.cpp
+ * File:    test.unit.cstring.2/entry.c
  *
  * Purpose: Unit-tests for general functionality.
  *
  * Created: 4th June 2009
- * Updated: 2nd September 2025
+ * Updated: 2nd August 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -28,38 +28,35 @@
 
 /* STLSoft header files */
 #include <stlsoft/stlsoft.h>
-#ifdef WIN32
-# include <comstl/memory/functions.h>
-#endif
 
 /* Standard C header files */
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
  */
 
-namespace
-{
-
-    static void test_createN(void);
-    static void test_insert(void);
-    static void test_insertLen(void);
-    static void test_replace(void);
-    static void test_replaceLen(void);
-    static void test_replaceAll_1(void);
-    static void test_replaceAll_2(void);
-    static void test_replaceAll_3(void);
-} // anonymous namespace
+static void test_createN(void);
+static void test_insert(void);
+static void test_insertLen(void);
+static void test_replace(void);
+static void test_replaceLen(void);
+static void test_replaceAll_1(void);
+static void test_replaceAll_2(void);
+static void test_replaceAll_3(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
-const char TEST_FILE_NAME[] = "test.unit.cstring.2.txt";
+static char const TEST_FILE_NAME[] = "test.unit.cstring.2.txt";
+
+static char const alphabet[] = "abcdefghijklmnopqrstuvwxyz";
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -122,12 +119,7 @@ int main(int argc, char **argv)
  * test function implementations
  */
 
-namespace
-{
-
-    static const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
-
-static void test_createN()
+static void test_createN(void)
 {
     { for (size_t volatile i = 0; i != 1000000u; i = (0u == i) ? 1u : i * 10u)
     {
@@ -137,7 +129,7 @@ static void test_createN()
 
         if (CSTRING_RC_SUCCESS == rc)
         {
-            TEST_INT_EQ(size_t(i), str.len);
+            TEST_INT_EQ((size_t)i, str.len);
             TEST_PTR_NE(NULL, str.ptr);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -157,9 +149,9 @@ static void test_createN()
     }}
 }
 
-static void test_insert()
+static void test_insert(void)
 {
-    { // Forwards
+    { /* Forwards */
 
         cstring_t str = cstring_t_DEFAULT;
 
@@ -170,10 +162,10 @@ static void test_insert()
 
         { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
         {
-            const char  sz[2] = { alphabet[i], '\0' };
-            cstring_insert(&str, int(i), sz);
+            char const  sz[2] = { alphabet[i], '\0' };
+            cstring_insert(&str, (int)i, sz);
 
-            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet, str.ptr, int(i));
+            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet, str.ptr, (int)i);
         }}
 
         cstring_destroy(&str);
@@ -184,7 +176,7 @@ static void test_insert()
         TEST_INT_EQ(0, str.flags);
     }
 
-    { // Backwards
+    { /* Backwards */
 
         cstring_t str = cstring_t_DEFAULT;
 
@@ -195,10 +187,10 @@ static void test_insert()
 
         { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
         {
-            const char  sz[2] = { alphabet[(STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)], '\0' };
+            char const  sz[2] = { alphabet[(STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)], '\0' };
             cstring_insert(&str, 0, sz);
 
-            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet + ((STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)), static_cast<char const*>(str.ptr), int(i));
+            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet + ((STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)), (char const*)str.ptr, (int)i);
         }}
 
         cstring_destroy(&str);
@@ -210,7 +202,7 @@ static void test_insert()
     }
 }
 
-static void test_insertLen()
+static void test_insertLen(void)
 {
     cstring_t   str = cstring_t_DEFAULT;
 
@@ -265,7 +257,7 @@ static void test_insertLen()
 
     { for (size_t i = 0; i != 13; ++i)
     {
-        const char ch = (char)('z' - i);
+        char const ch = (char)('z' - i);
         cstring_insertLen(&str, CSTRING_FROM_END(1 + i), &ch, 1);
     }}
 
@@ -282,7 +274,7 @@ static void test_insertLen()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_replace()
+static void test_replace(void)
 {
     cstring_t   str = cstring_t_DEFAULT;
 
@@ -312,7 +304,7 @@ static void test_replace()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_replaceLen()
+static void test_replaceLen(void)
 {
     cstring_t   str;
     CSTRING_RC  rc = cstring_create(&str, "abcdefghijklmnopqrstuvwxyz");
@@ -330,9 +322,9 @@ static void test_replaceLen()
 
         { for (size_t i = 0; i != str.len; ++i)
         {
-            char ch = static_cast<char>(toupper(str.ptr[i]));
+            char ch = (char)toupper((unsigned char)str.ptr[i]);
 
-            cstring_replaceLen(&str, int(i), 1u, &ch, 1u);
+            cstring_replaceLen(&str, (int)i, 1u, &ch, 1u);
         }}
 
         TEST_INT_EQ(26u, str.len);
@@ -349,7 +341,7 @@ static void test_replaceLen()
     }
 }
 
-static void test_replaceAll_1()
+static void test_replaceAll_1(void)
 {
     {
         cstring_t   str = cstring_t_DEFAULT;
@@ -391,7 +383,7 @@ static void test_replaceAll_1()
     }
 }
 
-static void test_replaceAll_2()
+static void test_replaceAll_2(void)
 {
     {
         cstring_t   str;
@@ -438,7 +430,7 @@ static void test_replaceAll_2()
     }
 }
 
-static void test_replaceAll_3()
+static void test_replaceAll_3(void)
 {
     {
         cstring_t   str;
@@ -588,14 +580,14 @@ static void test_replaceAll_3()
 
         { for (size_t i = 0; 0 != str.len; ++i)
         {
-            const char sz[2] = { str.ptr[0], '\0' };
+            char const sz[2] = { str.ptr[0], '\0' };
 
             rc = cstring_replaceAll(&str, sz, NULL, &n);
 
             XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
             TEST_INT_EQ(22u - 2 * (1 + i), str.len);
             TEST_PTR_NE(NULL, str.ptr);
-//          TEST_MS_EQ("pqrstuvwklpqrstuvwxyz", str.ptr);
+/*          TEST_MS_EQ("pqrstuvwklpqrstuvwxyz", str.ptr); */
             TEST_INT_GE(str.len, str.capacity);
             TEST_INT_EQ(0, str.flags);
             TEST_INT_EQ(0u, n);
@@ -609,8 +601,6 @@ static void test_replaceAll_3()
         TEST_INT_EQ(0, str.flags);
     }
 }
-} // anonymous namespace
 
 
 /* ///////////////////////////// end of file //////////////////////////// */
-

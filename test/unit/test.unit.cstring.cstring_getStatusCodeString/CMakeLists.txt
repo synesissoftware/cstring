@@ -1,1 +1,1 @@
-define_automated_test_program(test_unit_cstring_cstring_getStatusCodeString entry.cpp)
+define_automated_test_program(test_unit_cstring_cstring_getStatusCodeString entry.c)
