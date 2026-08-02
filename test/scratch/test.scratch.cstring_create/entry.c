@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
     {
         printf(
             "successfully created string with length %lu capacity %lu and contents '%.*s'\n"
-        ,   cs.len
-        ,   cs.capacity
+        ,   (unsigned long)cs.len
+        ,   (unsigned long)cs.capacity
         ,   (int)cs.len, cs.ptr
         );
 
