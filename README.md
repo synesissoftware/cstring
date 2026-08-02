@@ -27,10 +27,11 @@
 
 ## Installation
 
-**ctring** comes with **CMake** configuration/build files.
+Detailed instructions - via **CMake**, via bundling - are provided in the accompanying [INSTALL.md](./INSTALL.md) file.
 
 
 ## Components
+
 
 ### API / core library
 
@@ -59,7 +60,6 @@ The C API is based around two structures:
                                      and must not be modified by any application code.  */
   };
   ```
- the  structure, defined as follows:
 
 
 **Creation/destruction functions**:
@@ -134,6 +134,7 @@ The **C** API has no non-standard dependencies.
 When supplying `'--no-cpp'` to **prepare_cmake.sh** — sets the CMake option `NO_CSTRING_CPP_API=ON` — C++ examples and remaining C++ tests are omitted; the **C** unit-tests still require **STLSoft** and **xTests**.
 
 When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not recognised and pattern-match assertions are compiled out; other unit-tests still run.
+
 
 ### Related projects
 
