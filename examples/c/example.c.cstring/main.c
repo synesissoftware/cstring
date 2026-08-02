@@ -1,10 +1,12 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.cstring/entry.c
+ * File:    examples/c/example.c.cstring/main.c
  *
- * Purpose: Implementation file for the test.scratch.cstring project.
+ * Purpose: Example exercising core `cstring_t` create/assign/append/
+ *          truncate/copy/swap paths (including Windows allocator flags
+ *          where available).
  *
  * Created: 7th July 2005
- * Updated: 23rd March 2025
+ * Updated: 2nd August 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

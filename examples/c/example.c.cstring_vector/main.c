@@ -1,6 +1,14 @@
-/*
- * TODO: move to examples
- */
+/* /////////////////////////////////////////////////////////////////////////
+ * File:    examples/c/example.c.cstring_vector/main.c
+ *
+ * Purpose: Example reading lines into a `cstring_vector_t` and sorting
+ *          them.
+ *
+ * Created: ...
+ * Updated: 2nd August 2026
+ *
+ * ////////////////////////////////////////////////////////////////////// */
+
 
 /* cstring header files */
 #include <cstring/cstring.vector.h>
@@ -11,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* *************************************************************************
+/* /////////////////////////////////////////////////////////////////////////
  * main()
  */
 

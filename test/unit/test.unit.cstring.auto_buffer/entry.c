@@ -1,7 +1,8 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    test.unit.cstring.auto_buffer/entry.c
  *
- * Purpose: Implementation file for the test.unit.cstring.auto_buffer project.
+ * Purpose: Implementation file for the test.unit.cstring.auto_buffer
+ *          project.
  *
  * Created: 28th July 2011
  * Updated: 2nd August 2026

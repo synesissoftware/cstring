@@ -1,10 +1,11 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.cstring.dynload/entry.cpp
+ * File:    examples/cpp/example.cpp.cstring.dynload/main.cpp
  *
- * Purpose: Implementation file for the test.scratch.cstring.dynload project.
+ * Purpose: Windows-only example loading the cstring DLL dynamically via
+ *          `LoadLibrary` / `GetProcAddress`.
  *
  * Created: 19th August 2005
- * Updated: 26th October 2024
+ * Updated: 2nd August 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -142,7 +143,7 @@ int main(int argc, char** argv)
     {
 #if defined(_DEBUG) || \
     defined(__SYNSOFT_DBS_DEBUG)
-        puts("test.scratch.cstring.dynload: " STLSOFT_COMPILER_LABEL_STRING);
+        puts("example.cpp.cstring.dynload: " STLSOFT_COMPILER_LABEL_STRING);
 #endif /* debug */
 
         return main_(argc, argv);

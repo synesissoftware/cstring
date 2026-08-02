@@ -1,17 +1,19 @@
-/*
- * TODO: move to examples
- */
+/* /////////////////////////////////////////////////////////////////////////
+ * File:    examples/c/example.c.cstring_create/main.c
+ *
+ * Purpose: Minimal example of `cstring_create()` / `cstring_destroy()`.
+ *
+ * Created: ...
+ * Updated: 2nd August 2026
+ *
+ * ////////////////////////////////////////////////////////////////////// */
+
 
 /* cstring header files */
 #include <cstring/cstring.h>
 
 /* Standard C header files */
 #include <stdio.h>
-
-/* /////////////////////////////////////////////////////////////////////////
- * forward declarations
- */
-
 
 /* /////////////////////////////////////////////////////////////////////////
  * main()

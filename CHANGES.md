@@ -8,7 +8,8 @@
 * README CI badge now targets **ci.yml**;
 * Replaced leftover `cstring_error()` calls with `cstring_getStatusCodeString()` in **test.unit.cstring.1** and **test.unit.cstring.2**;
 * Suppressed MinGW `-Wcast-function-type` on `GetProcAddress` cast in **cstring.core.c**;
-* Fixed MinGW `size_t` printf format in **test.scratch.cstring_create**;
+* Fixed MinGW `size_t` printf format in **example.c.cstring_create** (formerly **test.scratch.cstring_create**);
+* Moved scratch programs (except **libver**) into **examples/** as `example.c.*` / `example.cpp.*` with `main.c` / `main.cpp` and per-example **README.md**;
 * Added **prepare_cmake.sh** `--no-cpp` / CMake `NO_CSTRING_CPP_API`;
 * CI job for `--no-cpp` builds and unit-tests;
 * Converted unit-tests **test.unit.cstring.2**, **test.unit.cstring.auto_buffer**, and **test.unit.cstring.cstring_getStatusCodeString** from C++ to C (so they build under `NO_CSTRING_CPP_API`);

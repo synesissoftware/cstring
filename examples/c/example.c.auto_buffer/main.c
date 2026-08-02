@@ -1,10 +1,12 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.scratch.auto_buffer/entry.c
+ * File:    examples/c/example.c.auto_buffer/main.c
  *
- * Purpose: Implementation file for the test.scratch.auto_buffer project.
+ * Purpose: Example illustrating borrowed buffer growth to the heap
+ *          (`CSTRING_F_MEMORY_IS_BORROWED` +
+ *          `CSTRING_F_MEMORY_CAN_GROW_TO_HEAP`).
  *
  * Created: 28th July 2011
- * Updated: 23rd February 2025
+ * Updated: 2nd August 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -52,6 +54,12 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    printf("cs=<len=%lu, capacity=%lu>: '%.*s'\n"
+    ,   (unsigned long)cs.len
+    ,   (unsigned long)cs.capacity
+    ,   (int)cs.len, cs.ptr
+    );
+
     /* add some more to exceed capacity */
     rc = cstring_append(&cs, " : something very long");
 
@@ -62,6 +70,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    printf("cs=<len=%lu, capacity=%lu>: '%.*s'\n"
+    ,   (unsigned long)cs.len
+    ,   (unsigned long)cs.capacity
+    ,   (int)cs.len, cs.ptr
+    );
 
     cstring_destroy(&cs);
 

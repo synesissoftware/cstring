@@ -32,23 +32,11 @@ if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
+add_subdirectory(c)
+if(NOT NO_CSTRING_CPP_API)
 
-foreach(d c cpp)
-
-	if(NO_CSTRING_CPP_API)
-
-		if ("${d}" EQUAL "cpp")
-
-			continue()
-		endif()
-	endif()
-
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${d}")
-
-		add_subdirectory(${d})
-	endif()
-endforeach()
+	add_subdirectory(cpp)
+endif()
 
 
 # ############################## end of file ############################# #
-

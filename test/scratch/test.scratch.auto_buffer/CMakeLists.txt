@@ -1,1 +1,0 @@
-define_example_program(test_scratch_cstring_auto_buffer entry.c)

@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 22nd March 2025
+ * Updated: 2nd August 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
