@@ -13,6 +13,8 @@
 * Added **HOW_YOU_CAN_HELP.md**;
 * **TODO.md** — marked `CMAKE_INSTALL_LIBDIR` complete;
 * **run_all_examples.sh**, **run_all_unit_tests.sh**, **run_all_scratch_tests.sh** — coloured list/execute path output (via `tput`);
+* Linux **TinyCC** (**tcc**) CI cell and install-smoke row (via `apt-get install tcc`); deps built with **GCC**/**G++**; **`NO_CSTRING_CPP_API`** and examples skipped for the **tcc** cell;
+* **CMakeLists.txt** — when `CMAKE_C_COMPILER_ID` is **TinyCC**, use `CMAKE_C_STANDARD` **99** (distro **tcc** lacks ISO C17);
 
 
 ## 4.0.13 - 2nd August 2026

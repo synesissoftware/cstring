@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  6th August 2026
+# Updated:  7th August 2026
 #
 # ######################################################################## #
 
@@ -66,6 +66,13 @@ set(CMAKE_C_EXTENSIONS ON) # GNU extensions and POSIX standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
+
+# Distro TinyCC (e.g. Ubuntu `tcc` 0.9.27) does not implement ISO C17; keep
+# a portable C99 dialect so the Linux TCC CI cell can exercise the C path.
+if(CMAKE_C_COMPILER_ID STREQUAL "TinyCC")
+
+	set(CMAKE_C_STANDARD 99)
+endif()
 
 if(MSVC)
 

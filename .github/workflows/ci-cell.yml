@@ -32,6 +32,10 @@ jobs:
         if: runner.os == 'Linux' && inputs.c-compiler == 'clang'
         run: sudo apt-get update && sudo apt-get install -y clang
 
+      - name: Install TCC (Ubuntu)
+        if: runner.os == 'Linux' && inputs.c-compiler == 'tcc'
+        run: sudo apt-get update && sudo apt-get install -y tcc
+
       - name: Setup MSYS2 MinGW
         if: runner.os == 'Windows' && inputs.c-compiler == 'mingw'
         uses: msys2/setup-msys2@v2
@@ -58,6 +62,14 @@ jobs:
 
           mkdir -p "$DEPS"
 
+          # TinyCC is for the cstring C path only; build deps with GCC/G++.
+          dep_c="${{ inputs.c-compiler }}"
+          dep_cxx="${{ inputs.cpp-compiler }}"
+          if [ "$dep_c" = "tcc" ]; then
+            dep_c=gcc
+            dep_cxx=g++
+          fi
+
           # 1. STLSoft
           git clone --depth 1 https://github.com/synesissoftware/STLSoft "$STLSRC"
           if [ "${{ inputs.c-compiler }}" = "cl" ]; then
@@ -80,8 +92,8 @@ jobs:
           else
             cmake -S "$STLSRC" -B "$STLBUILD" \
               -DCMAKE_BUILD_TYPE="${{ inputs.build-type }}" \
-              -DCMAKE_C_COMPILER="${{ inputs.c-compiler }}" \
-              -DCMAKE_CXX_COMPILER="${{ inputs.cpp-compiler }}" \
+              -DCMAKE_C_COMPILER="$dep_c" \
+              -DCMAKE_CXX_COMPILER="$dep_cxx" \
               -DCMAKE_INSTALL_PREFIX="$DEPS" \
               -DBUILD_EXAMPLES=OFF \
               -DBUILD_TESTING=OFF
@@ -113,8 +125,8 @@ jobs:
           else
             cmake -S "$SHWSRC" -B "$SHWBUILD" \
               -DCMAKE_BUILD_TYPE="${{ inputs.build-type }}" \
-              -DCMAKE_C_COMPILER="${{ inputs.c-compiler }}" \
-              -DCMAKE_CXX_COMPILER="${{ inputs.cpp-compiler }}" \
+              -DCMAKE_C_COMPILER="$dep_c" \
+              -DCMAKE_CXX_COMPILER="$dep_cxx" \
               -DCMAKE_INSTALL_PREFIX="$DEPS" \
               -DCMAKE_PREFIX_PATH="$DEPS" \
               -DBUILD_EXAMPLES=OFF \
@@ -147,8 +159,8 @@ jobs:
           else
             cmake -S "$XTSRC" -B "$XTBUILD" \
               -DCMAKE_BUILD_TYPE="${{ inputs.build-type }}" \
-              -DCMAKE_C_COMPILER="${{ inputs.c-compiler }}" \
-              -DCMAKE_CXX_COMPILER="${{ inputs.cpp-compiler }}" \
+              -DCMAKE_C_COMPILER="$dep_c" \
+              -DCMAKE_CXX_COMPILER="$dep_cxx" \
               -DCMAKE_INSTALL_PREFIX="$DEPS" \
               -DCMAKE_PREFIX_PATH="$DEPS" \
               -DBUILD_EXAMPLES=OFF \
@@ -177,13 +189,21 @@ jobs:
               -DBUILD_EXAMPLES=ON \
               -DBUILD_TESTING=ON
           else
+            # TinyCC: C library + C unit-tests only (deps built with GCC above).
+            build_examples=ON
+            no_cpp_api=OFF
+            if [ "${{ inputs.c-compiler }}" = "tcc" ]; then
+              build_examples=OFF
+              no_cpp_api=ON
+            fi
             cmake -B build -S . \
               -DCMAKE_BUILD_TYPE="${{ inputs.build-type }}" \
               -DCMAKE_C_COMPILER="${{ inputs.c-compiler }}" \
               -DCMAKE_CXX_COMPILER="${{ inputs.cpp-compiler }}" \
               -DCMAKE_PREFIX_PATH="${RUNNER_TEMP}/sis-deps" \
-              -DBUILD_EXAMPLES=ON \
-              -DBUILD_TESTING=ON
+              -DBUILD_EXAMPLES=${build_examples} \
+              -DBUILD_TESTING=ON \
+              -DNO_CSTRING_CPP_API:BOOL=${no_cpp_api}
           fi
 
       - name: Build
@@ -209,6 +229,7 @@ jobs:
   run-examples:
     name: Examples (${{ inputs.cell-id }})
     needs: build
+    if: inputs.c-compiler != 'tcc'
     runs-on: ${{ inputs.os }}
 
     steps:
@@ -271,6 +292,7 @@ jobs:
   test-component:
     name: Component tests (${{ inputs.cell-id }})
     needs: build
+    if: inputs.c-compiler != 'tcc'
     runs-on: ${{ inputs.os }}
 
     steps:
@@ -302,6 +324,7 @@ jobs:
   test-scratch:
     name: Scratch tests (${{ inputs.cell-id }})
     needs: build
+    if: inputs.c-compiler != 'tcc'
     continue-on-error: true
     runs-on: ${{ inputs.os }}
 

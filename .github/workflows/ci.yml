@@ -34,6 +34,10 @@ jobs:
             os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+          - id: linux-tcc
+            os: ubuntu-latest
+            c_compiler: tcc
+            cpp_compiler: g++
           - id: macos-clang
             os: macos-latest
             c_compiler: clang
@@ -72,6 +76,9 @@ jobs:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+          - os: ubuntu-latest
+            c_compiler: tcc
+            cpp_compiler: g++
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
@@ -88,6 +95,10 @@ jobs:
       - name: Install Clang (Ubuntu)
         if: runner.os == 'Linux' && matrix.c_compiler == 'clang'
         run: sudo apt-get update && sudo apt-get install -y clang
+
+      - name: Install TCC (Ubuntu)
+        if: runner.os == 'Linux' && matrix.c_compiler == 'tcc'
+        run: sudo apt-get update && sudo apt-get install -y tcc
 
       - name: Setup MSYS2 MinGW
         if: runner.os == 'Windows' && matrix.c_compiler == 'mingw'
