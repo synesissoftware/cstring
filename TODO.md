@@ -40,6 +40,7 @@
   * [x] ~~~macOS~~~ - ✅;
   * [x] ~~~Unix (ubuntu)~~~ - ✅;
   * [x] ~~~Windows~~~ - ✅;
+  * [x] ~~~Linux TinyCC (**tcc**) cell + install-smoke~~~ - ✅;
   * [ ] Debug configuration;
   * [ ] Release configuration;
   * [ ] exercise `--no-cpp` / `--no-shwild` permutations beyond the current jobs;
