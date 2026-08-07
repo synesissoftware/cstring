@@ -3,15 +3,13 @@ name: CI
 on:
   push:
     branches:
-      - master
-      - dev
       - boilerplate
+      - dev
+      - idiomatic
+      - master
       - rc1
       - rc2
       - rc3
-      - rc4
-      - rc5
-      - update
   pull_request:
 
 concurrency:
