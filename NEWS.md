@@ -1,11 +1,12 @@
 # cstring - News <!-- omit in toc -->
 
 
-| Date               | News Item                                                                                                                      |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| 7th August 2026    | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) (boilerplate alignment with **b64** / **Pantheios**) |
-| 2nd August 2026    | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) (modular CI, examples, Doxygen, documentation) |
-| 2nd September 2025 | Release of [cstring 4.0.12](https://github.com/synesissoftware/cstring/releases/tag/4.0.12)                                     |
+| Date               | News Item                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| 9th August 2026    | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) |
+| 7th August 2026    | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) |
+| 2nd August 2026    | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) |
+| 2nd September 2025 | Release of [cstring 4.0.12](https://github.com/synesissoftware/cstring/releases/tag/4.0.12) |
 | 23rd February 2025 | Release of cstring 4.0.11 |
 | 25th October 2024  | Release of cstring 4.0.10 |
 | 28th January 2024  | Release of cstring 4.0.9  |
