@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  2nd August 2026
+# Updated:  6th August 2026
 #
 # ######################################################################## #
 
@@ -14,6 +14,9 @@
 # CMake
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.31")
+	cmake_policy(SET CMP0177 NEW)
+endif()
 
 # require out-of-source builds
 file(TO_CMAKE_PATH "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)

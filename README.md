@@ -4,23 +4,24 @@
 
 
 ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
+![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B&logoColor=white)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
-[![CMake on multiple platforms](https://github.com/synesissoftware/cstring/actions/workflows/ci.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/ci.yml)
-
+[![CI](https://github.com/synesissoftware/cstring/actions/workflows/ci.yml/badge.svg)](https://github.com/synesissoftware/cstring/actions/workflows/ci.yml)
 
 
 ## Table of Contents <!-- omit in toc -->
 
+- [Introduction](#introduction)
 - [Installation](#installation)
 - [Components](#components)
   - [Types](#types)
   - [String API](#string-api)
     - [Status and capacity](#status-and-capacity)
     - [Creation/destruction functions](#creationdestruction-functions)
-    - [Modification functions\*\*](#modification-functions)
-    - [File functions\*\*](#file-functions)
+    - [Modification functions](#modification-functions)
+    - [File functions](#file-functions)
   - [Vector API](#vector-api)
 - [Examples](#examples)
 - [Project Information](#project-information)
@@ -29,6 +30,13 @@
   - [Dependencies](#dependencies)
   - [Related projects](#related-projects)
   - [License](#license)
+
+
+## Introduction
+
+**cstring** is a small, standalone library that provides extensible C-style string instances and extensible arrays of such, for Unix and Windows.
+
+The **C** API has no non-standard dependencies. Optional C++ examples and remaining C++ tests may be omitted with `--no-cpp` / `NO_CSTRING_CPP_API`. Building tests requires **STLSoft** and **xTests** (and may optionally recognise **shwild**).
 
 
 ## Installation
@@ -89,7 +97,7 @@ Defined in **cstring/cstring.h**:
 * `cstring_createLenEx()` — as `cstring_createEx()`, from a fixed number of characters;
 * `cstring_destroy()` — releases resources and resets the instance;
 
-#### Modification functions**
+#### Modification functions
 
 * `cstring_assign()` — assigns a C-style string (may reallocate);
 * `cstring_assignLen()` — assigns a fixed character count (embedded NULs allowed);
@@ -104,7 +112,7 @@ Defined in **cstring/cstring.h**:
 * `cstring_truncate()` — shortens the logical length (capacity unchanged);
 * `cstring_swap()` — swaps the contents of two instances;
 
-#### File functions**
+#### File functions
 
 * `cstring_readline()` — reads a line of text from the given text stream into the instance;
 * `cstring_write()` — writes the string to the given text stream;
@@ -143,12 +151,17 @@ Examples live under **examples/** (`c/` and `cpp/`), each with a short **README.
 
 ### Where to get help
 
-[GitHub Page](https://github.com/synesissoftware/cstring "GitHub Page")
+* [GitHub Page](https://github.com/synesissoftware/cstring)
+* [GitHub Issues](https://github.com/synesissoftware/cstring/issues)
+* [FAQ.md](./FAQ.md)
+* [HOW_YOU_CAN_HELP.md](./HOW_YOU_CAN_HELP.md)
 
 
 ### Contribution guidelines
 
 Defect reports, feature requests, and pull requests are welcome on https://github.com/synesissoftware/cstring.
+
+See also [HOW_YOU_CAN_HELP.md](./HOW_YOU_CAN_HELP.md).
 
 
 ### Dependencies

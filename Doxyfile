@@ -2,7 +2,7 @@
 
 PROJECT_NAME           = "cstring"
 PROJECT_BRIEF          = "Extensible C-style strings and vectors of such, for Unix and Windows"
-PROJECT_NUMBER         = 4.0.13
+PROJECT_NUMBER         = 4.0.14
 
 # Prefer SIS_CMAKE_BUILD_DIR-aligned output (same convention as Diagnosticism).
 # ./dox/ remains gitignored for legacy/local runs that override OUTPUT_DIRECTORY.
