@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 2nd August 2026
+ * Updated: 5th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -59,12 +59,14 @@
 /* Standard C header files */
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef CSTRING_USE_WIDE_STRINGS
 # include <wchar.h>
+# include <wctype.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
 
@@ -115,11 +117,13 @@
 # define cstring_strlen_                                    wcslen
 # define cstring_strncpy_                                   wcsncpy
 # define cstring_strstr_                                    wcsstr
+# define cstring_tolower_                                   towlower
 #else /* ? CSTRING_USE_WIDE_STRINGS */
 
 # define cstring_strlen_                                    strlen
 # define cstring_strncpy_                                   strncpy
 # define cstring_strstr_                                    strstr
+# define cstring_tolower_                                   tolower
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
 
@@ -1717,6 +1721,167 @@ cstring_replaceAll(
 
         return CSTRING_RC_SUCCESS;
     }
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * hashing functions
+ */
+
+uint64_t
+cstring_hash_djb2(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return 5381;
+    }
+
+    return cstring_hash_djb2_len(pcs->ptr, pcs->len);
+}
+
+uint64_t
+cstring_hash_djb2_ci(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return 5381;
+    }
+
+    return cstring_hash_djb2_len_ci(pcs->ptr, pcs->len);
+}
+
+uint64_t
+cstring_hash_djb2_len(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    uint64_t hash = 5381;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            uint8_t const c = (uint8_t)s[i];
+
+            hash = ((hash << 5) + hash) + c;
+        }
+    }
+
+    return hash;
+}
+
+uint64_t
+cstring_hash_djb2_len_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    uint64_t hash = 5381;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+#ifdef CSTRING_USE_WIDE_STRINGS
+            uint8_t const c = (uint8_t)(unsigned int)cstring_tolower_(s[i]);
+#else
+            uint8_t const c = (uint8_t)cstring_tolower_((unsigned char)s[i]);
+#endif
+
+            hash = ((hash << 5) + hash) + c;
+        }
+    }
+
+    return hash;
+}
+
+uint64_t
+cstring_hash_fnv1a(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return 0xcbf29ce484222325ULL;
+    }
+
+    return cstring_hash_fnv1a_len(pcs->ptr, pcs->len);
+}
+
+uint64_t
+cstring_hash_fnv1a_ci(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return 0xcbf29ce484222325ULL;
+    }
+
+    return cstring_hash_fnv1a_len_ci(pcs->ptr, pcs->len);
+}
+
+uint64_t
+cstring_hash_fnv1a_len(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    uint64_t const fnv_prime = 0x100000001b3ULL;
+    uint64_t hash = 0xcbf29ce484222325ULL;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            uint8_t const c = (uint8_t)s[i];
+
+            hash ^= c;
+            hash *= fnv_prime;
+        }
+    }
+
+    return hash;
+}
+
+uint64_t
+cstring_hash_fnv1a_len_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    uint64_t const fnv_prime = 0x100000001b3ULL;
+    uint64_t hash = 0xcbf29ce484222325ULL;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+#ifdef CSTRING_USE_WIDE_STRINGS
+            uint8_t const c = (uint8_t)(unsigned int)cstring_tolower_(s[i]);
+#else
+            uint8_t const c = (uint8_t)cstring_tolower_((unsigned char)s[i]);
+#endif
+
+            hash ^= c;
+            hash *= fnv_prime;
+        }
+    }
+
+    return hash;
 }
 
 
