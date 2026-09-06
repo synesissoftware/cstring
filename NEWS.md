@@ -5,6 +5,7 @@
 | --------------------- | ------------------------------------------------------------- | ------- |
 | Available from http://github.com/synesissoftware/cstring:                             | |
 | 6th September 2026    | Release of [cstring 4.1.0](https://github.com/synesissoftware/cstring/releases/tag/4.1.0) | Hashing functions |
+| 6th September 2026    | Release of [cstring 4.0.15](https://github.com/synesissoftware/cstring/releases/tag/4.0.15) | Documentation cleanup |
 | 9th August 2026       | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) | |
 | 7th August 2026       | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) | |
 | 2nd August 2026       | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) | (modular CI, examples, Doxygen, documentation) |

@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 5th September 2026
+ * Updated: 6th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -193,9 +193,9 @@ convert_negative_index(
 }
 
 /*
- * \param dst Destination. May NOT be \c NULL
- * \param src Source. May be \c NULL
- * \param lim Maximum number of elements in \c dst
+ * \param dst Destination. May NOT be \c NULL;
+ * \param src Source. May be \c NULL;
+ * \param lim Maximum number of elements in \c dst;
  *
  * \return The actual length of src if not \c NULL; 0 otherwise
  *
