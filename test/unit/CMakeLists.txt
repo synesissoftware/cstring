@@ -2,6 +2,7 @@
 if(NOT NO_CSTRING_CPP_API)
 
 	add_subdirectory(test.unit.cstring.1)
+	add_subdirectory(test.unit.cstring.hash)
 endif()
 add_subdirectory(test.unit.cstring.2)
 add_subdirectory(test.unit.cstring.auto_buffer)

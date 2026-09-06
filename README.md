@@ -22,7 +22,9 @@
     - [Creation/destruction functions](#creationdestruction-functions)
     - [Modification functions](#modification-functions)
     - [File functions](#file-functions)
+    - [Hashing functions](#hashing-functions)
   - [Vector API](#vector-api)
+  - [C++ Integration](#c-integration)
 - [Examples](#examples)
 - [Project Information](#project-information)
   - [Where to get help](#where-to-get-help)
@@ -75,6 +77,11 @@ The C API is based around two structures:
   };
   ```
 
+Supporting scalar typedefs:
+* `cstring_char_t` — character type (`char`, or `wchar_t` when `CSTRING_USE_WIDE_STRINGS` is defined);
+* `cstring_flags_t` — bit flags controlling allocation and capacity semantics;
+* `cstring_hash_t` — 64-bit unsigned integer type (`uint64_t`) representing hash values;
+
 
 ### String API
 
@@ -119,6 +126,20 @@ Defined in **cstring/cstring.h**:
 * `cstring_writeline()` — writes the string followed by a newline to the given text stream;
 
 
+#### Hashing functions
+
+Both 64-bit **djb2** (initial seed `5381`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, prime `0x100000001b3ULL`) hash functions are provided, returning `cstring_hash_t` (`uint64_t`). Buffer/slice variants (`_len`) allow hashing character sequences without constructing a `cstring_t` instance. Case-insensitive variants (`_ci`) fold characters to lower case, facilitating case-folded lookups and comparisons. All functions safely tolerate `NULL` pointers and zero lengths, returning the respective algorithm's initial basis / seed value:
+
+* `cstring_hash_djb2()` — calculates a 64-bit djb2 hash of a `cstring_t` instance;
+* `cstring_hash_djb2_ci()` — calculates a case-insensitive 64-bit djb2 hash of a `cstring_t` instance;
+* `cstring_hash_djb2_len()` — calculates a 64-bit djb2 hash of a character buffer or slice;
+* `cstring_hash_djb2_len_ci()` — calculates a case-insensitive 64-bit djb2 hash of a character buffer or slice;
+* `cstring_hash_fnv1a()` — calculates a 64-bit FNV-1a hash of a `cstring_t` instance;
+* `cstring_hash_fnv1a_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a `cstring_t` instance;
+* `cstring_hash_fnv1a_len()` — calculates a 64-bit FNV-1a hash of a character buffer or slice;
+* `cstring_hash_fnv1a_len_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a character buffer or slice;
+
+
 ### Vector API
 
 Defined in **cstring/cstring.vector.h**:
@@ -130,6 +151,13 @@ Defined in **cstring/cstring.vector.h**:
 * `cstring_vector_insertAt()` — inserts one or more `cstring_t` instances at a position;
 * `cstring_vector_append()` / `cstring_vector_prepend()` — macros over `cstring_vector_insertAt()`;
 * `cstring_vector_readLines()` — reads lines from a stream into the vector;
+
+
+### C++ Integration
+
+When included in C++ compilation units, **cstring/cstring.h** provides inline access shims:
+* **String access shims** — `c_str_data()`, `c_str_len()`, and `c_str_ptr()`, allowing `cstring_t` instances to be used directly with **STLSoft** and generic C++ templates;
+* **Hash access shims** — `hash_djb2()`, `hash_djb2_ci()`, `hash_fnv1a()`, and `hash_fnv1a_ci()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, and slice / buffer forms `(cstring_char_t const* s, size_t cch)`;
 
 
 ## Examples

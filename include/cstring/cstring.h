@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 13
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     85
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     86
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -115,6 +115,7 @@
 # define CSTRING_VER_4_0_14_A1  0x04000e41
 # define CSTRING_VER_4_0_14     0x04000eff
 # define CSTRING_VER_4_0_15     0x04000fff
+# define CSTRING_VER_4_1_0_A1   0x04010041
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -134,9 +135,9 @@
  */
 
 #define CSTRING_VER_MAJOR                                   4
-#define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   15
-#define CSTRING_VER_ALPHABETA                               0xFF
+#define CSTRING_VER_MINOR                                   1
+#define CSTRING_VER_PATCH                                   0
+#define CSTRING_VER_ALPHABETA                               0x41
 
 #define CSTRING_VER \
     (0\
@@ -154,6 +155,12 @@
  */
 
 #include <stddef.h>
+#if defined(_MSC_VER) && \
+    _MSC_VER < 1600
+typedef unsigned __int64                                    uint64_t;
+#else
+# include <stdint.h>
+#endif
 #include <stdio.h>
 
 
@@ -258,6 +265,11 @@ typedef char                                                cstring_char_t;
  * \ingroup group__cstring_api
  */
 typedef int                                                 cstring_flags_t;
+
+/** \brief Hash value type
+ * \ingroup group__cstring_api
+ */
+typedef uint64_t                                            cstring_hash_t;
 
 /** \brief The cstring structure
  * \ingroup group__cstring_api
@@ -1081,6 +1093,138 @@ cstring_appendLenFn(
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * hashing functions
+ */
+
+/** \defgroup group__cstring_api__hashing Hashing Functions
+ * \ingroup group__cstring_api
+ * \brief Functions for calculating hash values of strings and string
+ *   slices.
+ * @{
+ */
+
+/** \brief Computes a 64-bit djb2 hash of the given cstring instance.
+ *
+ * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
+ *   5381.
+ *
+ * \return A 64-bit djb2 hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_djb2(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a case-insensitive 64-bit djb2 hash of the given
+ *   cstring instance.
+ *
+ * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
+ *   5381.
+ *
+ * \return A case-insensitive 64-bit djb2 hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_djb2_ci(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a 64-bit djb2 hash of a character buffer of specified
+ *   length.
+ *
+ * \param s Pointer to the character buffer. If NULL, treated as empty
+ *   string.
+ * \param cch Number of characters in the buffer.
+ *
+ * \return A 64-bit djb2 hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_djb2_len(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** \brief Computes a case-insensitive 64-bit djb2 hash of a character
+ *   buffer of specified length.
+ *
+ * \param s Pointer to the character buffer. If NULL, treated as empty
+ *   string.
+ * \param cch Number of characters in the buffer.
+ *
+ * \return A case-insensitive 64-bit djb2 hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_djb2_len_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** \brief Computes a 64-bit FNV-1a hash of the given cstring instance.
+ *
+ * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
+ *   0xcbf29ce484222325ULL.
+ *
+ * \return A 64-bit FNV-1a hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_fnv1a(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a case-insensitive 64-bit FNV-1a hash of the given
+ *   cstring instance.
+ *
+ * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
+ *   0xcbf29ce484222325ULL.
+ *
+ * \return A case-insensitive 64-bit FNV-1a hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_fnv1a_ci(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a 64-bit FNV-1a hash of a character buffer of specified
+ *   length.
+ *
+ * \param s Pointer to the character buffer. If NULL, treated as empty
+ *   string.
+ * \param cch Number of characters in the buffer.
+ *
+ * \return A 64-bit FNV-1a hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_fnv1a_len(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** \brief Computes a case-insensitive 64-bit FNV-1a hash of a character
+ *   buffer of specified length.
+ *
+ * \param s Pointer to the character buffer. If NULL, treated as empty
+ *   string.
+ * \param cch Number of characters in the buffer.
+ *
+ * \return A case-insensitive 64-bit FNV-1a hash value.
+ */
+CSTRING_EXTERN_C
+uint64_t
+cstring_hash_fnv1a_len_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** @} */
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
  */
 
@@ -1280,6 +1424,123 @@ c_str_ptr(
 )
 {
     return cstring_getStatusCodeString(rc);
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * hash access shims
+ */
+
+inline
+uint64_t
+hash_djb2(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_djb2(pcs);
+}
+
+inline
+uint64_t
+hash_djb2(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_djb2(&cs);
+}
+
+inline
+uint64_t
+hash_djb2(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    return cstring_hash_djb2_len(s, cch);
+}
+
+inline
+uint64_t
+hash_djb2_ci(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_djb2_ci(pcs);
+}
+
+inline
+uint64_t
+hash_djb2_ci(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_djb2_ci(&cs);
+}
+
+inline
+uint64_t
+hash_djb2_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    return cstring_hash_djb2_len_ci(s, cch);
+}
+
+inline
+uint64_t
+hash_fnv1a(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_fnv1a(pcs);
+}
+
+inline
+uint64_t
+hash_fnv1a(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_fnv1a(&cs);
+}
+
+inline
+uint64_t
+hash_fnv1a(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    return cstring_hash_fnv1a_len(s, cch);
+}
+
+inline
+uint64_t
+hash_fnv1a_ci(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_fnv1a_ci(pcs);
+}
+
+inline
+uint64_t
+hash_fnv1a_ci(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_fnv1a_ci(&cs);
+}
+
+inline
+uint64_t
+hash_fnv1a_ci(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+    return cstring_hash_fnv1a_len_ci(s, cch);
 }
 
 # ifndef _STLSOFT_NO_NAMESPACE
