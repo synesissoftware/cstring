@@ -3,6 +3,7 @@
 
 | Date               | News Item                                                                                   |
 | ------------------ | ------------------------------------------------------------------------------------------- |
+| 6th September 2026 | Release of [cstring 4.0.15](https://github.com/synesissoftware/cstring/releases/tag/4.0.15) |
 | 9th August 2026    | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) |
 | 7th August 2026    | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) |
 | 2nd August 2026    | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) |

@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 2nd August 2026
+ * Updated: 6th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -54,8 +54,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
-# define CSTRING_VER_CSTRING_H_VECTOR_REVISION  2
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      8
+# define CSTRING_VER_CSTRING_H_VECTOR_REVISION  3
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      9
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -127,7 +127,7 @@ cstring_vector_init(
  * \note This must only be called on an initialised cstring-vector instance,
  *   which is then rendered in the uninitialised state.
  *
- * \retval CSTRING_RC_SUCCESS the capacity was destroyed
+ * \retval CSTRING_RC_SUCCESS the capacity was destroyed;
  *
  * \pre (NULL != pcsv)
  */
@@ -169,14 +169,15 @@ cstring_vector_create(
 
 /**
  *
- * \param pcsv Pointer to the c-string vector instance
- * \param position Position within the vector at which to insert the given item(s)
+ * \param pcsv Pointer to the c-string vector instance;
+ * \param position Position within the vector at which to insert the given
+ *   item(s);
  * \param strings Pointer to an array of cstring_t instances with at least
  *   as many elements as \c numStrings. May be NULL, in which case the
  *   function will behave as if \c strings points to an array containing
- *   \c numStrings blank cstring_t instances.
+ *   \c numStrings blank cstring_t instances;
  * \param numStrings The number of cstring_t instances to be inserted at the
- *   given position.
+ *   given position;
  *
  * \pre (NULL != pcsv)
  * \pre (position <= pcsv->len)
