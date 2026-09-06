@@ -10,6 +10,25 @@
 * Added unit test suite **test.unit.cstring.hash**;
 
 
+## 4.0.14 - 9th August 2026
+
+4.0.14
+
+
+## 4.0.14-alpha1 - 7th August 2026
+
+* Aligned project boilerplate with **b64** / **Pantheios** (scripts, markdown, CI branches, `.sis`);
+* Added **.sis/project_name.txt**; helper scripts load `ProjectName` for status echoes;
+* CI `on.push.branches` set to lexicographic Pantheios set (`boilerplate`, `dev`, `idiomatic`, `master`, `rc1`–`rc3`);
+* **CMakeLists.txt** — set `CMP0177` for CMake ≥ 3.31;
+* **.gitignore** — removed stray **b64** include/src ignore entries;
+* **README.md** — C++ badge; CI badge alt text; **Introduction**; help links; heading fixes;
+* **AUTHORS.md**, **NEWS.md**, **FAQ.md**, **KNOWN_ISSUES.md** — peer layout/content alignment;
+* Added **HOW_YOU_CAN_HELP.md**;
+* **TODO.md** — marked `CMAKE_INSTALL_LIBDIR` complete;
+* **run_all_examples.sh**, **run_all_unit_tests.sh**, **run_all_scratch_tests.sh** — coloured list/execute path output (via `tput`);
+
+
 ## 4.0.13 - 2nd August 2026
 
 * Modular GitHub Actions CI (**ci.yml** + **ci-cell.yml**), with install-smoke and MinGW cells;

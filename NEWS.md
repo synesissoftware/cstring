@@ -3,7 +3,10 @@
 
 | Date                  | News Item                                                     | Details |
 | --------------------- | ------------------------------------------------------------- | ------- |
-| 6th August 2026       | Release of [cstring 4.1.0](https://github.com/synesissoftware/cstring/releases/tag/4.1.0) | Hashing functions |
+| Available from http://github.com/synesissoftware/cstring:                             | |
+| 6th September 2026    | Release of [cstring 4.1.0](https://github.com/synesissoftware/cstring/releases/tag/4.1.0) | Hashing functions |
+| 9th August 2026       | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) | |
+| 7th August 2026       | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) | |
 | 2nd August 2026       | Release of [cstring 4.0.13](https://github.com/synesissoftware/cstring/releases/tag/4.0.13) | (modular CI, examples, Doxygen, documentation) |
 | 2nd September 2025    | Release of [cstring 4.0.12](https://github.com/synesissoftware/cstring/releases/tag/4.0.12) | |
 | 23rd February 2025    | Release of cstring 4.0.11                                     | |
@@ -11,7 +14,7 @@
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  | |
 | 28th January 2024     | Release of cstring 4.0.9                                      | |
 | 12th January 2024     | Release of cstring 4.0.8                                      | |
-| Available from **http://synesis.com.au/software/cstring**:                            | |
+| Available from http://synesis.com.au/software/cstring:                                | |
 | 20th February 2012    | Release of 3.6.2                                              | |
 | 24th January 2012     | Release of 3.6.1                                              | |
 | 22nd January 2012     | Release of 3.5.4                                              | |
@@ -27,4 +30,3 @@
 
 
 <!-- ########################### end of file ########################### -->
-

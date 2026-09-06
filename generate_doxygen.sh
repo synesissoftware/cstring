@@ -11,6 +11,8 @@ ScriptPath=$0
 Dir=$(cd "$(dirname "$ScriptPath")" && pwd)
 Basename=$(basename "$ScriptPath")
 CMakeDir=${SIS_CMAKE_BUILD_DIR:-$Dir/_build}
+ProjectNameFile="$Dir/.sis/project_name.txt"
+ProjectName=$(tr -d '[:space:]' < "$ProjectNameFile")
 
 
 # ##########################################################
@@ -75,7 +77,7 @@ mkdir -p "${CMakeDir}/doxygen"
   echo "OUTPUT_DIRECTORY = ${CMakeDir}/doxygen"
 } | doxygen -
 
-echo "API documentation written to ${CMakeDir}/doxygen/html/index.html"
+echo "${ProjectName} API documentation written to ${CMakeDir}/doxygen/html/index.html"
 
 
 # ############################## end of file ############################# #

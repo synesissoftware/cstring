@@ -29,7 +29,7 @@
 * [x] ~~~Boilerplate: **INSTALL.md**, **FAQ.md**, **KNOWN_ISSUES.md**, **AUTHORS.md** layout~~~ - ✅;
 * [ ] CMake:
   * [x] ~~~custom definitions: `_BUILD_AS_UNIX` / `_BUILD_AS_WIN32`~~~ - ✅;
-  * [ ] `CMAKE_INSTALL_LIBDIR` (export config still references `LIB_INSTALL_DIR` in one path);
+  * [x] ~~~`CMAKE_INSTALL_LIBDIR` (replaces legacy `LIB_INSTALL_DIR`)~~~ - ✅;
   * [x] ~~~**CTest**~~~ - ✅;
   * [ ] build DLL on Windows;
   * [x] ~~~`/MT` build option for Visual C++ (`--msvc-mt` / `MSVC_USE_MT`)~~~ - ✅;
