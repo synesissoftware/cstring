@@ -1,6 +1,11 @@
 # cstring - CHANGES <!-- omit in toc -->
 
 
+## 4.0.15 - 6th September 2026
+
+* Updated all `\param` and `\retval` Doxygen documentation comments in **cstring.h**, **cstring.vector.h**, and **cstring.core.c** to obey the 76-rule and terminate with a semicolon;
+
+
 ## 4.0.14 - 9th August 2026
 
 4.0.14
