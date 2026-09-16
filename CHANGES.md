@@ -1,4 +1,4 @@
-# cstring - CHANGES <!-- omit in toc -->
+# cstring - Changes <!-- omit in toc -->
 
 
 ## 4.0.14 - 9th August 2026
