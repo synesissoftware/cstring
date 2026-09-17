@@ -1,1 +1,1 @@
-add_subdirectory(libver)
+add_subdirectory(versions)

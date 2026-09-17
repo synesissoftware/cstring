@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test/scratch/libver/main.c
+ * File:    test/scratch/versions/main.c
  *
  * Purpose: Prints cstring composite version (and STLSoft when present).
  *
@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 
-#define PROGRAM_NAME                                        "libver"
+#define PROGRAM_NAME                                        "versions"
 
 
 static void
