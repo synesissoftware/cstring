@@ -183,6 +183,8 @@ When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not rec
 
 Projects in which **cstring** is used include:
 
+* [**errni**](https://github.com/sistools/errni)
+* [**rstrip**](https://github.com/sistools/rstrip)
 * [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch)
 
 
