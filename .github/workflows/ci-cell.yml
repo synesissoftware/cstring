@@ -215,6 +215,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup MSYS2 MinGW
+        id: msys2
         if: runner.os == 'Windows' && inputs.c-compiler == 'mingw'
         uses: msys2/setup-msys2@v2
         with:
@@ -229,13 +230,19 @@ jobs:
           path: build
 
       - name: Run examples
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ inputs.c-compiler }}" = "mingw" ]; then
-            export PATH="/mingw64/bin:$PATH"
-          fi
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" ./run_all_examples.sh -M
+
+      - name: Run examples
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_examples.cmd
 
   test-unit:
     name: Unit tests (${{ inputs.cell-id }})
@@ -246,6 +253,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup MSYS2 MinGW
+        id: msys2
         if: runner.os == 'Windows' && inputs.c-compiler == 'mingw'
         uses: msys2/setup-msys2@v2
         with:
@@ -260,13 +268,19 @@ jobs:
           path: build
 
       - name: Run unit tests
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ inputs.c-compiler }}" = "mingw" ]; then
-            export PATH="/mingw64/bin:$PATH"
-          fi
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" ./run_all_unit_tests.sh -M --unit-only
+
+      - name: Run unit tests
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_unit_tests.cmd
 
   test-component:
     name: Component tests (${{ inputs.cell-id }})
@@ -277,6 +291,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup MSYS2 MinGW
+        id: msys2
         if: runner.os == 'Windows' && inputs.c-compiler == 'mingw'
         uses: msys2/setup-msys2@v2
         with:
@@ -291,13 +306,19 @@ jobs:
           path: build
 
       - name: Run component tests
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ inputs.c-compiler }}" = "mingw" ]; then
-            export PATH="/mingw64/bin:$PATH"
-          fi
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" ./run_all_component_tests.sh -M --component-only
+
+      - name: Run component tests
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_component_tests.cmd
 
   test-scratch:
     name: Scratch tests (${{ inputs.cell-id }})
@@ -309,6 +330,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup MSYS2 MinGW
+        id: msys2
         if: runner.os == 'Windows' && inputs.c-compiler == 'mingw'
         uses: msys2/setup-msys2@v2
         with:
@@ -323,10 +345,16 @@ jobs:
           path: build
 
       - name: Run scratch tests
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ inputs.c-compiler }}" = "mingw" ]; then
-            export PATH="/mingw64/bin:$PATH"
-          fi
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" ./run_all_scratch_tests.sh -M
+
+      - name: Run scratch tests
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_scratch_tests.cmd
