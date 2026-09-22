@@ -1,1 +1,1 @@
-define_example_program(versions main.c)
+define_example_program(test.scratch.versions main.c)
