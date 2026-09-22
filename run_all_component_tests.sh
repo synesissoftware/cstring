@@ -127,6 +127,11 @@ while [[ $# -gt 0 ]]; do
 
       # AlwaysUseColours=1 - this is handled by the for loop above
       ;;
+    --component-only)
+
+      # Benign: this script is already component-only (aggregate / CI may
+      # pass it)
+      ;;
     --list-only|-l)
 
       ListOnly=1
@@ -156,6 +161,10 @@ Flags/options:
     --always-use-colors
     --always-use-colours
         forces use of colours even when stdout is not a TTY
+
+    --component-only
+        accepted for compatibility; this script always runs component tests
+        only
 
     -l
     --list-only

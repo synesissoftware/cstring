@@ -135,6 +135,10 @@ while [[ $# -gt 0 ]]; do
 
       RunMake=0
       ;;
+    --unit-only)
+
+      # Benign: this script is already unit-only (aggregate / CI may pass it)
+      ;;
     --verbosity)
 
       shift
@@ -164,6 +168,9 @@ Flags/options:
     -M
     --no-make
         does not execute a build before running programs
+
+    --unit-only
+        accepted for compatibility; this script always runs unit tests only
 
     --verbosity <verbosity>
         specifies an explicit verbosity (forwarded when supported)
