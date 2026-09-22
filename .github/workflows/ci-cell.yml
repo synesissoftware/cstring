@@ -244,7 +244,8 @@ jobs:
         run: |
           set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
           if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
-          call run_all_unit_tests.cmd
+          REM Dogfood the aggregate .cmd; it CALLs run_all_unit_tests.cmd.
+          call run_all_automated_tests.cmd --unit-only
 
   test-component:
     name: Component tests (${{ inputs.cell-id }})
@@ -282,7 +283,8 @@ jobs:
         run: |
           set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
           if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
-          call run_all_component_tests.cmd
+          REM Dogfood the aggregate .cmd; it CALLs run_all_component_tests.cmd.
+          call run_all_automated_tests.cmd --component-only
 
   test-performance:
     name: Performance tests (${{ inputs.cell-id }})
