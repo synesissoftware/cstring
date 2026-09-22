@@ -236,6 +236,10 @@ if [ $status -eq 0 ]; then
     echo "Running all ${ProjectNameClr} example programs"
   fi
 
+  # Examples that require human input may honour SIS_EXAMPLE_SMOKE for a
+  # no-arg built-in tmpfile demo (see example.c.cstring_vector).
+  export SIS_EXAMPLE_SMOKE=1
+
   NumPrograms=0
 
   while IFS= read -r -d '' f; do
