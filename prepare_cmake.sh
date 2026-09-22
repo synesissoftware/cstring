@@ -1,17 +1,29 @@
 #! /bin/bash
 
+# ##########################################################
+# functions - 1
+
+sis_cmake_is_truey() {
+  case "$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')" in
+
+    1|ok|on|true|yes|y)
+
+      return 0
+    ;;
+    *)
+
+      return 1
+      ;;
+  esac
+}
+
+
+# ##########################################################
+# constants and variables
+
 Basename=$(basename "$0")
 Dir=$(cd "$(dirname "$0")" && pwd)
 CMakeDir=${SIS_CMAKE_BUILD_DIR:-$Dir/_build}
-if [[ -n "$MSYSTEM" ]]; then
-
-  DefaultMakeCmd=mingw32-make.exe
-  MinGW=1
-else
-
-  DefaultMakeCmd=make
-fi
-MakeCmd=${SIS_CMAKE_MAKE_COMMAND:-${SIS_CMAKE_COMMAND:-$DefaultMakeCmd}}
 ProjectNameFile="$Dir/.sis/project_name.txt"
 ProjectName=$(tr -d '[:space:]' < "$ProjectNameFile")
 ScriptPath=$0
@@ -20,7 +32,7 @@ AlwaysUseColours=${SIS_CMAKE_ALWAYS_USE_COLOURS:-${SIS_ALWAYS_USE_COLOURS:-0}}
 BuildSharedLibs=0
 Configuration=Release
 ExamplesDisabled=0
-MinGW="${MinGW:=0}"
+MinGW=$(sis_cmake_is_truey "${SIS_CMAKE_MINGW:-}" && echo 1 || echo 0)
 MSVC_MT=0
 NO_cxx=0
 NO_shwild=0
@@ -85,9 +97,32 @@ if [ $SisUseColours -ne 0 ]; then
 fi
 
 CMakeDirClr="${SisClr_Blue}${SisClr_Bold}${CMakeDir}${SisClr_None}"
-MakeCmdClr="${SisClr_Blue}${SisClr_Bold}${MakeCmd}${SisClr_None}"
 ProjectNameClr="${SisClr_Blue}${SisClr_Bold}${ProjectName}${SisClr_None}"
 ScriptPathClr="${SisClr_Blue}${SisClr_Bold}${ScriptPath}${SisClr_None}"
+
+
+# ##########################################################
+# functions - 2
+
+sis_cmake_build() {
+
+  local config="${SIS_CMAKE_CONFIG:-Release}"
+  local args=(--build "$CMakeDir")
+  if [ -f "$CMakeDir/CMakeCache.txt" ] && grep -q '^CMAKE_CONFIGURATION_TYPES:' "$CMakeDir/CMakeCache.txt" 2>/dev/null; then
+
+    args+=(--config "$config")
+  fi
+  if [ "$#" -gt 0 ]; then
+
+    local t
+    for t in "$@"; do
+
+      args+=(--target "$t")
+    done
+  fi
+
+  cmake "${args[@]}"
+}
 
 
 # ##########################################################
@@ -184,12 +219,10 @@ Flags/options:
         available to CMake
 
     --mingw
-        uses explicitly the "MinGW Makefiles" generator, and defaults the
-        make-command to "mingw32-make.exe"
+        uses explicitly the "MinGW Makefiles" generator
 
     --msvc-mt
-        when using Visual C++ (MSVC), the static runtime library will be
-        selected; the default is the dynamic runtime library
+        when using Visual C++ (MSVC), select the static runtime library
 
     -C
     --no-cpp
@@ -203,7 +236,7 @@ Flags/options:
 
     -m
     --run-make
-        executes a build via ${MakeCmd} after a successful configure
+        executes a build via cmake --build after a successful configure
 
     -s <dir>
     --stlsoft-root-dir <dir>
@@ -238,8 +271,6 @@ done
 
 mkdir -p "$CMakeDir" || exit 1
 
-cd "$CMakeDir"
-
 echo
 echo "Executing CMake for ${ProjectNameClr} (in ${CMakeDirClr})"
 
@@ -248,7 +279,7 @@ if [ $ExamplesDisabled -eq 0 ]; then CMakeBuildExamplesFlag="ON" ; else CMakeBui
 if [ $MSVC_MT -eq 0 ]; then CMakeMsvcMtFlag="OFF" ; else CMakeMsvcMtFlag="ON" ; fi
 if [ $NO_cxx -eq 0 ]; then CMakeNoCppApiFlag="OFF" ; else CMakeNoCppApiFlag="ON" ; fi
 if [ $NO_shwild -eq 0 ]; then CMakeNoShwild="OFF" ; else CMakeNoShwild="ON" ; fi
-if [ -z $STLSoftDirGiven ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
+if [ -z "$STLSoftDirGiven" ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
 if [ $TestingDisabled -eq 0 ]; then CMakeBuildTestingFlag="ON" ; else CMakeBuildTestingFlag="OFF" ; fi
 if [ $VerboseMakefile -eq 0 ]; then CMakeVerboseMakefileFlag="OFF" ; else CMakeVerboseMakefileFlag="ON" ; fi
 
@@ -281,20 +312,18 @@ cmake \
   "${CMakeGeneratorArgs[@]}" \
   -B "$CMakeDir" \
   -S "$Dir" \
-  || (cd ->/dev/null ; exit 1)
+  || exit 1
 
 status=0
 
 if [ $RunMake -ne 0 ]; then
 
   echo
-  echo "Executing build for ${ProjectNameClr} (via command \`${MakeCmdClr}\`)"
+  echo "Executing build of ${ProjectNameClr} (via cmake --build)"
 
-  $MakeCmd
+  sis_cmake_build
   status=$?
 fi
-
-cd ->/dev/null
 
 if [ $VerboseMakefile -ne 0 ]; then
 
@@ -307,4 +336,3 @@ exit $status
 
 
 # ############################## end of file ############################# #
-
