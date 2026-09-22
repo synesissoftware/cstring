@@ -217,7 +217,19 @@ if [ $status -eq 0 ]; then
   echo
   echo "Running ${ProjectNameClr} CMake tests"
 
-  ctest --test-dir "$CMakeDir" --output-on-failure $CTestVerbose
+  # Multi-config generators (e.g. Visual Studio) need -C <config>;
+  # mirror sis_cmake_build's CMAKE_CONFIGURATION_TYPES detection.
+  ctest_args=(--test-dir "$CMakeDir" --output-on-failure)
+  if [ -n "$CTestVerbose" ]; then
+
+    ctest_args+=("$CTestVerbose")
+  fi
+  if [ -f "$CMakeDir/CMakeCache.txt" ] && grep -q '^CMAKE_CONFIGURATION_TYPES:' "$CMakeDir/CMakeCache.txt" 2>/dev/null; then
+
+    ctest_args+=(-C "${SIS_CMAKE_CONFIG:-Release}")
+  fi
+
+  ctest "${ctest_args[@]}"
   status=$?
 fi
 

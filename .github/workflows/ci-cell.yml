@@ -164,6 +164,8 @@ jobs:
           export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build"
           export SIS_CMAKE_CONFIG="${{ inputs.build-type }}"
           export CMAKE_PREFIX_PATH="${RUNNER_TEMP}/sis-deps"
+          # Bash 3.2 (macOS) + set -u treats an empty "${arr[@]}" as
+          # unbound; use the ${arr[@]+…} form so Release/non-mingw is OK.
           PREPARE_ARGS=()
           if [ "${{ inputs.build-type }}" = "Debug" ]; then
             PREPARE_ARGS+=(-d)
@@ -175,7 +177,7 @@ jobs:
             export CC="${{ inputs.c-compiler }}"
             export CXX="${{ inputs.cpp-compiler }}"
           fi
-          ./prepare_cmake.sh "${PREPARE_ARGS[@]}"
+          ./prepare_cmake.sh ${PREPARE_ARGS[@]+"${PREPARE_ARGS[@]}"}
 
       - name: Build via build_cmake.sh
         shell: bash
