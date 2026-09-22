@@ -1,10 +1,15 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## Unreleased
+## 4.0.16 - 22nd September 2026
 
 * Applied **misc-dev-scripts** **0.6.0** editor/Git/`.sis` drop-in templates on **boilerplate**;
 * Restored historical **.gitignore** patterns as a sorted union with **misc-dev-scripts** gold section layout;
+
+
+## 4.0.15 - 6th September 2026
+
+* Updated all `\param` and `\retval` Doxygen documentation comments in **cstring.h**, **cstring.vector.h**, and **cstring.core.c** to obey the 76-rule and terminate with a semicolon;
 
 
 ## 4.0.14 - 9th August 2026
