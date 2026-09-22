@@ -16,7 +16,7 @@ ProjectNameFile="$Dir/.sis/project_name.txt"
 ProjectName=$(tr -d '[:space:]' < "$ProjectNameFile")
 ScriptPath=$0
 
-AlwaysUseColours=0
+AlwaysUseColours=${SIS_CMAKE_ALWAYS_USE_COLOURS:-${SIS_ALWAYS_USE_COLOURS:-0}}
 BuildSharedLibs=0
 Configuration=Release
 ExamplesDisabled=0
@@ -34,10 +34,12 @@ VerboseMakefile=0
 # ##########################################################
 # colours
 #
-# Enable when NO_COLOR is unset, tput is available, and either:
-#   - AlwaysUseColours is set (may set TERM if empty/dumb), or
-#   - stdout is a TTY and TERM is not dumb (union of collect-c's
-#     "TERM set + TTY" and cstring's "TTY" — empty TERM on a TTY is OK).
+# Enable when tput is available and either:
+#   - AlwaysUseColours is set (overrides NO_COLOR; may set TERM if
+#     empty/dumb), or
+#   - NO_COLOR is unset, stdout is a TTY, and TERM is not dumb (union of
+#     collect-c's "TERM set + TTY" and cstring's "TTY" — empty TERM on a
+#     TTY is OK).
 
 SisClr_Blue=
 SisClr_Bold=
@@ -46,7 +48,17 @@ SisClr_None=
 SisClr_Red=
 SisClr_Yellow=
 
-if [ -z "${NO_COLOR:-}" ] && command -v tput >/dev/null 2>&1; then
+for arg in "$@"; do
+
+  case $arg in
+    --always-use-colors|--always-use-colours|-A)
+
+      AlwaysUseColours=1
+      ;;
+  esac
+done
+
+if command -v tput >/dev/null 2>&1; then
 
   if [ $AlwaysUseColours -ne 0 ]; then
 
@@ -56,7 +68,7 @@ if [ -z "${NO_COLOR:-}" ] && command -v tput >/dev/null 2>&1; then
     fi
 
     SisUseColours=1
-  elif [ -t 1 ] && [ "${TERM:-}" != "dumb" ]; then
+  elif [ -z "${NO_COLOR:-}" ] && [ -t 1 ] && [ "${TERM:-}" != "dumb" ]; then
 
     SisUseColours=1
   fi
@@ -84,6 +96,10 @@ ScriptPathClr="${SisClr_Blue}${SisClr_Bold}${ScriptPath}${SisClr_None}"
 while [[ $# -gt 0 ]]; do
 
   case $1 in
+    --always-use-colors|--always-use-colours|-A)
+
+      # AlwaysUseColours=1 - this is handled by the for loop above
+      ;;
     --build-shared-libs)
 
       BuildSharedLibs=1
@@ -140,6 +156,11 @@ ${ScriptPath} [ ... flags/options ... ]
 Flags/options:
 
     behaviour:
+
+    -A
+    --always-use-colors
+    --always-use-colours
+        forces use of colours even when stdout is not a TTY
 
     --build-shared-libs
         builds ${ProjectName} as a shared library (BUILD_SHARED_LIBS=ON)
