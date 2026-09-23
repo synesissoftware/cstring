@@ -23,6 +23,7 @@
 
 /* xTests header files */
 #include <xtests/xtests.h>
+#include <xtests/terse-api.h>
 
 /* STLSoft header files */
 #include <platformstl/exception/platformstl_exception.hpp>
@@ -163,11 +164,11 @@ static void test_1_1()
 {
     cstring_t   cs = cstring_t_DEFAULT;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, NULL));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, NULL));
 
     size_t      n;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
 }
 
 static void test_1_2()
@@ -197,45 +198,45 @@ static void test_1_2()
 
         rc = cstring_readline(f, &strings[0], &lengths[0]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(0u, lengths[0]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", strings[0]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(0u, lengths[0]);
+        TEST_MS_EQ("", strings[0]);
 
         rc = cstring_readline(f, &strings[1], &lengths[1]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(3u, lengths[1]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abc", strings[1]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(3u, lengths[1]);
+        TEST_MS_EQ("abc", strings[1]);
 
         rc = cstring_readline(f, &strings[2], &lengths[2]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(6u, lengths[2]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdef", strings[2]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(6u, lengths[2]);
+        TEST_MS_EQ("abcdef", strings[2]);
 
         rc = cstring_readline(f, &strings[3], &lengths[3]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(12u, lengths[3]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijkl", strings[3]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(12u, lengths[3]);
+        TEST_MS_EQ("abcdefghijkl", strings[3]);
 
         rc = cstring_readline(f, &strings[4], &lengths[4]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(26u, lengths[4]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijklmnopqrstuvwxyz", strings[4]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(26u, lengths[4]);
+        TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz", strings[4]);
 
         rc = cstring_readline(f, &strings[5], &lengths[5]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(62u, lengths[5]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", strings[5]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(62u, lengths[5]);
+        TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", strings[5]);
 
         rc = cstring_readline(f, &strings[6], &lengths[6]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-        XTESTS_TEST_INTEGER_EQUAL(3u, lengths[6]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("xyz", strings[6]);
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(3u, lengths[6]);
+        TEST_MS_EQ("xyz", strings[6]);
     }
 }
 
@@ -259,15 +260,15 @@ static void test_1_3()
         cstring_vector_t csv = cstring_vector_t_DEFAULT;
         size_t            numLinesRead;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+        XTESTS_REQUIRE(TEST_ENUM_EQ(
             CSTRING_RC_EOF
         ,   cstring_vector_readLinesEx(f, CSTRING_VECTOR_READLINES_F_NONE, &csv, &numLinesRead)
         ));
-        XTESTS_TEST_INTEGER_EQUAL(3u, numLinesRead);
-        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(3u, csv.len));
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", csv.ptr[2].ptr);
+        TEST_INT_EQ(3u, numLinesRead);
+        XTESTS_REQUIRE(TEST_INT_EQ(3u, csv.len));
+        TEST_MS_EQ("one", csv.ptr[0].ptr);
+        TEST_MS_EQ("two", csv.ptr[1].ptr);
+        TEST_MS_EQ("three", csv.ptr[2].ptr);
 
         cstring_vector_destroy(&csv);
     }
@@ -292,14 +293,14 @@ static void test_1_4()
         cstring_vector_t csv = cstring_vector_t_DEFAULT;
         size_t            numLinesRead;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+        XTESTS_REQUIRE(TEST_ENUM_EQ(
             CSTRING_RC_EOF
         ,   cstring_vector_readLines(f, &csv, &numLinesRead)
         ));
-        XTESTS_TEST_INTEGER_EQUAL(2u, numLinesRead);
-        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(2u, csv.len));
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+        TEST_INT_EQ(2u, numLinesRead);
+        XTESTS_REQUIRE(TEST_INT_EQ(2u, csv.len));
+        TEST_MS_EQ("one", csv.ptr[0].ptr);
+        TEST_MS_EQ("two", csv.ptr[1].ptr);
 
         cstring_vector_destroy(&csv);
     }
