@@ -247,10 +247,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -272,10 +271,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -297,10 +295,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -322,10 +319,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -347,10 +343,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -372,10 +367,9 @@ static void test_1_3()
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -557,10 +551,18 @@ static void test_1_5()
         else
         {
             TEST_INT_EQ(cch, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-            TEST_INT_GE(cch, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == cch)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+                TEST_INT_GE(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
+            }
 
             cstring_destroy(&str);
 
@@ -587,10 +589,18 @@ static void test_1_5()
             else
             {
                 TEST_INT_EQ(cch, str.len);
-                TEST_PTR_NE(NULL, str.ptr);
-                XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-                TEST_INT_GE(cch, str.capacity);
-                TEST_INT_GE(str.len, str.capacity);
+                if (0u == cch)
+                {
+                    TEST_PTR_EQ(NULL, str.ptr);
+                    TEST_INT_EQ(0u, str.capacity);
+                }
+                else
+                {
+                    TEST_PTR_NE(NULL, str.ptr);
+                    XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+                    TEST_INT_GE(cch, str.capacity);
+                    TEST_INT_GE(str.len, str.capacity);
+                }
             }
         }}
 
@@ -616,10 +626,18 @@ static void test_1_5()
         else
         {
             TEST_INT_EQ(cch, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
-            TEST_INT_GE(cch, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == cch)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+                TEST_INT_GE(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
+            }
 
             cstring_destroy(&str);
 
@@ -839,9 +857,18 @@ static void test_2_2()
 
         cstring_createLen(&str, s, i);
 
-        TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
@@ -997,9 +1024,18 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
