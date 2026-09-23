@@ -289,14 +289,18 @@ alloc_retry:
     switch (CSTRING_F_ARENA_MASK & flags)
     {
         case    CSTRING_F_USE_REALLOC:
-#if defined(_MSC_VER) && \
-    defined(_DEBUG)
+            /* realloc(pv, 0) allocates on some platforms; free the block,
+             * and do nothing when pv is NULL.
+             */
             if (0 == cb)
             {
-                free(pv);
+                if (NULL != pv)
+                {
+                    free(pv);
+                }
+
                 return NULL;
             }
-#endif /* _DEBUG */
             pvNew = realloc(pv, cb);
             break;
 #if defined(CSTRING_USE_WINAPI_)
@@ -687,7 +691,8 @@ cstring_destroy(
 
     CSTRING_ASSERT(NULL != pcs);
 
-    if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags))
+    if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags) &&
+        NULL != pcs->ptr)
     {
         (void)cstring_realloc_(pcs->ptr, 0, pcs->flags, &rc);
     }
