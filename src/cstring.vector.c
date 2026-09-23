@@ -79,6 +79,56 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+/** Destroys live slots only; already-empty slots are left alone.
+ *
+ * An empty slot (as from \c cstring_init / \c cstring_t_DEFAULT) has a NULL
+ * pointer, zero length, zero capacity, and zero flags. Skipping those avoids
+ * a per-element call on \c cstring_vector_create / destroy of empty vectors.
+ */
+static
+CSTRING_RC
+cstring_vector_destroy_slots_(
+    cstring_t*  slots
+,   size_t      n
+)
+{
+    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
+    size_t      i;
+
+    if (0 == n)
+    {
+        return CSTRING_RC_SUCCESS;
+    }
+
+    CSTRING_VECTOR_ASSERT(NULL != slots);
+
+    for (i = 0; i != n; ++i)
+    {
+        cstring_t* const pcs = slots + i;
+
+        if (0 != pcs->len ||
+            NULL != pcs->ptr ||
+            0 != pcs->capacity ||
+            0 != pcs->flags)
+        {
+            CSTRING_RC const rc2 = cstring_destroy(pcs);
+
+            if (CSTRING_RC_SUCCESS != rc2 &&
+                CSTRING_RC_SUCCESS == rc)
+            {
+                rc = rc2;
+            }
+        }
+    }
+
+    return rc;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
  */
 
@@ -169,21 +219,11 @@ cstring_vector_destroy(
     cstring_vector_t*   pcsv
 )
 {
-    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
-    size_t      i;
+    CSTRING_RC rc;
 
     CSTRING_VECTOR_ASSERT(NULL != pcsv);
 
-    for (i = 0; i != pcsv->len; ++i)
-    {
-        CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
-
-        if (CSTRING_RC_SUCCESS != rc2 &&
-            CSTRING_RC_SUCCESS == rc)
-        {
-            rc = rc2;
-        }
-    }
+    rc = cstring_vector_destroy_slots_(pcsv->ptr, pcsv->len);
 
     free(pcsv->ptr);
 
@@ -201,22 +241,12 @@ cstring_vector_truncate(
 ,   size_t              len
 )
 {
-    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
-    size_t      i;
+    CSTRING_RC rc;
 
     CSTRING_VECTOR_ASSERT(NULL != pcsv);
     CSTRING_VECTOR_ASSERT(len <= pcsv->len);
 
-    for (i = len; i != pcsv->len; ++i)
-    {
-        CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
-
-        if (CSTRING_RC_SUCCESS != rc2 &&
-            CSTRING_RC_SUCCESS == rc)
-        {
-            rc = rc2;
-        }
-    }
+    rc = cstring_vector_destroy_slots_(pcsv->ptr + len, pcsv->len - len);
 
     pcsv->len = len;
 
