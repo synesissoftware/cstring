@@ -317,12 +317,16 @@ cstring_vector_insertAt(
         /* Make space for new items */
         if (position < pcsv->len)
         {
-            memmove(pcsv->ptr + pcsv->len + numStrings, pcsv->ptr + pcsv->len, sizeof(cstring_t) * numStrings);
+            memmove(
+                pcsv->ptr + position + numStrings
+            ,   pcsv->ptr + position
+            ,   sizeof(cstring_t) * (pcsv->len - position)
+            );
         }
 
         for (i = 0; i != numStrings; ++i)
         {
-            cstring_t* dest = pcsv->ptr + pcsv->len + i;
+            cstring_t* dest = pcsv->ptr + position + i;
 
             if (NULL == strings)
             {
@@ -339,7 +343,7 @@ cstring_vector_insertAt(
                 {
                     while (0 != i)
                     {
-                        cstring_destroy(pcsv->ptr + pcsv->len + (i - 1));
+                        cstring_destroy(pcsv->ptr + position + (i - 1));
 
                         --i;
                     }
@@ -359,7 +363,11 @@ cstring_vector_insertAt(
             /* If it's failed, and we made space for new items, remove the gap (leaving it with increased capacity) */
             if (position < pcsv->len)
             {
-                memmove(pcsv->ptr + pcsv->len, pcsv->ptr + pcsv->len + numStrings, sizeof(cstring_t) * numStrings);
+                memmove(
+                    pcsv->ptr + position
+                ,   pcsv->ptr + position + numStrings
+                ,   sizeof(cstring_t) * (pcsv->len - position)
+                );
             }
         }
 

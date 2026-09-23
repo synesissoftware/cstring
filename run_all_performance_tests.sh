@@ -29,6 +29,7 @@ ProjectName=$(tr -d '[:space:]' < "$ProjectNameFile")
 ScriptPath=$0
 
 AlwaysUseColours=${SIS_CMAKE_ALWAYS_USE_COLOURS:-${SIS_ALWAYS_USE_COLOURS:-0}}
+GapGroups=0
 ListOnly=0
 RunMake=1
 SisUseColours=0
@@ -127,6 +128,10 @@ while [[ $# -gt 0 ]]; do
 
       # AlwaysUseColours=1 - this is handled by the for loop above
       ;;
+    --gap-groups)
+
+      GapGroups=1
+      ;;
     --list-only|-l)
 
       ListOnly=1
@@ -156,6 +161,10 @@ Flags/options:
     --always-use-colors
     --always-use-colours
         forces use of colours even when stdout is not a TTY
+
+    --gap-groups
+        sets SIS_PERFTESTS_GROUPGAPS=1 so performance programs emit a blank
+        line between scenario groups
 
     -l
     --list-only
@@ -192,6 +201,11 @@ done
 
 # ##########################################################
 # main()
+
+if [ $GapGroups -ne 0 ]; then
+
+  export SIS_PERFTESTS_GROUPGAPS=1
+fi
 
 status=0
 

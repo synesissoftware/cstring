@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 14
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     86
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 15
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     87
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -116,6 +116,7 @@
 # define CSTRING_VER_4_0_14     0x04000eff
 # define CSTRING_VER_4_0_15     0x04000fff
 # define CSTRING_VER_4_0_16     0x040010ff
+# define CSTRING_VER_4_0_17     0x040011ff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -136,7 +137,7 @@
 
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   16
+#define CSTRING_VER_PATCH                                   17
 #define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \
