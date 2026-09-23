@@ -1,6 +1,11 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0 - 25th September 2026
+
+* performance optimisations;
+
+
 ## 4.0.17 - 24th September 2026
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
