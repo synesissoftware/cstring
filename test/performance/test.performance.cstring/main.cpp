@@ -133,7 +133,7 @@ emit_row(
 )
 {
     double const ratio =
-        (0 == ::strcmp(impl, IMPL_CSTRING))
+        (0 == ::strcmp(impl, IMPL_CSTRING) || 0 == ::strcmp(impl, IMPL_BORROWED))
             ? 1.0
             : ratio_or_dash(r.tm_ns, cstring_tm_ns)
             ;
@@ -486,12 +486,18 @@ scenario_borrowed_fixed(
         ,   ""
         ,   CSTRING_F_MEMORY_IS_BORROWED | CSTRING_F_MEMORY_IS_FIXED
         ,   &buf[0]
-        ,   n
+        ,   n + 1u
         );
         cstring_assignLen(&s, p, n);
         std::uint64_t const a = s.len;
         cstring_destroy(&s);
         return a;
+    });
+
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        std::string s;
+        s.assign(p, n);
+        return s.size();
     });
 
     run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
@@ -502,6 +508,7 @@ scenario_borrowed_fixed(
     });
 
     emit_row("borrowed_fixed_assign", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
+    emit_row("borrowed_fixed_assign", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("borrowed_fixed_assign", n, IMPL_FIXEDBUF, num_iterations, 1, fx, cs.tm_ns);
 }
 } // anonymous namespace
