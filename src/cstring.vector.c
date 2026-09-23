@@ -251,11 +251,9 @@ cstring_vector_create(
 
                 if (CSTRING_RC_SUCCESS != rc2)
                 {
-                    while (0 != i)
+                    for (; 0 != i; --i)
                     {
                         cstring_destroy(pcsv->ptr + (i - 1));
-
-                        --i;
                     }
 
                     rc = rc2;
@@ -338,11 +336,9 @@ cstring_vector_insertAt(
 
                 if (CSTRING_RC_SUCCESS != rc2)
                 {
-                    while (0 != i)
+                    for (; 0 != i; --i)
                     {
                         cstring_destroy(pcsv->ptr + pcsv->len + (i - 1));
-
-                        --i;
                     }
 
                     rc = rc2;
