@@ -82,6 +82,26 @@
  * helper functions
  */
 
+/** Zero-fills \c n slots to the empty \c cstring_t_DEFAULT form.
+ *
+ * Equivalent to calling \c cstring_init on each slot; that function always
+ * succeeds and only clears the four fields.
+ */
+static
+void
+cstring_vector_init_empty_slots_(
+    cstring_t*  slots
+,   size_t      n
+)
+{
+    if (0 != n)
+    {
+        CSTRING_VECTOR_ASSERT(NULL != slots);
+
+        memset(slots, 0, sizeof(cstring_t) * n);
+    }
+}
+
 /** Destroys live slots only; already-empty slots are left alone.
  *
  * An empty slot (as from \c cstring_init / \c cstring_t_DEFAULT) has a NULL
@@ -271,34 +291,10 @@ cstring_vector_create(
 
         if (CSTRING_RC_SUCCESS == rc)
         {
-            size_t i;
-
             CSTRING_VECTOR_ASSERT(pcsv->capacity >= initialSize);
 
-            for (i = 0; i != initialSize; ++i)
-            {
-                CSTRING_RC rc2 = cstring_init(pcsv->ptr + i);
+            cstring_vector_init_empty_slots_(pcsv->ptr, initialSize);
 
-                if (CSTRING_RC_SUCCESS != rc2)
-                {
-                    for (; 0 != i; --i)
-                    {
-                        cstring_destroy(pcsv->ptr + (i - 1));
-                    }
-
-                    rc = rc2;
-
-                    pcsv->len = 0;
-
-                    cstring_vector_destroy(pcsv);
-
-                    break;
-                }
-            }
-        }
-
-        if (CSTRING_RC_SUCCESS == rc)
-        {
             pcsv->len = initialSize;
         }
 

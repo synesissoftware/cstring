@@ -190,9 +190,19 @@ static void test_1_04(void)
     else
     if (CSTRING_RC_SUCCESS == rc)
     {
+        size_t i;
+
         XTESTS_TEST_INTEGER_EQUAL(10, csv.len);
         XTESTS_TEST_POINTER_NOT_EQUAL(NULL, csv.ptr);
         XTESTS_TEST_INTEGER_GREATER_OR_EQUAL(10, csv.capacity);
+
+        for (i = 0; i != csv.len; ++i)
+        {
+            XTESTS_TEST_INTEGER_EQUAL(0, csv.ptr[i].len);
+            XTESTS_TEST_POINTER_EQUAL(NULL, csv.ptr[i].ptr);
+            XTESTS_TEST_INTEGER_EQUAL(0, csv.ptr[i].capacity);
+            XTESTS_TEST_INTEGER_EQUAL(0, csv.ptr[i].flags);
+        }
 
         cstring_vector_destroy(&csv);
     }
