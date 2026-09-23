@@ -1198,7 +1198,18 @@ cstring_appendFn(
             return CSTRING_RC_SUCCESS;
         }
 
-        if (pcs->capacity < newLen)
+        /* Capacity already covers the write: copy in place. */
+        if (pcs->capacity >= newLen)
+        {
+            CSTRING_ASSERT(NULL != pcs->ptr);
+
+            cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+            pcs->len            =   newLen;
+            pcs->ptr[pcs->len]  =   '\0';
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         {
             size_t cch;
 
@@ -1304,18 +1315,29 @@ cstring_appendLenFn(
     }
     else
     {
-        size_t newLen = pcs->len + len;
+        size_t const newLen = pcs->len + len;
 
         if (0 == len)
         {
             return CSTRING_RC_SUCCESS;
         }
 
-        if (pcs->capacity < newLen)
+        /* Capacity already covers the write: copy in place. */
+        if (pcs->capacity >= newLen)
+        {
+            CSTRING_ASSERT(NULL != pcs->ptr);
+
+            cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+            pcs->len            =   newLen;
+            pcs->ptr[pcs->len]  =   '\0';
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         {
             size_t cch;
 
-            cch  =   pcs->len + len;
+            cch  =   newLen;
             cch  =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
             if (cch < pcs->capacity * 2)
@@ -1380,7 +1402,7 @@ cstring_appendLenFn(
             }
         }
 
-        cstring_strlcpy_safe_(pcs->ptr + pcs->len, s, len);
+        cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
         pcs->len            +=  len;
         pcs->ptr[pcs->len]  =   '\0';
 
