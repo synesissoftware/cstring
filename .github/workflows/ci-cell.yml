@@ -262,7 +262,10 @@ jobs:
         shell: cmd
         run: |
           set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
-          if /I "${{ inputs.c-compiler }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          if /I "${{ inputs.c-compiler }}"=="mingw" (
+            set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+            set "CSTRING_PERF_FILE_TRIALS=10"
+          )
           call run_all_performance_tests.cmd
 
       - name: Scratch tests
