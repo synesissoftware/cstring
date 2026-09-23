@@ -35,6 +35,7 @@ ExamplesDisabled=0
 MinGW=$(sis_cmake_is_truey "${SIS_CMAKE_MINGW:-}" && echo 1 || echo 0)
 MSVC_MT=0
 NO_cxx=0
+NO_p99=0
 NO_shwild=0
 RunMake=0
 SisUseColours=0
@@ -167,6 +168,10 @@ while [[ $# -gt 0 ]]; do
 
       NO_cxx=1
       ;;
+    --no-p99)
+
+      NO_p99=1
+      ;;
     --no-shwild)
 
       NO_shwild=1
@@ -230,6 +235,10 @@ Flags/options:
         omits the C++ API, C++ examples, and remaining C++ tests (CMake
         NO_CSTRING_CPP_API). C unit-tests still require STLSoft and xTests
 
+    --no-p99
+        prevents recognising p99 library (NO_P99=ON); performance tests
+        then omit percentiles and the file_lines suite
+
     --no-shwild
         prevents recognising shwild library (NO_SHWILD=ON); xTests
         pattern-match assertions are then unavailable
@@ -278,6 +287,7 @@ if [ $BuildSharedLibs -eq 0 ]; then CMakeBuildSharedLibsFlag="OFF" ; else CMakeB
 if [ $ExamplesDisabled -eq 0 ]; then CMakeBuildExamplesFlag="ON" ; else CMakeBuildExamplesFlag="OFF" ; fi
 if [ $MSVC_MT -eq 0 ]; then CMakeMsvcMtFlag="OFF" ; else CMakeMsvcMtFlag="ON" ; fi
 if [ $NO_cxx -eq 0 ]; then CMakeNoCppApiFlag="OFF" ; else CMakeNoCppApiFlag="ON" ; fi
+if [ $NO_p99 -eq 0 ]; then CMakeNoP99="OFF" ; else CMakeNoP99="ON" ; fi
 if [ $NO_shwild -eq 0 ]; then CMakeNoShwild="OFF" ; else CMakeNoShwild="ON" ; fi
 if [ -z "$STLSoftDirGiven" ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
 if [ $TestingDisabled -eq 0 ]; then CMakeBuildTestingFlag="ON" ; else CMakeBuildTestingFlag="OFF" ; fi
@@ -307,6 +317,7 @@ cmake \
   -DCMAKE_VERBOSE_MAKEFILE:BOOL=$CMakeVerboseMakefileFlag \
   -DMSVC_USE_MT:BOOL=$CMakeMsvcMtFlag \
   -DNO_CSTRING_CPP_API:BOOL=$CMakeNoCppApiFlag \
+  -DNO_P99:BOOL=$CMakeNoP99 \
   -DNO_SHWILD:BOOL=$CMakeNoShwild \
   $CMakeSTLSoftVariable \
   "${CMakeGeneratorArgs[@]}" \

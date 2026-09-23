@@ -53,6 +53,7 @@ The primary choice for installation is by use of **CMake**.
 
    * `--no-cpp` / `-C` — omit C++ examples and remaining C++ tests
      (`NO_CSTRING_CPP_API`);
+   * `--no-p99` — do not recognise **p99** (`NO_P99`);
    * `--no-shwild` — do not recognise **shwild** (`NO_SHWILD`);
    * `--disable-examples` / `-E` — omit examples (`BUILD_EXAMPLES=OFF`);
    * `--disable-testing` / `-T` — omit tests (`BUILD_TESTING=OFF`);

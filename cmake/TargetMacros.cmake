@@ -94,5 +94,60 @@ function(define_example_program program_name entry_point_source_name)
 endfunction(define_example_program)
 
 
+# Performance programs are built for human attention (see test-standards).
+# They are discovered by run_all_performance_tests.sh and must NOT be
+# registered with CTest (unlike define_automated_test_program).
+
+function(define_performance_test_program program_name entry_point_source_name)
+
+	add_executable(${program_name}
+		${entry_point_source_name}
+	)
+
+	set(_p99_link_lib_)
+
+	if(p99_FOUND)
+
+		if(TARGET p99::p99)
+
+			set(_p99_link_lib_ p99::p99)
+		elseif(TARGET p99::p99_static)
+
+			set(_p99_link_lib_ p99::p99_static)
+		elseif(TARGET p99::p99_shared)
+
+			set(_p99_link_lib_ p99::p99_shared)
+		endif()
+	endif()
+
+	target_link_libraries(${program_name}
+		PRIVATE
+			core
+			$<$<STREQUAL:${STLSOFT_INCLUDE_DIR},>:STLSoft::STLSoft>
+			${_p99_link_lib_}
+	)
+
+	if(_p99_link_lib_)
+
+		target_compile_definitions(${program_name}
+			PRIVATE
+				HAS_P99
+		)
+	endif()
+
+	unset(_p99_link_lib_)
+
+	if(WIN32)
+
+		target_link_libraries(${program_name}
+			PRIVATE
+				wininet
+		)
+	endif(WIN32)
+
+	define_target_compile_options(${program_name})
+endfunction(define_performance_test_program)
+
+
 # ############################## end of file ############################# #
 
