@@ -141,7 +141,7 @@ Examples live under **examples/** (`c/` and `cpp/`), each with a short **README.
 | [**example.c.auto_buffer**](./examples/c/example.c.auto_buffer/) | C | Borrowed buffer that may grow to the heap |
 | [**example.c.cstring**](./examples/c/example.c.cstring/) | C | Core `cstring_t` create / assign / append / truncate / copy / swap |
 | [**example.c.cstring_create**](./examples/c/example.c.cstring_create/) | C | Minimal `cstring_create()` |
-| [**example.c.cstring_vector**](./examples/c/example.c.cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (requires input path or `--`) |
+| [**example.c.cstring_vector**](./examples/c/example.c.cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (input path or `--`; `SIS_EXAMPLE_SMOKE` enables no-arg demo) |
 | [**example.cpp.cstring.dynload**](./examples/cpp/example.cpp.cstring.dynload/) | C++ | Windows-only dynamic load of the cstring DLL |
 | [**example.cpp.HGLOBAL_on_x64**](./examples/cpp/example.cpp.HGLOBAL_on_x64/) | C++ | Windows-only `CSTRING_F_USE_WIN32_GLOBAL_MEMORY` |
 
@@ -183,6 +183,8 @@ When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not rec
 
 Projects in which **cstring** is used include:
 
+* [**errni**](https://github.com/sistools/errni)
+* [**rstrip**](https://github.com/sistools/rstrip)
 * [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch)
 
 

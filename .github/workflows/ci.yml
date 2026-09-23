@@ -100,6 +100,30 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
 
+      - name: Helper scripts prepare-clean-build-remove-reprepare-build
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Exercise prepare/clean/build/remove helpers on a dedicated tree
+          # (does not replace the install-smoke configure/build below).
+          export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build-helper-smoke"
+          PREPARE_ARGS=(-E -T)
+          if [ "${{ matrix.c_compiler }}" = "mingw" ]; then
+            export PATH="/mingw64/bin:$PATH"
+            PREPARE_ARGS+=(--mingw)
+          elif [ "${{ matrix.c_compiler }}" != "cl" ]; then
+            export CC="${{ matrix.c_compiler }}"
+            export CXX="${{ matrix.cpp_compiler }}"
+          fi
+          ./prepare_cmake.sh "${PREPARE_ARGS[@]}"
+          ./clean_cmake.sh
+          ./build_cmake.sh
+          ./clean_cmake.sh
+          ./build_cmake.sh
+          ./remove_cmake_artefacts.sh
+          ./prepare_cmake.sh "${PREPARE_ARGS[@]}"
+          ./build_cmake.sh
+
       - name: Configure
         shell: bash
         run: |
@@ -250,18 +274,25 @@ jobs:
 
           echo "SIS_DEPS=$DEPS" >> "$GITHUB_ENV"
 
-      - name: Configure and build via prepare_cmake.sh --no-cpp
+      - name: Configure via prepare_cmake.sh --no-cpp
         shell: bash
         run: |
           set -euo pipefail
           # Prefer CMAKE_PREFIX_PATH (find_package) over prepare_cmake -s /
-          # -DSTLSOFT: xTests::core links STLSoft::STLSoft, which only exists
-          # when the STLSoft CMake package is imported.
+          # -DSTLSOFT: xTests::core links STLSoft::STLSoft, which only
+          # exists when the STLSoft CMake package is imported.
           export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
-          ./prepare_cmake.sh --no-cpp -m
+          ./prepare_cmake.sh --no-cpp
 
-      - name: Run unit tests
+      - name: Build via build_cmake.sh
         shell: bash
         run: |
           set -euo pipefail
-          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_unit_tests.sh -M --unit-only
+          export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+          ./build_cmake.sh
+
+      - name: Run automated tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_automated_tests.sh -M
