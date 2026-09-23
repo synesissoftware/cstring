@@ -28,6 +28,7 @@
 #include <platformstl/exception/platformstl_exception.hpp>
 #include <platformstl/filesystem/file_lines.hpp>
 #include <platformstl/system/system_traits.hpp>
+#include <stlsoft/api/internal/stdio.h>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C header files */
@@ -124,15 +125,10 @@ namespace
 
     static FILE* fopen_or_throw(char const* fileName, char const* mode /* = "r" */)
     {
-#ifdef CSTRING_USING_SAFE_STR_FUNCTIONS
-        FILE*   f;
+        FILE*       f;
+        int const   e = STLSOFT_API_INTERNAL_stdio_fopen_m(fileName, mode, &f);
 
-        if (0 != ::fopen_s(&f, fileName, mode))
-#else /* ? CSTRING_USING_SAFE_STR_FUNCTIONS */
-        FILE*   f = ::fopen(fileName, mode);
-
-        if (NULL == f)
-#endif /* CSTRING_USING_SAFE_STR_FUNCTIONS */
+        if (0 != e)
         {
             throw platformstl::platform_exception((std::string("Could not open file '") + fileName + "'").c_str(), platformstl::system_traits<char>::get_last_error());
         }
@@ -177,7 +173,7 @@ static void test_1_1()
 static void test_1_2()
 {
     {
-        FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "w");
 
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
@@ -191,7 +187,7 @@ static void test_1_2()
     }
 
     {
-        FILE* f = fopen_or_throw(TEST_FILE_NAME, "r");
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "r");
 
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
@@ -245,56 +241,68 @@ static void test_1_2()
 
 static void test_1_3()
 {
-    FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
+    {
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "w");
 
-    fprintf(f, "one\n");
-    fprintf(f, "two\n");
-    fprintf(f, "three");
-    ::fclose(f);
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
-    f = fopen_or_throw(TEST_FILE_NAME, "r");
+        fprintf(f, "one\n");
+        fprintf(f, "two\n");
+        fprintf(f, "three");
+    }
 
-    cstring_vector_t csv = cstring_vector_t_DEFAULT;
-    size_t            numLinesRead;
+    {
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "r");
 
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
-        CSTRING_RC_EOF
-    ,   cstring_vector_readLinesEx(f, CSTRING_VECTOR_READLINES_F_NONE, &csv, &numLinesRead)
-    ));
-    XTESTS_TEST_INTEGER_EQUAL(3u, numLinesRead);
-    XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(3u, csv.len));
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", csv.ptr[2].ptr);
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
-    cstring_vector_destroy(&csv);
-    ::fclose(f);
+        cstring_vector_t csv = cstring_vector_t_DEFAULT;
+        size_t            numLinesRead;
+
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+            CSTRING_RC_EOF
+        ,   cstring_vector_readLinesEx(f, CSTRING_VECTOR_READLINES_F_NONE, &csv, &numLinesRead)
+        ));
+        XTESTS_TEST_INTEGER_EQUAL(3u, numLinesRead);
+        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(3u, csv.len));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", csv.ptr[2].ptr);
+
+        cstring_vector_destroy(&csv);
+    }
 }
 
 static void test_1_4()
 {
-    FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
+    {
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "w");
 
-    fprintf(f, "one\n");
-    fprintf(f, "two\n");
-    ::fclose(f);
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
-    f = fopen_or_throw(TEST_FILE_NAME, "r");
+        fprintf(f, "one\n");
+        fprintf(f, "two\n");
+    }
 
-    cstring_vector_t csv = cstring_vector_t_DEFAULT;
-    size_t            numLinesRead;
+    {
+        FILE* const f = fopen_or_throw(TEST_FILE_NAME, "r");
 
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
-        CSTRING_RC_EOF
-    ,   cstring_vector_readLines(f, &csv, &numLinesRead)
-    ));
-    XTESTS_TEST_INTEGER_EQUAL(2u, numLinesRead);
-    XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(2u, csv.len));
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
-    cstring_vector_destroy(&csv);
-    ::fclose(f);
+        cstring_vector_t csv = cstring_vector_t_DEFAULT;
+        size_t            numLinesRead;
+
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+            CSTRING_RC_EOF
+        ,   cstring_vector_readLines(f, &csv, &numLinesRead)
+        ));
+        XTESTS_TEST_INTEGER_EQUAL(2u, numLinesRead);
+        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(2u, csv.len));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+
+        cstring_vector_destroy(&csv);
+    }
 }
 
 static void test_1_5()
