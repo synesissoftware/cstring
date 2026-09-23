@@ -5,7 +5,7 @@
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
 * Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;
-* Optional **p99** linkage for per-iteration percentiles throughout; filesystem `platformstl::file_lines` vs `cstring_vector_readLines` suite gated on **p99**;
+* Optional **p99** linkage for per-iteration percentiles throughout; filesystem suite (`cstring_vector_readLines`, `std::ifstream` + `std::getline`, `platformstl::file_lines`) gated on **p99**;
 * **`--no-p99`** / `NO_P99` to skip recognising **p99** (same pattern as **`--no-shwild`**);
 * **`--gap-groups`** on **run_all_performance_tests.sh** sets `SIS_PERFTESTS_GROUPGAPS` for blank lines between scenario groups;
 * Declared **cstring.vector** API with `CSTRING_EXTERN_C` for C++ linkage;
