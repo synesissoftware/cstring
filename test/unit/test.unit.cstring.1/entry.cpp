@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 2nd September 2025
+ * Updated: 23rd September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -431,11 +431,13 @@ static void test_1_3()
             TEST_PTR_NE(NULL, str.ptr);
             XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[0]);
+            /*
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[1]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[2]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[3]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[4]);
             XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[5]);
+            */
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 

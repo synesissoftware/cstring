@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 6th September 2026
+ * Updated: 23rd September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -193,12 +193,10 @@ convert_negative_index(
  * \param src Source. May be \c NULL;
  * \param lim Maximum number of elements in \c dst;
  *
- * \return The actual length of src if not \c NULL; 0 otherwise
- *
  * \pre NULL != dst
  */
 static
-size_t
+void
 cstring_strlcpy_safe_(
     cstring_char_t          dst[]
 ,   cstring_char_t const*   src
@@ -210,30 +208,10 @@ cstring_strlcpy_safe_(
     if (NULL == src)
     {
         memset(dst, 0, sizeof(cstring_char_t) * lim);
-
-        return 0;
     }
     else
     {
-        size_t i;
-
-        for (i = 0; i != lim; ++i, ++dst, ++src)
-        {
-            *dst = *src;
-
-            if ('\0' == *src)
-            {
-                break;
-            }
-        }
-
-        memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
-
-        for (; '\0' != *src; ++i, ++src)
-        {
-        }
-
-        return i;
+        memcpy(dst, src, sizeof(cstring_char_t) * lim);
     }
 }
 
