@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring.vector API
  *
  * Created: 16th June 1994
- * Updated: 23rd February 2025
+ * Updated: 24th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -374,12 +374,30 @@ cstring_vector_readLines(
 ,   size_t*             numLinesRead /* = NULL */
 )
 {
+    return cstring_vector_readLinesEx(
+        stm
+    ,   CSTRING_VECTOR_READLINES_F_NONE
+    ,   pcsv
+    ,   numLinesRead
+    );
+}
+
+CSTRING_RC
+cstring_vector_readLinesEx(
+    FILE*               stm
+,   cstring_flags_t     flags
+,   cstring_vector_t*   pcsv
+,   size_t*             numLinesRead /* = NULL */
+)
+{
     CSTRING_RC  rc;
     cstring_t   cs = cstring_t_DEFAULT;
     size_t      numLinesRead_;
     size_t      initialLen;
 
     CSTRING_VECTOR_ASSERT(NULL != pcsv);
+
+    (void)flags;
 
     initialLen = pcsv->len;
 

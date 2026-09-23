@@ -4,7 +4,7 @@
  * Purpose: Unit-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 12th January 2024
+ * Updated: 23rd September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -15,6 +15,7 @@
 
 #include <cstring/cstring.h>
 #include <cstring/internal/safestr.h>
+#include <cstring/cstring.vector.h>
 
 /* /////////////////////////////////////////////////////////////////////////
  * includes
@@ -244,10 +245,56 @@ static void test_1_2()
 
 static void test_1_3()
 {
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
+
+    fprintf(f, "one\n");
+    fprintf(f, "two\n");
+    fprintf(f, "three");
+    ::fclose(f);
+
+    f = fopen_or_throw(TEST_FILE_NAME, "r");
+
+    cstring_vector_t csv = cstring_vector_t_DEFAULT;
+    size_t            numLinesRead;
+
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+        CSTRING_RC_EOF
+    ,   cstring_vector_readLinesEx(f, CSTRING_VECTOR_READLINES_F_NONE, &csv, &numLinesRead)
+    ));
+    XTESTS_TEST_INTEGER_EQUAL(3u, numLinesRead);
+    XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(3u, csv.len));
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", csv.ptr[2].ptr);
+
+    cstring_vector_destroy(&csv);
+    ::fclose(f);
 }
 
 static void test_1_4()
 {
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
+
+    fprintf(f, "one\n");
+    fprintf(f, "two\n");
+    ::fclose(f);
+
+    f = fopen_or_throw(TEST_FILE_NAME, "r");
+
+    cstring_vector_t csv = cstring_vector_t_DEFAULT;
+    size_t            numLinesRead;
+
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(
+        CSTRING_RC_EOF
+    ,   cstring_vector_readLines(f, &csv, &numLinesRead)
+    ));
+    XTESTS_TEST_INTEGER_EQUAL(2u, numLinesRead);
+    XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(2u, csv.len));
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", csv.ptr[0].ptr);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", csv.ptr[1].ptr);
+
+    cstring_vector_destroy(&csv);
+    ::fclose(f);
 }
 
 static void test_1_5()

@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 6th September 2026
+ * Updated: 24th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -101,6 +101,11 @@ typedef struct cstring_vector_t                             cstring_vector_t;
  */
 #define cstring_vector_DEFAULT_CAPACITY                     (~(size_t)(0))
 
+/** \def CSTRING_VECTOR_READLINES_F_NONE
+ * \brief Default flags for cstring_vector_readLinesEx()
+ */
+#define CSTRING_VECTOR_READLINES_F_NONE                     (0x0000)
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * API functions
@@ -113,6 +118,7 @@ typedef struct cstring_vector_t                             cstring_vector_t;
  *
  * \pre (NULL != pcsv)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_init(
     cstring_vector_t*   pcsv
@@ -131,6 +137,7 @@ cstring_vector_init(
  *
  * \pre (NULL != pcsv)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_destroy(
     cstring_vector_t* pcsv
@@ -151,6 +158,7 @@ cstring_vector_destroy(
  *
  * \pre (NULL != pcsv)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_truncate(
     cstring_vector_t*   pcsv
@@ -161,6 +169,7 @@ cstring_vector_truncate(
  *
  * \pre (NULL != pcsv)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_create(
     cstring_vector_t*   pcsv
@@ -182,6 +191,7 @@ cstring_vector_create(
  * \pre (NULL != pcsv)
  * \pre (position <= pcsv->len)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_insertAt(
     cstring_vector_t*   pcsv
@@ -194,14 +204,35 @@ cstring_vector_insertAt(
 
 #define cstring_vector_prepend(pscv, strings, numStrings)   cstring_vector_insertAt((pscv), 0, (strings), (numStrings))
 
-/**
+/** \brief Reads lines from a text stream into a cstring-vector instance
  *
  *
  * \pre (NULL != pcsv)
  */
+CSTRING_EXTERN_C
 CSTRING_RC
 cstring_vector_readLines(
     FILE*               stm
+,   cstring_vector_t*   pcsv
+,   size_t*             numLinesRead /* = NULL */
+);
+
+/** \brief Reads lines from a text stream into a cstring-vector instance
+ *
+ * \param stm The stream from which the lines will be read;
+ * \param pcsv The cstring-vector instance into which the lines will be
+ *   stored;
+ * \param flags Flags controlling the reading behaviour;
+ * \param numLinesRead An optional pointer to a variable to receive the
+ *   number of lines read. May be NULL;
+ *
+ * \pre (NULL != pcsv)
+ */
+CSTRING_EXTERN_C
+CSTRING_RC
+cstring_vector_readLinesEx(
+    FILE*               stm
+,   cstring_flags_t     flags
 ,   cstring_vector_t*   pcsv
 ,   size_t*             numLinesRead /* = NULL */
 );
