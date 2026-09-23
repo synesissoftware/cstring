@@ -17,10 +17,6 @@
  * includes
  */
 
-#if defined(_MSC_VER)
-# define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stlsoft/conversion/number/grouping_functions.hpp>
 #include <stlsoft/diagnostics/std_chrono_hrc_stopwatch.hpp>
 #include <stlsoft/stlsoft.h>
