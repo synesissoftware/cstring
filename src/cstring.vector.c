@@ -301,7 +301,8 @@ cstring_vector_insertAt(
 
         if (newSize > pcsv->capacity)
         {
-            cstring_t* newPtr = realloc(pcsv->ptr, sizeof(cstring_t) * newSize);
+            size_t const    newCapacity =   (newSize * 3) / 2;
+            cstring_t*      newPtr      =   realloc(pcsv->ptr, sizeof(cstring_t) * newCapacity);
 
             if (NULL == newPtr)
             {
@@ -310,7 +311,7 @@ cstring_vector_insertAt(
             else
             {
                 pcsv->ptr       =   newPtr;
-                pcsv->capacity  =   newSize;
+                pcsv->capacity  =   newCapacity;
             }
         }
 
