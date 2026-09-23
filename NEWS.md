@@ -4,7 +4,7 @@
 | Date                | News Item                        | Details |
 | ------------------- | -------------------------------- | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
-| 22nd September 2026 | Release of [cstring 4.0.16](https://github.com/synesissoftware/cstring/releases/tag/4.0.16) | drop-in templates, `PREFIX_VER`, **versions**               |
+| 23rd September 2026 | Release of [cstring 4.0.16](https://github.com/synesissoftware/cstring/releases/tag/4.0.16) | Phase 4b helpers, native `.cmd`, CI dogfood |
 | 6th September 2026  | Release of [cstring 4.0.15](https://github.com/synesissoftware/cstring/releases/tag/4.0.15) | Doxygen `\param`/`\retval` 76-rule |
 | 9th August 2026     | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) | self-assignment safety |
 | 7th August 2026     | Release of [cstring 4.0.14-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.0.14-alpha1) | |

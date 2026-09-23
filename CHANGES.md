@@ -1,10 +1,18 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.0.16 - 22nd September 2026
+## 4.0.16 - 23rd September 2026
 
 * Applied **misc-dev-scripts** **0.6.0** editor/Git/`.sis` drop-in templates on **boilerplate**;
 * Restored historical **.gitignore** patterns as a sorted union with **misc-dev-scripts** gold section layout;
+* Use computed `CSTRING_VER` with documented `CSTRING_VER_PATCH` / `CSTRING_VER_ALPHABETA` in **cstring.h**;
+* Added **test.scratch.versions** (canonical scratch versions reporter; formerly **libver**);
+* Modernised CMake helpers to the Phase 4b dialect (`SisClr_*` / `-A`, `sis_cmake_build`, no MinGW-from-`MSYSTEM`);
+* Native Windows **`run_all_*.cmd`** runners (no Bash wrap); aggregate **`run_all_automated_tests.*`**;
+* **`SIS_EXAMPLE_SMOKE`** gates the interactive **example.c.cstring_vector** no-arg demo in CI;
+* CI dogfoods **`prepare_cmake.sh`** / **`build_cmake.sh`** / **`ctest_cmake.sh`** / helper smoke and Windows **`.cmd`**;
+* Collapsed cell suites into one post-build **Tests** job (sequential helpers);
+* **`ctest_cmake.sh`** passes **`ctest -C`** on multi-config generators;
 
 
 ## 4.0.15 - 6th September 2026
