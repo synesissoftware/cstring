@@ -324,6 +324,79 @@ static void test_1_06(void)
 
 static void test_1_07(void)
 {
+    cstring_vector_t    csv = cstring_vector_t_DEFAULT;
+    CSTRING_RC          rc = cstring_vector_create(&csv, 0);
+    cstring_t           cs = cstring_t_DEFAULT;
+    cstring_t           pair[2];
+
+    pair[0] = cs;
+    pair[1] = cs;
+
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_createLen(&cs, "a", 1);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_vector_append(&csv, &cs, 1);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_assign(&cs, "c");
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_vector_append(&csv, &cs, 1);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_assign(&cs, "b");
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_vector_insertAt(&csv, 1, &cs, 1);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_assign(&cs, "z");
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_vector_prepend(&csv, &cs, 1);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_createLen(&pair[0], "m1", 2);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_createLen(&pair[1], "m2", 2);
+    }
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        rc = cstring_vector_insertAt(&csv, 2, pair, 2);
+    }
+
+    if (CSTRING_RC_SUCCESS == rc)
+    {
+        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(6, csv.len));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("z", csv.ptr[0].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("a", csv.ptr[1].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("m1", csv.ptr[2].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("m2", csv.ptr[3].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("b", csv.ptr[4].ptr);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("c", csv.ptr[5].ptr);
+    }
+    else
+    if (CSTRING_RC_OUTOFMEMORY != rc)
+    {
+        XTESTS_TEST_FAIL("insertAt shift failed");
+    }
+
+    cstring_destroy(&pair[0]);
+    cstring_destroy(&pair[1]);
+    cstring_destroy(&cs);
+    cstring_vector_destroy(&csv);
 }
 
 static void test_1_08(void)
