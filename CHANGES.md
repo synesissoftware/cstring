@@ -1,7 +1,7 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.0.16 - 23rd September 2026
+## 4.0.16 - 27th September 2026
 
 * Applied **misc-dev-scripts** **0.6.0** editor/Git/`.sis` drop-in templates on **boilerplate**;
 * Restored historical **.gitignore** patterns as a sorted union with **misc-dev-scripts** gold section layout;
