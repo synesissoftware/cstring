@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - boilerplate
-      - dev
-      - idiomatic
       - master
+      - dev
+      - boilerplate
+      - idiomatic
       - rc1
       - rc2
       - rc3
