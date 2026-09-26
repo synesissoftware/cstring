@@ -144,7 +144,7 @@ while [[ $# -gt 0 ]]; do
 
       [ -f "$Dir/.sis/script_info_lines.txt" ] && cat "$Dir/.sis/script_info_lines.txt"
       cat << EOF
-Runs all (matching) scratch-test programs
+Runs all (matching) performance-test programs
 
 ${ScriptPath} [ ... flags/options ... ]
 
@@ -200,7 +200,7 @@ if [ $RunMake -ne 0 ]; then
   if [ $ListOnly -eq 0 ]; then
 
     echo
-    echo "Executing build of ${ProjectNameClr} (via cmake --build) and then running all scratch-test programs"
+    echo "Executing build of ${ProjectNameClr} (via cmake --build) and then running all performance-test programs"
 
     mkdir -p "$CMakeDir" || exit 1
 
@@ -229,11 +229,11 @@ if [ $status -eq 0 ]; then
   if [ $ListOnly -ne 0 ]; then
 
     echo
-    echo "Listing all ${ProjectNameClr} scratch-test programs"
+    echo "Listing all ${ProjectNameClr} performance-test programs"
   else
 
     echo
-    echo "Running all ${ProjectNameClr} scratch-test programs"
+    echo "Running all ${ProjectNameClr} performance-test programs"
   fi
 
   NumPrograms=0
@@ -278,11 +278,11 @@ if [ $status -eq 0 ]; then
 
       break 1
     fi
-  done < <(find "$CMakeDir" -type f \( -name 'test_scratch*' -o -name 'test.scratch.*' \) \( -perm -100 -o -name '*.exe' \) -print0 2>/dev/null | sort -z)
+  done < <(find "$CMakeDir" -type f \( -name 'test_performance*' -o -name 'test.performance.*' \) \( -perm -100 -o -name '*.exe' \) -print0 2>/dev/null | sort -z)
 
   if [ $NumPrograms -eq 0 ]; then
 
-    echo "${ScriptPathClr}: found no scratch-test programs under '${CMakeDirClr}' (none found)"
+    echo "${ScriptPathClr}: found no performance-test programs under '${CMakeDirClr}' (none found)"
 
     exit 0
   fi

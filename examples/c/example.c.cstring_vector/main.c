@@ -5,7 +5,7 @@
  *          them.
  *
  * Created: ...
- * Updated: 2nd August 2026
+ * Updated: 23rd September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -18,6 +18,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+static
+int is_example_smoke_detected_(void)
+{
+    char const* const ev = getenv("SIS_EXAMPLE_SMOKE");
+
+    return NULL != ev;
+}
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * main()
@@ -39,9 +53,44 @@ int main(int argc, char* argv[])
     {
     case 1:
 
-        fprintf(stderr, "%s: input source not specified; use --help for usage\n", arg0);
+        if (!is_example_smoke_detected_())
+        {
+            fprintf(stderr, "%s: input source not specified; use --help for usage\n", arg0);
 
-        return EXIT_FAILURE;
+            return EXIT_FAILURE;
+        }
+        else
+        {
+            /* No-arg smoke / demo path for run_all_examples.sh and similar. */
+
+            stream = tmpfile();
+
+            if (NULL == stream)
+            {
+                int const e = errno;
+
+                fprintf(stderr, "%s: could not create temporary demo input: %s\n", arg0, strerror(e));
+
+                return EXIT_FAILURE;
+            }
+
+            if (EOF == fputs("beta\nalpha\ngamma\n", stream))
+            {
+                int const e = errno;
+
+                fprintf(stderr, "%s: could not write temporary demo input: %s\n", arg0, strerror(e));
+
+                fclose(stream);
+
+                return EXIT_FAILURE;
+            }
+
+            rewind(stream);
+
+            input_path = "(built-in demo)";
+        }
+
+        break;
     case 2:
 
         if (0 == strcmp("--help", argv[1]))
@@ -50,6 +99,10 @@ int main(int argc, char* argv[])
                 stdout
             ,   "USAGE: %s { <input-path> | -- | --help }\n"
             ,   arg0
+            );
+            fprintf(
+                stdout
+            ,   "  With SIS_EXAMPLE_SMOKE set, no arguments runs a small built-in demo.\n"
             );
 
             return EXIT_SUCCESS;
@@ -232,6 +285,7 @@ int run_(
         return EXIT_SUCCESS;
     }
 }
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

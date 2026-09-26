@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - boilerplate
-      - dev
-      - idiomatic
       - master
+      - dev
+      - boilerplate
+      - idiomatic
       - rc1
       - rc2
       - rc3
@@ -46,10 +46,13 @@ jobs:
             os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+          # `toolchain` carries what is not a compiler: MinGW needs its own
+          # generator and PATH, but the compilers it drives are gcc and g++
           - id: windows-mingw
             os: windows-latest
-            c_compiler: mingw
+            c_compiler: gcc
             cpp_compiler: g++
+            toolchain: mingw
     uses: ./.github/workflows/ci-cell.yml
     with:
       cell-id: ${{ matrix.id }}
@@ -57,10 +60,11 @@ jobs:
       c-compiler: ${{ matrix.c_compiler }}
       cpp-compiler: ${{ matrix.cpp_compiler }}
       build-type: Release
+      toolchain: ${{ matrix.toolchain }}
     secrets: inherit
 
   install-smoke:
-    name: Install smoke (${{ matrix.os }}, ${{ matrix.c_compiler }})
+    name: Install smoke (${{ matrix.os }}, ${{ matrix.toolchain || matrix.c_compiler }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -79,8 +83,9 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
           - os: windows-latest
-            c_compiler: mingw
+            c_compiler: gcc
             cpp_compiler: g++
+            toolchain: mingw
 
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +95,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang
 
       - name: Setup MSYS2 MinGW
-        if: runner.os == 'Windows' && matrix.c_compiler == 'mingw'
+        if: runner.os == 'Windows' && matrix.toolchain == 'mingw'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -99,6 +104,30 @@ jobs:
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
+
+      - name: Helper scripts prepare-clean-build-remove-reprepare-build
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Exercise prepare/clean/build/remove helpers on a dedicated tree
+          # (does not replace the install-smoke configure/build below).
+          export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build-helper-smoke"
+          PREPARE_ARGS=(-E -T)
+          if [ "${{ matrix.toolchain }}" = "mingw" ]; then
+            export PATH="/mingw64/bin:$PATH"
+            PREPARE_ARGS+=(--mingw)
+          elif [ "${{ matrix.c_compiler }}" != "cl" ]; then
+            export CC="${{ matrix.c_compiler }}"
+            export CXX="${{ matrix.cpp_compiler }}"
+          fi
+          ./prepare_cmake.sh "${PREPARE_ARGS[@]}"
+          ./clean_cmake.sh
+          ./build_cmake.sh
+          ./clean_cmake.sh
+          ./build_cmake.sh
+          ./remove_cmake_artefacts.sh
+          ./prepare_cmake.sh "${PREPARE_ARGS[@]}"
+          ./build_cmake.sh
 
       - name: Configure
         shell: bash
@@ -109,7 +138,7 @@ jobs:
               -DCMAKE_DISABLE_FIND_PACKAGE_MFC=TRUE \
               -DBUILD_EXAMPLES=OFF \
               -DBUILD_TESTING=OFF
-          elif [ "${{ matrix.c_compiler }}" = "mingw" ]; then
+          elif [ "${{ matrix.toolchain }}" = "mingw" ]; then
             export PATH="/mingw64/bin:$PATH"
             cmake -B build -G "MinGW Makefiles" \
               -DCMAKE_BUILD_TYPE="${{ env.BUILD_TYPE }}" \
@@ -132,7 +161,7 @@ jobs:
           set -euo pipefail
           if [ "${{ matrix.c_compiler }}" = "cl" ]; then
             cmake --build build --config "${{ env.BUILD_TYPE }}" --parallel
-          elif [ "${{ matrix.c_compiler }}" = "mingw" ]; then
+          elif [ "${{ matrix.toolchain }}" = "mingw" ]; then
             export PATH="/mingw64/bin:$PATH"
             cmake --build build --parallel 2
           else
@@ -180,7 +209,7 @@ jobs:
               -DCMAKE_PREFIX_PATH="${INSTALL_PREFIX};${{ env.SIS_DEPS }}"
             cmake --build consumer-build --config "${{ env.BUILD_TYPE }}" --parallel
             consumer-build/${{ env.BUILD_TYPE }}/consumer.exe
-          elif [ "${{ matrix.c_compiler }}" = "mingw" ]; then
+          elif [ "${{ matrix.toolchain }}" = "mingw" ]; then
             export PATH="/mingw64/bin:$PATH"
             cmake -S "$CONSUMER" -B consumer-build -G "MinGW Makefiles" \
               -DCMAKE_BUILD_TYPE="${{ env.BUILD_TYPE }}" \
@@ -204,64 +233,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies (STLSoft + shwild + xTests)
-        shell: bash
-        run: |
-          set -euo pipefail
+      - name: Install test dependencies (STLSoft + shwild + xTests)
+        uses: ./.github/actions/install-sis-deps
+        with:
+          build-type: ${{ env.BUILD_TYPE }}
+          c-compiler: gcc
+          cpp-compiler: g++
+          dependencies: STLSoft shwild xTests
 
-          DEPS="${RUNNER_TEMP}/sis-deps"
-          STLSRC="${RUNNER_TEMP}/stlsoft-src"
-          STLBUILD="${RUNNER_TEMP}/stlsoft-build"
-          SHWSRC="${RUNNER_TEMP}/shwild-src"
-          SHWBUILD="${RUNNER_TEMP}/shwild-build"
-          XTSRC="${RUNNER_TEMP}/xtests-src"
-          XTBUILD="${RUNNER_TEMP}/xtests-build"
-
-          mkdir -p "$DEPS"
-
-          git clone --depth 1 https://github.com/synesissoftware/STLSoft "$STLSRC"
-          cmake -S "$STLSRC" -B "$STLBUILD" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX="$DEPS" \
-            -DBUILD_EXAMPLES=OFF \
-            -DBUILD_TESTING=OFF
-          cmake --build "$STLBUILD" --parallel
-          cmake --install "$STLBUILD"
-
-          git clone --depth 1 https://github.com/synesissoftware/shwild "$SHWSRC"
-          cmake -S "$SHWSRC" -B "$SHWBUILD" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX="$DEPS" \
-            -DCMAKE_PREFIX_PATH="$DEPS" \
-            -DBUILD_EXAMPLES=OFF \
-            -DBUILD_TESTING=OFF
-          cmake --build "$SHWBUILD" --parallel
-          cmake --install "$SHWBUILD"
-
-          git clone --depth 1 https://github.com/synesissoftware/xTests "$XTSRC"
-          cmake -S "$XTSRC" -B "$XTBUILD" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX="$DEPS" \
-            -DCMAKE_PREFIX_PATH="$DEPS" \
-            -DBUILD_EXAMPLES=OFF \
-            -DBUILD_TESTING=OFF
-          cmake --build "$XTBUILD" --parallel
-          cmake --install "$XTBUILD"
-
-          echo "SIS_DEPS=$DEPS" >> "$GITHUB_ENV"
-
-      - name: Configure and build via prepare_cmake.sh --no-cpp
+      - name: Configure via prepare_cmake.sh --no-cpp
         shell: bash
         run: |
           set -euo pipefail
           # Prefer CMAKE_PREFIX_PATH (find_package) over prepare_cmake -s /
-          # -DSTLSOFT: xTests::core links STLSoft::STLSoft, which only exists
-          # when the STLSoft CMake package is imported.
+          # -DSTLSOFT: xTests::core links STLSoft::STLSoft, which only
+          # exists when the STLSoft CMake package is imported.
           export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
-          ./prepare_cmake.sh --no-cpp -m
+          ./prepare_cmake.sh --no-cpp
 
-      - name: Run unit tests
+      - name: Build via build_cmake.sh
         shell: bash
         run: |
           set -euo pipefail
-          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_unit_tests.sh -M --unit-only
+          export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+          ./build_cmake.sh
+
+      - name: Run automated tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_automated_tests.sh -M
