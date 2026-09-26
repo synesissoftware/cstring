@@ -99,6 +99,7 @@
  */
 
 #if defined(__BORLANDC__)
+
 char* strncpy_safe(char* dest, char const* src, size_t len)
 {
     if (0 != len)
@@ -113,6 +114,7 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
 
 #if defined(UNIX) || \
     defined(unix)
+
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
 # define index index_disambiguated_1
 #endif
