@@ -56,24 +56,9 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 14
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     86
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     87
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-/** \def CSTRING_VER_MAJOR
- * The major version number of cstring
- */
-
-/** \def CSTRING_VER_MINOR
- * The minor version number of cstring
- */
-
-/** \def CSTRING_VER_REVISION
- * The revision version number of cstring
- */
-
-/** \def CSTRING_VER
- * The current composite version number of cstring
- */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_1_0_1      0x01000100
@@ -376,7 +361,7 @@ typedef struct cstring_t                                    cstring_t;
 CSTRING_EXTERN_C
 char const*
 cstring_getStatusCodeString(
-    CSTRING_RC  rc
+    CSTRING_RC              rc
 );
 
 /** \brief Returns the length of the string returned by
@@ -391,7 +376,7 @@ cstring_getStatusCodeString(
 CSTRING_EXTERN_C
 size_t
 cstring_getStatusCodeStringLength(
-    CSTRING_RC  rc
+    CSTRING_RC              rc
 );
 
 /** \brief [DEPRECATED] This function is deprecated, and may be removed in a
@@ -410,7 +395,7 @@ __declspec(deprecated("cstring_error() is deprecated, and may be removed in a fu
 CSTRING_EXTERN_C
 char const*
 cstring_error(
-    CSTRING_RC  rc
+    CSTRING_RC              rc
 );
 
 /** \brief Initialises a cstring instance to a default form
@@ -856,9 +841,9 @@ cstring_swap(
 CSTRING_EXTERN_C
 CSTRING_RC
 cstring_readline(
-    FILE*               stm
-,   struct cstring_t*   pcs
-,   size_t*             numRead /* = NULL */
+    FILE*                   stm
+,   struct cstring_t*       pcs
+,   size_t*                 numRead /* = NULL */
 );
 
 /** Writes a line of text to the given text stream
