@@ -1495,13 +1495,13 @@ cstring_readline(
         numRead = &numRead_;
     }
 
+    *numRead = 0u;
+
     if (NULL == stm ||
         0 != ferror(stm))
     {
         return CSTRING_RC_INVALIDSTREAM;
     }
-
-    *numRead = 0u;
 
     cstring_truncate(pcs, 0);
 
