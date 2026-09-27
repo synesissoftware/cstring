@@ -22,6 +22,7 @@
 
 /* xTests header files */
 #include <xtests/xtests.h>
+#include <xtests/terse-api.h>
 
 /* STLSoft header files */
 #include <platformstl/exception/platformstl_exception.hpp>
@@ -159,18 +160,18 @@ static void TEST_cstring_readline_CALLABILITY()
 {
     false && cstring_readline(stdout, NULL, NULL);
 
-    XTESTS_TEST_PASSED();
+    TEST_PASSED();
 }
 
 static void TEST_cstring_readline_INVALID_STREAM()
 {
     cstring_t   cs = cstring_t_DEFAULT;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, NULL));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, NULL));
 
     size_t      n;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
 }
 
 static void TEST_cstring_readline_SHORT_MULTILINE()
@@ -208,45 +209,45 @@ static void TEST_cstring_readline_SHORT_MULTILINE()
 
         rc = cstring_readline(f, &strings[0], &lengths[0]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(0u, lengths[0]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", strings[0]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(0u, lengths[0]);
+        TEST_MS_EQ("", strings[0]);
 
         rc = cstring_readline(f, &strings[1], &lengths[1]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(3u, lengths[1]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abc", strings[1]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(3u, lengths[1]);
+        TEST_MS_EQ("abc", strings[1]);
 
         rc = cstring_readline(f, &strings[2], &lengths[2]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(6u, lengths[2]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdef", strings[2]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(6u, lengths[2]);
+        TEST_MS_EQ("abcdef", strings[2]);
 
         rc = cstring_readline(f, &strings[3], &lengths[3]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(12u, lengths[3]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijkl", strings[3]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(12u, lengths[3]);
+        TEST_MS_EQ("abcdefghijkl", strings[3]);
 
         rc = cstring_readline(f, &strings[4], &lengths[4]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(26u, lengths[4]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijklmnopqrstuvwxyz", strings[4]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(26u, lengths[4]);
+        TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz", strings[4]);
 
         rc = cstring_readline(f, &strings[5], &lengths[5]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(62u, lengths[5]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", strings[5]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(62u, lengths[5]);
+        TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", strings[5]);
 
         rc = cstring_readline(f, &strings[6], &lengths[6]);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-        XTESTS_TEST_INTEGER_EQUAL(3u, lengths[6]);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("xyz", strings[6]);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(3u, lengths[6]);
+        TEST_MS_EQ("xyz", strings[6]);
     }
 }
 

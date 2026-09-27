@@ -22,6 +22,7 @@
 
 /* xTests header files */
 #include <xtests/xtests.h>
+#include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
 /* STLSoft header files */
@@ -132,7 +133,7 @@ static void TEST_cstring_writeline_CALLABILITY()
 {
     false && cstring_writeline(stdout, NULL, NULL);
 
-    XTESTS_TEST_PASSED();
+    TEST_PASSED();
 }
 
 static void TEST_cstring_writeline_INVALID_STREAM()
@@ -140,14 +141,14 @@ static void TEST_cstring_writeline_INVALID_STREAM()
 #if 0
     cstring_t   cs = cstring_t_DEFAULT;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_writeline(NULL, &cs, NULL));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_writeline(NULL, &cs, NULL));
 
     size_t      n;
 
-    XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_writeline(NULL, &cs, &n));
+    TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_writeline(NULL, &cs, &n));
 #endif /* 0 */
 
-    XTESTS_TEST_PASSED();
+    TEST_PASSED();
 }
 
 static void TEST_cstring_writeline_MULTIPLE_LINES()
@@ -194,10 +195,10 @@ static void TEST_cstring_writeline_MULTIPLE_LINES()
 
         platformstl::file_lines out_lines(tf_out);
 
-        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(6u, out_lines.size()));
+        REQUIRE(TEST_INT_EQ(6u, out_lines.size()));
         { for (size_t i = 0; STLSOFT_NUM_ELEMENTS(s_lines) != i; ++i)
         {
-            XTESTS_TEST_MULTIBYTE_STRING_EQUAL(s_lines[i], out_lines[i]);
+            TEST_MS_EQ(s_lines[i], out_lines[i]);
         }}
     }
 }
@@ -246,7 +247,7 @@ static void TEST_cstring_write_CONCATENATED()
 
         platformstl::file_lines out_lines(tf_out);
 
-        XTESTS_REQUIRE(XTESTS_TEST_INTEGER_EQUAL(1u, out_lines.size()));
+        REQUIRE(TEST_INT_EQ(1u, out_lines.size()));
 
         std::string expected;
 
@@ -255,7 +256,7 @@ static void TEST_cstring_write_CONCATENATED()
             expected.append(s_lines[i]);
         }}
 
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL(expected, out_lines[0]);
+        TEST_MS_EQ(expected, out_lines[0]);
     }
 }
 
