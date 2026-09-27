@@ -329,7 +329,7 @@ typedef struct cstring_t                                    cstring_t;
 
 /* arena */
 
-#define CSTRING_F_ARENA_MASK                                (0xff00)
+#define CSTRING_F_ARENA_MASK                                (0x3700)
 #define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
 #if 0
 #elif 0 ||\
@@ -345,8 +345,8 @@ typedef struct cstring_t                                    cstring_t;
 #endif /* CSTRING_USE_SYNESIS_APIS */
 #define CSTRING_F_USE_CUSTOMARENAFUNCTIONS                  (0x2000)    /*!< Uses an externally supplied allocator function for all memory (de-)allocation (NOT CURRENTLY SUPPORTED) */
 
-#define CSTRING_F_CUSTOMARENA_CC_CDECL                      (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
-#define CSTRING_F_CUSTOMARENA_CC_STDCALL                    (0x4000)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+#define _CSTRING_F_CUSTOMARENA_CC_CDECL_unused              (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+#define _CSTRING_F_CUSTOMARENA_CC_STDCALL_unused            (0x0000)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
 
 /* I/O */
 #define CSTRING_F_IO_MASK                                   (0x0000)
