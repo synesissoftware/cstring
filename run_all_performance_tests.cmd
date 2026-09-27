@@ -37,6 +37,14 @@ Flags/options: ^
 
 ^
 
+    --gap-groups ^
+
+        sets SIS_PERFTESTS_GROUPGAPS=1 so performance programs emit a ^
+
+        blank line between scenario groups ^
+
+^
+
     standard flags: ^
 
 ^
@@ -47,6 +55,9 @@ Flags/options: ^
 
 
 		EXIT /B 0
+	) ELSE IF /I {--gap-groups}=={%%a} (
+
+		SET SIS_PERFTESTS_GROUPGAPS=1
 	) ELSE (
 
 		ECHO "%SCRIPT_DIRECTORY%: unrecognised argument '%%a'; use --help for usage" 1>&2
