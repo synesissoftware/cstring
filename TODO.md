@@ -18,9 +18,10 @@
 
 ## Performance improvements
 
-* [ ] Performance testing and optimisation:
-  * [ ] Quantify performance;
-  * [ ] Compare with other popular implementations;
+* [x] ~~~Performance testing and optimisation:~~~ - ✅:
+  * [x] ~~~Quantify performance~~~ - ✅;
+  * [x] ~~~Compare with other popular implementations~~~ - ✅;
+* [ ] Analyse performance results and optimise hot paths;
 
 
 ## Packaging improvements

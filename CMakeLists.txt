@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  6th August 2026
+# Updated:  23rd September 2026
 #
 # ######################################################################## #
 
@@ -119,6 +119,10 @@ option(BUILD_TESTING "Build tests" ON)
 
 option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" OFF)
 
+option(NO_P99 "Do not recognise p99 for performance tests" OFF)
+
+option(NO_SHWILD "Do not recognise shwild for xTests pattern-match assertions" OFF)
+
 
 # ######################################
 # features
@@ -132,6 +136,9 @@ option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" 
 # - xTests - required for testing;
 #
 # optional:
+# - p99 - optional for performance tests: per-iteration percentiles
+#         throughout when found; also gates the filesystem file_lines vs
+#         cstring_vector_readLines suite (unless NO_P99);
 # - shwild - for enhanced match constructs in xTests (unless NO_SHWILD);
 #
 # note: NO_CSTRING_CPP_API skips C++ examples and remaining C++ tests; C
@@ -212,6 +219,29 @@ if(BUILD_TESTING)
 	find_package(xTests ${xTests_REQUIRED_VERSION_} REQUIRED)
 
 	message("-- CMake package xTests found (version ${xTests_VERSION}; ${xTests_REQUIRED_VERSION_} requested)")
+endif(BUILD_TESTING)
+
+
+# ############################
+# p99 (optional; performance tests)
+
+if(BUILD_TESTING)
+
+	if(NOT (NO_P99))
+
+		find_package(p99 QUIET)
+
+		if(p99_FOUND)
+
+			message("-- CMake package p99 found (version ${p99_VERSION})")
+		else()
+
+			message("-- CMake package p99 not found; performance percentiles and file_lines suite disabled")
+		endif()
+	else()
+
+		message("-- p99 recognition disabled (NO_P99); performance percentiles and file_lines suite disabled")
+	endif()
 endif(BUILD_TESTING)
 
 
