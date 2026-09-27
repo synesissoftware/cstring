@@ -291,17 +291,18 @@ alloc_retry:
     {
         case    CSTRING_F_USE_REALLOC:
 
-#if defined(_MSC_VER) && \
-    defined(_DEBUG)
+            /* realloc(pv, 0) allocates on some platforms; free the block,
+             * and do nothing when pv is NULL.
+             */
             if (0 == cb)
             {
                 free(pv);
                 return NULL;
             }
-#endif /* _DEBUG */
+
             pvNew = realloc(pv, cb);
             break;
-#ifdef CSTRING_USE_WINAPI_
+#if defined(CSTRING_USE_WINAPI_)
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
