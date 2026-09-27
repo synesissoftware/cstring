@@ -26,12 +26,18 @@
 
 /* STLSoft header files */
 #include <platformstl/exception/platformstl_exception.hpp>
-#include <platformstl/filesystem/file_lines.hpp>
 #include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
+/* Standard C++ header files */
+#include <string>
+#include <vector>
+
 /* Standard C header files */
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
@@ -53,14 +59,15 @@ namespace
 
     int setup(void*);
     int teardown(void*);
-
 } // anonymous namespace
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
 const char TEST_FILE_NAME[] = "test.component.cstring_readline.txt";
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -72,6 +79,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_readline.txt";
 # endif /* compiler */
 # pragma warning(disable : 4702)
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * main
@@ -105,6 +113,7 @@ int main(int argc, char* argv[])
     return retCode;
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -115,8 +124,9 @@ int main(int argc, char* argv[])
 # endif /* compiler */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
- * test function implementations
+ * helper functions
  */
 
 namespace
@@ -140,6 +150,28 @@ namespace
         return f;
     }
 
+    static void write_bytes(char const* fileName, void const* bytes, size_t cb)
+    {
+        FILE* f = fopen_or_throw(fileName, "wb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        if (cb != ::fwrite(bytes, 1, cb, f))
+        {
+            throw platformstl::platform_exception("Could not write test file", platformstl::system_traits<char>::get_last_error());
+        }
+    }
+
+    static void write_string_bytes(char const* fileName, std::string const& bytes)
+    {
+        write_bytes(fileName, bytes.data(), bytes.size());
+    }
+
+    static std::string make_filled(size_t n, char ch)
+    {
+        return std::string(n, ch);
+    }
+
     int setup(void*)
     {
         return 0;
@@ -153,8 +185,15 @@ namespace
 
         return 0;
     }
+} // anonymous namespace
 
 
+/* /////////////////////////////////////////////////////////////////////////
+ * test function implementations
+ */
+
+namespace
+{
 
 static void TEST_cstring_readline_CALLABILITY()
 {
@@ -248,40 +287,299 @@ static void TEST_cstring_readline_SHORT_MULTILINE()
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
         TEST_INT_EQ(3u, lengths[6]);
         TEST_MS_EQ("xyz", strings[6]);
+
+        { for (size_t i = 0; i != 7; ++i)
+        {
+            cstring_destroy(&strings[i]);
+        }}
     }
 }
 
 static void TEST_cstring_readline_EMPTY_FILE()
 {
+    /* empty file → first read is EOF with empty payload */
+    write_bytes(TEST_FILE_NAME, "", 0);
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      n = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &n);
+
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+    XTESTS_TEST_INTEGER_EQUAL(0u, n);
+    XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", cs);
+
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
 {
+    /* CRLF, mixed EOL, and lone CR mid-line (binary I/O so CR is visible) */
+    {
+        std::string bytes;
+
+        bytes.append("one\r\n");
+        bytes.append("two\n");
+        bytes.append("three\r\n");
+        bytes.append("has\rembed\r\n");
+        bytes.append("end");
+
+        write_string_bytes(TEST_FILE_NAME, bytes);
+    }
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      n;
+    CSTRING_RC  rc;
+
+    rc = cstring_readline(f, &cs, &n);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    /* CRLF: CR is appended then stripped; numRead still counts the CR */
+    XTESTS_TEST_INTEGER_EQUAL(4u, n);
+    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", cs);
+
+    rc = cstring_readline(f, &cs, &n);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    XTESTS_TEST_INTEGER_EQUAL(3u, n);
+    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", cs);
+
+    rc = cstring_readline(f, &cs, &n);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    XTESTS_TEST_INTEGER_EQUAL(6u, n);
+    XTESTS_TEST_INTEGER_EQUAL(5u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", cs);
+
+    rc = cstring_readline(f, &cs, &n);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    XTESTS_TEST_INTEGER_EQUAL(10u, n);
+    XTESTS_TEST_INTEGER_EQUAL(9u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("has\rembed", cs);
+
+    rc = cstring_readline(f, &cs, &n);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+    XTESTS_TEST_INTEGER_EQUAL(3u, n);
+    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("end", cs);
+
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 {
+    /* final line with EOL vs without EOL */
+    {
+        write_string_bytes(TEST_FILE_NAME, std::string("alpha\nbeta\n"));
+
+        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs = cstring_t_DEFAULT;
+        size_t      n;
+        CSTRING_RC  rc;
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("alpha", cs);
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("beta", cs);
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+        XTESTS_TEST_INTEGER_EQUAL(0u, n);
+        XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
+
+        cstring_destroy(&cs);
+    }
+
+    {
+        write_string_bytes(TEST_FILE_NAME, std::string("alpha\nbeta"));
+
+        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs = cstring_t_DEFAULT;
+        size_t      n;
+        CSTRING_RC  rc;
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("alpha", cs);
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+        XTESTS_TEST_INTEGER_EQUAL(4u, n);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("beta", cs);
+
+        cstring_destroy(&cs);
+    }
 }
 
 static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
 {
+    /* consecutive empty lines */
+    write_string_bytes(TEST_FILE_NAME, std::string("\n\n\n"));
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      n;
+    CSTRING_RC  rc;
+
+    { for (int i = 0; i != 3; ++i)
+    {
+        rc = cstring_readline(f, &cs, &n);
+
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_INTEGER_EQUAL(0u, n);
+        XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", cs);
+    }}
+
+    rc = cstring_readline(f, &cs, &n);
+
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+    XTESTS_TEST_INTEGER_EQUAL(0u, n);
+
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_LONG_LINES()
 {
+    /* long lines at several lengths */
+    static size_t const lengths[] = {
+        1024u,
+        4096u,
+        16384u,
+        65536u,
+    };
+
+    { for (size_t i = 0; i != sizeof(lengths) / sizeof(lengths[0]); ++i)
+    {
+        size_t const    len = lengths[i];
+        std::string     line = make_filled(len, static_cast<char>('A' + static_cast<int>(i % 26)));
+        std::string     bytes = line;
+
+        bytes.push_back('\n');
+        bytes.append(make_filled(len / 2u == 0 ? 1u : len / 2u, 'z'));
+
+        write_string_bytes(TEST_FILE_NAME, bytes);
+
+        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs = cstring_t_DEFAULT;
+        size_t      n;
+        CSTRING_RC  rc;
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_INTEGER_EQUAL(len, n);
+        XTESTS_TEST_INTEGER_EQUAL(len, cs.len);
+        XTESTS_REQUIRE(XTESTS_TEST_MULTIBYTE_STRING_EQUAL(line.c_str(), cs));
+
+        rc = cstring_readline(f, &cs, &n);
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+        XTESTS_TEST_INTEGER_EQUAL(len / 2u == 0 ? 1u : len / 2u, n);
+
+        cstring_destroy(&cs);
+    }}
 }
 
 static void TEST_cstring_readline_MANY_SHORT_LINES()
 {
+    /* many short lines */
+    size_t const        num_lines = 1000u;
+    std::string         bytes;
+    std::vector<std::string> expected;
+
+    expected.reserve(num_lines);
+
+    { for (size_t i = 0; i != num_lines; ++i)
+    {
+        char buf[32];
+
+        snprintf(buf, sizeof(buf), "line-%04u", static_cast<unsigned>(i));
+
+        expected.push_back(buf);
+        bytes.append(buf);
+        bytes.push_back('\n');
+    }}
+
+    write_string_bytes(TEST_FILE_NAME, bytes);
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      n;
+    CSTRING_RC  rc;
+
+    { for (size_t i = 0; i != num_lines; ++i)
+    {
+        rc = cstring_readline(f, &cs, &n);
+
+        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_TEST_INTEGER_EQUAL(expected[i].size(), n);
+        XTESTS_TEST_MULTIBYTE_STRING_EQUAL(expected[i].c_str(), cs);
+    }}
+
+    rc = cstring_readline(f, &cs, &n);
+
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+    XTESTS_TEST_INTEGER_EQUAL(0u, n);
+
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE()
 {
+    /* reuse one cstring_t after a long line then a short line; numRead may be NULL */
+    std::string const long_line = make_filled(8192u, 'L');
+    std::string       bytes = long_line;
+
+    bytes.push_back('\n');
+    bytes.append("short");
+
+    write_string_bytes(TEST_FILE_NAME, bytes);
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    CSTRING_RC  rc;
+
+    rc = cstring_readline(f, &cs, NULL);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    XTESTS_TEST_INTEGER_EQUAL(8192u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL(long_line.c_str(), cs);
+
+    rc = cstring_readline(f, &cs, NULL);
+    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
+    XTESTS_TEST_INTEGER_EQUAL(5u, cs.len);
+    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("short", cs);
+
+    cstring_destroy(&cs);
 }
-
-
-
 } // anonymous namespace
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

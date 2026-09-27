@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    cstring/vector.h
+ * File:    cstring/cstring.vector.h
  *
  * Purpose: Definition of the cstring.vector API.
  *
