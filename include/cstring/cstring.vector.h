@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    cstring/vector.h
+ * File:    cstring/cstring.vector.h
  *
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 23rd September 2026
+ * Updated: 27th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
