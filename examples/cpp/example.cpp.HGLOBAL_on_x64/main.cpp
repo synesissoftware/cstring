@@ -26,7 +26,7 @@ int main()
     }}
 
     cstring_t       payload =   cstring_t_DEFAULT;
-    cstring_flags_t flags   =   CSTRING_F_USE_WIN32_GLOBAL_MEMORY;
+    cstring_flags_t flags   =   CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY;
     CSTRING_RC      rc      =   CSTRING_RC_SUCCESS;
 
     rc = ::cstring_createLenFn(&payload, NULL, 0, flags, NULL, cchTotal, NULL, NULL);

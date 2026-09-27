@@ -6,7 +6,7 @@
  *          where available).
  *
  * Created: 7th July 2005
- * Updated: 2nd August 2026
+ * Updated: 27th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -83,11 +83,12 @@ int main(int argc, char *argv[])
 
 #if 0
 #elif defined(WIN32)
+
         printf("\n========================================\n");
-        printf("cstring_createLenEx(CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY):\n");
+        printf("cstring_createLenEx(CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createLenEx(&cs1, "string-#2", 9, CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY, NULL, 0);
+            CSTRING_RC          rc  =   cstring_createLenEx(&cs1, "string-#2", 9, CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -98,10 +99,10 @@ int main(int argc, char *argv[])
         }
 
         printf("\n========================================\n");
-        printf("cstring_createLenFn(CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY):\n");
+        printf("cstring_createLenFn(CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createLenFn(&cs1, "string-#2", 9, CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY, NULL, 0, on_allocFail, NULL);
+            CSTRING_RC          rc  =   cstring_createLenFn(&cs1, "string-#2", 9, CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY, NULL, 0, on_allocFail, NULL);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -114,10 +115,10 @@ int main(int argc, char *argv[])
         }
 
         printf("\n========================================\n");
-        printf("cstring_createLenEx(CSTRING_F_USE_WIN32_COM_TASK_MEMORY):\n");
+        printf("cstring_createLenEx(CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createEx(&cs1, "string-#3", CSTRING_F_USE_WIN32_COM_TASK_MEMORY, NULL, 0);
+            CSTRING_RC          rc  =   cstring_createEx(&cs1, "string-#3", CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
