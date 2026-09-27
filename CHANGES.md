@@ -6,7 +6,7 @@
 * performance optimisations;
 
 
-## 4.0.17 - 28th September 2026
+## 4.0.17 - 27th September 2026
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
 * Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;

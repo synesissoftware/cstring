@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 28th September 2026
+ * Updated: 27th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
