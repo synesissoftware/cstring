@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 14
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     88
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 15
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     89
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -101,6 +101,7 @@
 # define CSTRING_VER_4_0_14     0x04000eff
 # define CSTRING_VER_4_0_15     0x04000fff
 # define CSTRING_VER_4_0_16     0x040010ff
+# define CSTRING_VER_4_0_17     0x040011ff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -121,7 +122,7 @@
 
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   16
+#define CSTRING_VER_PATCH                                   17
 #define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \
@@ -345,7 +346,10 @@ typedef struct cstring_t                                    cstring_t;
 #define CSTRING_F_USE_CUSTOMARENAFUNCTIONS                  (0x2000)    /*!< Uses an externally supplied allocator function for all memory (de-)allocation (NOT CURRENTLY SUPPORTED) */
 
 #define CSTRING_F_CUSTOMARENA_CC_CDECL                      (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
-#define CSTRING_F_CUSTOMARENA_CC_STDCALL                    (0x0040)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+#define CSTRING_F_CUSTOMARENA_CC_STDCALL                    (0x4000)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+
+/* I/O */
+#define CSTRING_F_IO_MASK                                   (0x0000)
 /** @} */
 
 
