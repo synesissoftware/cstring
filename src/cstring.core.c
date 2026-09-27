@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 6th September 2026
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -76,8 +76,7 @@
 
 #define CSTRING_OFFSET_SIZE                                 (16)
 
-#if defined(WIN32) || \
-    defined(WIN64)
+#ifdef _WIN32
 
 # define CSTRING_USE_WINAPI_
 #endif
@@ -264,7 +263,8 @@ cstring_memcpy_safe_(
  * allocation functions
  */
 
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef CSTRING_USE_WINAPI_
+
 static void* win32_global_realloc(void* pv, size_t cb);
 static void* win32_processheap_realloc(void* pv, size_t cb);
 static void* win32_comtask_realloc(void* pv, size_t cb);
@@ -322,7 +322,7 @@ alloc_retry:
 #endif /* _DEBUG */
             pvNew = realloc(pv, cb);
             break;
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef CSTRING_USE_WINAPI_
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -1726,10 +1726,10 @@ cstring_replaceAll(
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * Win32 functions
+ * Windows functions
  */
 
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef CSTRING_USE_WINAPI_
 
 # ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 #  if defined(__MWERKS__)

@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 15
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     89
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     90
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -102,6 +102,7 @@
 # define CSTRING_VER_4_0_15     0x04000fff
 # define CSTRING_VER_4_0_16     0x040010ff
 # define CSTRING_VER_4_0_17     0x040011ff
+# define CSTRING_VER_4_1_0      0x040100ff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -121,8 +122,8 @@
  */
 
 #define CSTRING_VER_MAJOR                                   4
-#define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   17
+#define CSTRING_VER_MINOR                                   1
+#define CSTRING_VER_PATCH                                   0
 #define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \
@@ -331,15 +332,11 @@ typedef struct cstring_t                                    cstring_t;
 
 #define CSTRING_F_ARENA_MASK                                (0x3700)
 #define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
-#if 0
-#elif 0 ||\
-      defined(WIN32) ||\
-      defined(WIN64) ||\
-      0
+#ifdef _WIN32
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)    /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY              (0x0400)    /*!< Uses COM Task Allocator for all memory (de-)allocation (Windows only); arena parameter is ignored. */
-#endif /* WIN32 || WIN64 */
+#endif /* Windows */
 #if defined(CSTRING_USE_SYNESIS_APIS)
 # define CSTRING_F_USE_SYNESIS_HATOR                        (0x1000)    /*!< Assumes that the arena variable is a Synesis Software memory allocator */
 #endif /* CSTRING_USE_SYNESIS_APIS */
