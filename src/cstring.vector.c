@@ -79,25 +79,6 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if 0
-
-#if defined(_MSC_VER)
-# if _MSC_VER >= 1200
-#  pragma warning(push)
-# endif /* _MSC_VER >= 1200 */
-# if _MSC_VER >= 1310
-#  if !defined(__COMO__)
-#   pragma warning(disable : 4055)
-#  endif /* !__COMO__ */
-# endif /* _MSC_VER >= 1310 */
-#endif /* compiler */
-#endif
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
 
@@ -439,17 +420,6 @@ cstring_vector_readLines(
     return rc;
 }
 
-
-/* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if 0
-#if defined(_MSC_VER) && \
-    _MSC_VER >= 1200
-# pragma warning(pop)
-#endif /* compiler */
-#endif
 
 /* ///////////////////////////// end of file //////////////////////////// */
 
