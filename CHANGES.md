@@ -4,6 +4,7 @@
 ## 4.1.0 - 28th September 2026
 
 * Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;
+* Timed Windows Global, process-heap, and COM task arenas in **test.performance.cstring** (`cstring_win_global`, `cstring_win_processheap`, `cstring_win_comtask`) against the realloc `cstring` baseline;
 
 
 ## 4.0.17 - 27th September 2026

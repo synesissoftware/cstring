@@ -2,11 +2,12 @@
  * File:    test/performance/test.performance.cstring/main.cpp
  *
  * Purpose: Competitive performance tests for cstring vs std::string and a
- *          hand-rolled realloc/memcpy floor. When p99 is available, also
- *          report per-iteration percentiles.
+ *          hand-rolled realloc/memcpy floor. On Windows, the same scenarios
+ *          also time the Global, process-heap, and COM task arenas. When
+ *          p99 is available, also report per-iteration percentiles.
  *
  * Created: 23rd September 2026
- * Updated: 23rd September 2026
+ * Updated: 28th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -38,6 +39,25 @@ char const* const IMPL_STD      = "std::string";
 char const* const IMPL_RAW      = "raw_realloc";
 char const* const IMPL_BORROWED = "cstring_borrowed";
 char const* const IMPL_FIXEDBUF = "fixed_char_buf";
+
+#ifdef _WIN32
+
+/* Realloc row is the ratio baseline. These arenas follow unit-test order
+ * (global, process heap, COM task), which is also flag-value order.
+ */
+struct cstring_arena
+{
+    char const*     impl;
+    cstring_flags_t flags;
+};
+
+cstring_arena const WINDOWS_CSTRING_ARENAS[] =
+{
+    { "cstring_win_global", CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY },
+    { "cstring_win_processheap", CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY },
+    { "cstring_win_comtask", CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY },
+};
+#endif /* _WIN32 */
 
 std::size_t const SIZES[] =
 {
@@ -152,6 +172,59 @@ emit_row(
 #endif /* HAS_P99 */
     );
 }
+
+/* Windows rows share the scenario's realloc cstring total as the ratio
+ * baseline. createEx / createLenEx selects the arena. Flags on a live
+ * instance must not be written by the caller.
+ */
+template <typename F>
+void
+emit_windows_cstring_arenas(
+    char const*     scenario
+,   std::size_t     size
+,   std::size_t     num_iterations
+,   std::size_t     num_warm_loops
+,   std::size_t     num_actions
+,   interval_t      baseline_ns
+,   F               body
+)
+{
+#ifdef _WIN32
+
+    for (std::size_t i = 0; STLSOFT_NUM_ELEMENTS(WINDOWS_CSTRING_ARENAS) != i; ++i)
+    {
+        cstring_flags_t const flags = WINDOWS_CSTRING_ARENAS[i].flags;
+
+        run_result const r = time_iterations(
+            num_iterations
+        ,   num_warm_loops
+        ,   [&body, flags]() -> std::uint64_t
+            {
+                return body(flags);
+            }
+        );
+
+        emit_row(
+            scenario
+        ,   size
+        ,   WINDOWS_CSTRING_ARENAS[i].impl
+        ,   num_iterations
+        ,   num_actions
+        ,   r
+        ,   baseline_ns
+        );
+    }
+#else /* ? _WIN32 */
+
+    ((void)scenario);
+    ((void)size);
+    ((void)num_iterations);
+    ((void)num_warm_loops);
+    ((void)num_actions);
+    ((void)baseline_ns);
+    ((void)body);
+#endif /* _WIN32 */
+}
 } // anonymous namespace
 
 
@@ -190,6 +263,26 @@ scenario_create_destroy_empty(
     });
 
     emit_row("create_destroy_empty", 0, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "create_destroy_empty"
+    ,   0
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   1
+    ,   cs.tm_ns
+    ,   [](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createEx(&s, "", flags, NULL, 0);
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row("create_destroy_empty", 0, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("create_destroy_empty", 0, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
 }
@@ -227,6 +320,28 @@ scenario_create_destroy_len(
     });
 
     emit_row("create_destroy_len", n, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "create_destroy_len"
+    ,   n
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   1
+    ,   cs.tm_ns
+    ,   [p, n](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createLenEx(&s, p, n, flags, NULL, 0);
+
+            std::uint64_t const a =
+                s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+                ;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row("create_destroy_len", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("create_destroy_len", n, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
 }
@@ -266,6 +381,27 @@ scenario_assign_len_grow(
     });
 
     emit_row("assign_len_grow", n, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "assign_len_grow"
+    ,   n
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   1
+    ,   cs.tm_ns
+    ,   [p, n](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createEx(&s, "", flags, NULL, 0);
+            cstring_assignLen(&s, p, n);
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row("assign_len_grow", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("assign_len_grow", n, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
 }
@@ -318,6 +454,31 @@ scenario_append_len_growth(
     std::snprintf(scenario, sizeof(scenario), "append_len_growth_x%zu", num_appends);
 
     emit_row(scenario, chunk, IMPL_CSTRING, num_iterations, num_appends, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        scenario
+    ,   chunk
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   num_appends
+    ,   cs.tm_ns
+    ,   [p, chunk, num_appends](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createEx(&s, "", flags, NULL, 0);
+
+            for (std::size_t i = 0; num_appends != i; ++i)
+            {
+                cstring_appendLen(&s, p, chunk);
+            }
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row(scenario, chunk, IMPL_STD, num_iterations, num_appends, st, cs.tm_ns);
     emit_row(scenario, chunk, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
 }
@@ -371,6 +532,32 @@ scenario_append_len_reserved(
     });
 
     emit_row("append_len_reserved", n, IMPL_CSTRING, num_iterations, num_appends, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "append_len_reserved"
+    ,   n
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   num_appends
+    ,   cs.tm_ns
+    ,   [p, chunk, n, num_appends](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createEx(&s, "", flags, NULL, 0);
+            cstring_setCapacity(&s, n);
+
+            for (std::size_t i = 0; num_appends != i; ++i)
+            {
+                cstring_appendLen(&s, p, chunk);
+            }
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row("append_len_reserved", n, IMPL_STD, num_iterations, num_appends, st, cs.tm_ns);
     emit_row("append_len_reserved", n, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
 }
@@ -415,6 +602,27 @@ scenario_insert_len_mid(
     });
 
     emit_row("insert_len_mid", n, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "insert_len_mid"
+    ,   n
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   1
+    ,   cs.tm_ns
+    ,   [bp, n, ip, in, pos](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createLenEx(&s, bp, n, flags, NULL, 0);
+            cstring_insertLen(&s, pos, ip, in);
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
     emit_row("insert_len_mid", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("insert_len_mid", n, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
 }
@@ -460,10 +668,34 @@ scenario_copy(
         return a;
     });
 
-    cstring_destroy(&src_cs);
     raw_destroy(&src_raw);
 
     emit_row("copy", n, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
+    /* cstring_copy allocates with the destination's existing flags, so a
+     * default instance stays on realloc. createLenEx is the supported way
+     * to duplicate a payload in a selected arena.
+     */
+    emit_windows_cstring_arenas(
+        "copy"
+    ,   n
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   1
+    ,   cs.tm_ns
+    ,   [&src_cs, n](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t d = cstring_t_DEFAULT;
+
+            cstring_createLenEx(&d, src_cs.ptr, n, flags, NULL, 0);
+
+            std::uint64_t const a = d.len;
+
+            cstring_destroy(&d);
+
+            return a;
+        }
+    );
+    cstring_destroy(&src_cs);
     emit_row("copy", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("copy", n, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
 }
@@ -529,6 +761,19 @@ int main(int /*argc*/, char* /*argv*/[])
         ;
 
     cstring_perf::display_banner("test.performance.cstring");
+#ifdef _WIN32
+
+    std::cout
+        << "  Windows arenas (ratio vs realloc cstring): cstring_win_global,"
+        << std::endl
+        << "  cstring_win_processheap, cstring_win_comtask."
+        << std::endl
+        << "  cstring_win_comtask loads and unloads OLE32 when no COM-task"
+        << std::endl
+        << "  allocation stays live across the call."
+        << std::endl
+        ;
+#endif /* _WIN32 */
     cstring_perf::display_results_title();
 
     scenario_create_destroy_empty(num_iterations, num_warm_loops);
