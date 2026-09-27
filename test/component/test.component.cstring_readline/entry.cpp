@@ -308,10 +308,10 @@ static void TEST_cstring_readline_EMPTY_FILE()
     size_t      n = 123u;
     CSTRING_RC  rc = cstring_readline(f, &cs, &n);
 
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-    XTESTS_TEST_INTEGER_EQUAL(0u, n);
-    XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, n);
+    TEST_INT_EQ(0u, cs.len);
+    TEST_MS_EQ("", cs);
 
     cstring_destroy(&cs);
 }
@@ -340,35 +340,35 @@ static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
     CSTRING_RC  rc;
 
     rc = cstring_readline(f, &cs, &n);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
     /* CRLF: CR is appended then stripped; numRead still counts the CR */
-    XTESTS_TEST_INTEGER_EQUAL(4u, n);
-    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("one", cs);
+    TEST_INT_EQ(4u, n);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("one", cs);
 
     rc = cstring_readline(f, &cs, &n);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-    XTESTS_TEST_INTEGER_EQUAL(3u, n);
-    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("two", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(3u, n);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("two", cs);
 
     rc = cstring_readline(f, &cs, &n);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-    XTESTS_TEST_INTEGER_EQUAL(6u, n);
-    XTESTS_TEST_INTEGER_EQUAL(5u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("three", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(6u, n);
+    TEST_INT_EQ(5u, cs.len);
+    TEST_MS_EQ("three", cs);
 
     rc = cstring_readline(f, &cs, &n);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-    XTESTS_TEST_INTEGER_EQUAL(10u, n);
-    XTESTS_TEST_INTEGER_EQUAL(9u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("has\rembed", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(10u, n);
+    TEST_INT_EQ(9u, cs.len);
+    TEST_MS_EQ("has\rembed", cs);
 
     rc = cstring_readline(f, &cs, &n);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-    XTESTS_TEST_INTEGER_EQUAL(3u, n);
-    XTESTS_TEST_INTEGER_EQUAL(3u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("end", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(3u, n);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("end", cs);
 
     cstring_destroy(&cs);
 }
@@ -388,17 +388,17 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
         CSTRING_RC  rc;
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("alpha", cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_MS_EQ("alpha", cs);
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("beta", cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_MS_EQ("beta", cs);
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-        XTESTS_TEST_INTEGER_EQUAL(0u, n);
-        XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(0u, cs.len);
 
         cstring_destroy(&cs);
     }
@@ -415,13 +415,13 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
         CSTRING_RC  rc;
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("alpha", cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_MS_EQ("alpha", cs);
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-        XTESTS_TEST_INTEGER_EQUAL(4u, n);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("beta", cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(4u, n);
+        TEST_MS_EQ("beta", cs);
 
         cstring_destroy(&cs);
     }
@@ -444,16 +444,16 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
     {
         rc = cstring_readline(f, &cs, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(0u, n);
-        XTESTS_TEST_INTEGER_EQUAL(0u, cs.len);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL("", cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(0u, cs.len);
+        TEST_MS_EQ("", cs);
     }}
 
     rc = cstring_readline(f, &cs, &n);
 
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-    XTESTS_TEST_INTEGER_EQUAL(0u, n);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, n);
 
     cstring_destroy(&cs);
 }
@@ -488,14 +488,14 @@ static void TEST_cstring_readline_LONG_LINES()
         CSTRING_RC  rc;
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(len, n);
-        XTESTS_TEST_INTEGER_EQUAL(len, cs.len);
-        XTESTS_REQUIRE(XTESTS_TEST_MULTIBYTE_STRING_EQUAL(line.c_str(), cs));
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(len, n);
+        TEST_INT_EQ(len, cs.len);
+        REQUIRE(TEST_MS_EQ(line.c_str(), cs));
 
         rc = cstring_readline(f, &cs, &n);
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-        XTESTS_TEST_INTEGER_EQUAL(len / 2u == 0 ? 1u : len / 2u, n);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(len / 2u == 0 ? 1u : len / 2u, n);
 
         cstring_destroy(&cs);
     }}
@@ -535,15 +535,15 @@ static void TEST_cstring_readline_MANY_SHORT_LINES()
     {
         rc = cstring_readline(f, &cs, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-        XTESTS_TEST_INTEGER_EQUAL(expected[i].size(), n);
-        XTESTS_TEST_MULTIBYTE_STRING_EQUAL(expected[i].c_str(), cs);
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(expected[i].size(), n);
+        TEST_MS_EQ(expected[i].c_str(), cs);
     }}
 
     rc = cstring_readline(f, &cs, &n);
 
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-    XTESTS_TEST_INTEGER_EQUAL(0u, n);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, n);
 
     cstring_destroy(&cs);
 }
@@ -567,14 +567,14 @@ static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE()
     CSTRING_RC  rc;
 
     rc = cstring_readline(f, &cs, NULL);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
-    XTESTS_TEST_INTEGER_EQUAL(8192u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL(long_line.c_str(), cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(8192u, cs.len);
+    TEST_MS_EQ(long_line.c_str(), cs);
 
     rc = cstring_readline(f, &cs, NULL);
-    XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EOF, rc));
-    XTESTS_TEST_INTEGER_EQUAL(5u, cs.len);
-    XTESTS_TEST_MULTIBYTE_STRING_EQUAL("short", cs);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(5u, cs.len);
+    TEST_MS_EQ("short", cs);
 
     cstring_destroy(&cs);
 }
