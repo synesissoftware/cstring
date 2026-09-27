@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring.vector API
  *
  * Created: 16th June 1994
- * Updated: 23rd February 2025
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -82,6 +82,8 @@
  * compiler warnings
  */
 
+#if 0
+
 #if defined(_MSC_VER)
 # if _MSC_VER >= 1200
 #  pragma warning(push)
@@ -92,6 +94,7 @@
 #  endif /* !__COMO__ */
 # endif /* _MSC_VER >= 1310 */
 #endif /* compiler */
+#endif
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -99,6 +102,7 @@
  */
 
 #if defined(__BORLANDC__)
+
 char* strncpy_safe(char* dest, char const* src, size_t len)
 {
     if (0 != len)
@@ -108,13 +112,14 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
 
     return dest;
 }
-# define strncpy    strncpy_safe
+# define strncpy                                            strncpy_safe
 #endif /* compiler */
 
 #if defined(UNIX) || \
     defined(unix)
+
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
-# define index index_disambiguated_1
+# define index                                              index_disambiguated_1
 #endif
 
 
@@ -439,10 +444,12 @@ cstring_vector_readLines(
  * compiler warnings
  */
 
+#if 0
 #if defined(_MSC_VER) && \
     _MSC_VER >= 1200
 # pragma warning(pop)
 #endif /* compiler */
+#endif
 
 /* ///////////////////////////// end of file //////////////////////////// */
 
