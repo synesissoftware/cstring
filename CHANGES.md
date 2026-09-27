@@ -1,12 +1,12 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.1.0 - 25th September 2026
+## 4.1.0 - 29th September 2026
 
 * performance optimisations;
 
 
-## 4.0.17 - 24th September 2026
+## 4.0.17 - 28th September 2026
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
 * Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;
@@ -16,7 +16,7 @@
 * Declared **cstring.vector** API with `CSTRING_EXTERN_C` for C++ linkage;
 
 
-## 4.0.16 - 23rd September 2026
+## 4.0.16 - 27th September 2026
 
 * Applied **misc-dev-scripts** **0.6.0** editor/Git/`.sis` drop-in templates on **boilerplate**;
 * Restored historical **.gitignore** patterns as a sorted union with **misc-dev-scripts** gold section layout;
