@@ -466,7 +466,7 @@ raw_assign_len(
 
     if (0 != n)
     {
-        std::memcpy(s->ptr, src, n);
+        ::memcpy(s->ptr, src, n);
     }
 
     s->len = n;
@@ -492,7 +492,7 @@ raw_append_len(
 
     if (0 != n)
     {
-        std::memcpy(s->ptr + s->len, src, n);
+        ::memcpy(s->ptr + s->len, src, n);
     }
 
     s->len = need;
@@ -524,8 +524,8 @@ raw_insert_len(
 
     if (0 != n)
     {
-        std::memmove(s->ptr + pos + n, s->ptr + pos, s->len - pos);
-        std::memcpy(s->ptr + pos, src, n);
+        ::memmove(s->ptr + pos + n, s->ptr + pos, s->len - pos);
+        ::memcpy(s->ptr + pos, src, n);
     }
 
     s->len = need;
@@ -642,7 +642,7 @@ raw_vec_append_cstr(
 
     if (0 != n)
     {
-        std::memcpy(copy, s, n);
+        ::memcpy(copy, s, n);
     }
 
     copy[n] = '\0';
@@ -680,14 +680,14 @@ raw_vec_prepend_cstr(
 
     if (0 != n)
     {
-        std::memcpy(copy, s, n);
+        ::memcpy(copy, s, n);
     }
 
     copy[n] = '\0';
 
     if (0 != v->len)
     {
-        std::memmove(v->ptr + 1, v->ptr, v->len * sizeof(char*));
+        ::memmove(v->ptr + 1, v->ptr, v->len * sizeof(char*));
     }
 
     v->ptr[0] = copy;

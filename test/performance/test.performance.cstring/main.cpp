@@ -502,7 +502,7 @@ scenario_borrowed_fixed(
 
     run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
         std::vector<char> buf(n + 1u, '\0');
-        std::memcpy(&buf[0], p, n);
+        ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
         return n + static_cast<unsigned char>(buf[0]);
     });

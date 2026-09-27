@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 23rd September 2026
+ * Updated: 27th September 2025
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -972,7 +972,7 @@ static void test_2_3()
         cstring_t                   str;
         const size_t                n       =   (STLSOFT_NUM_ELEMENTS(alphabet) - 1) - i;
         cstring_char_t const* const s       =   alphabet + n;
-        cstring_flags_t             flags   =   CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY;
+        cstring_flags_t             flags   =   CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY;
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
@@ -994,7 +994,7 @@ static void test_2_3()
         cstring_t                   str;
         const size_t                n       =   (STLSOFT_NUM_ELEMENTS(alphabet) - 1) - i;
         cstring_char_t const* const s       =   alphabet + n;
-        cstring_flags_t             flags   =   CSTRING_F_USE_WIN32_COM_TASK_MEMORY;
+        cstring_flags_t             flags   =   CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY;
 
         cstring_createEx(&str, s, flags, NULL, 0);
 
@@ -1093,7 +1093,7 @@ static void test_2_4()
         cstring_t                   str;
         const size_t                n       =   (STLSOFT_NUM_ELEMENTS(alphabet) - 1) - i;
         cstring_char_t const* const s       =   alphabet + n;
-        cstring_flags_t             flags   =   CSTRING_F_USE_WIN32_GLOBAL_MEMORY;
+        cstring_flags_t             flags   =   CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY;
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
@@ -1115,7 +1115,7 @@ static void test_2_4()
         cstring_t                   str;
         const size_t                n       =   (STLSOFT_NUM_ELEMENTS(alphabet) - 1) - i;
         cstring_char_t const* const s       =   alphabet + n;
-        cstring_flags_t             flags   =   CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY;
+        cstring_flags_t             flags   =   CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY;
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
@@ -1137,7 +1137,7 @@ static void test_2_4()
         cstring_t                   str;
         const size_t                n       =   (STLSOFT_NUM_ELEMENTS(alphabet) - 1) - i;
         cstring_char_t const* const s       =   alphabet + n;
-        cstring_flags_t             flags   =   CSTRING_F_USE_WIN32_COM_TASK_MEMORY;
+        cstring_flags_t             flags   =   CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY;
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 

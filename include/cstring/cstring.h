@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 15
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     88
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     89
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -316,6 +316,8 @@ typedef struct cstring_t                                    cstring_t;
  * @{
  */
 
+/* memory */
+
 #define CSTRING_F_TYPE_MASK                                 (0x003f)
 #define CSTRING_F_MEMORY_IS_INTERNAL_HEAP                   (0x0000)    /*!< Memory is allocated by the heap function, and is owned by the cstring instance */
 #define CSTRING_F_MEMORY_IS_BORROWED                        (0x0001)    /*!< Memory is supplied external to the API, and may not be deallocated, moved or expanded. \note Implies CSTRING_F_MEMORY_IS_FIXED, unless CSTRING_F_MEMORY_CAN_GROW_TO_HEAP is also specified */
@@ -324,10 +326,11 @@ typedef struct cstring_t                                    cstring_t;
 #define CSTRING_F_MEMORY_IS_CONST                           CSTRING_F_MEMORY_IS_READONLY /*!< [DEPRECATED] Equivalent to CSTRING_F_MEMORY_IS_READONLY \deprecated Use CSTRING_F_MEMORY_IS_READONLY instead. */
 
 #define CSTRING_F_MEMORY_IS_OFFSET                          (0x0040)    /*!< cstring instance may not be modified. This flag cannot be set by client code. */
-
 #define CSTRING_F_MEMORY_CAN_GROW_TO_HEAP                   (0x0080)    /*!< Allows borrowed strings to move their contents to the heap and continue to grow when their borrowed capacity would be exceeded: note that they do not subsequently return to use the borrowed capacity if the size subsequently shrinks to within capacity. */
 
-#define CSTRING_F_ARENA_MASK                                (0xff00)
+/* arena */
+
+#define CSTRING_F_ARENA_MASK                                (0x3700)
 #define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
 #if 0
 #elif 0 ||\
@@ -335,7 +338,7 @@ typedef struct cstring_t                                    cstring_t;
       defined(WIN64) ||\
       0
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
-# define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)  /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
+# define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)    /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY              (0x0400)    /*!< Uses COM Task Allocator for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 #endif /* WIN32 || WIN64 */
 #if defined(CSTRING_USE_SYNESIS_APIS)
@@ -343,8 +346,11 @@ typedef struct cstring_t                                    cstring_t;
 #endif /* CSTRING_USE_SYNESIS_APIS */
 #define CSTRING_F_USE_CUSTOMARENAFUNCTIONS                  (0x2000)    /*!< Uses an externally supplied allocator function for all memory (de-)allocation (NOT CURRENTLY SUPPORTED) */
 
-#define CSTRING_F_CUSTOMARENA_CC_CDECL                      (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
-#define CSTRING_F_CUSTOMARENA_CC_STDCALL                    (0x0040)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+#define _CSTRING_F_CUSTOMARENA_CC_CDECL_unused              (0x0000)    /*!< Treats the externally supplied allocator function as having CDecl calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+#define _CSTRING_F_CUSTOMARENA_CC_STDCALL_unused            (0x0000)    /*!< Treats the externally supplied allocator function as having StdCall calling convention (de-)allocation (NOT CURRENTLY SUPPORTED) */
+
+/* I/O */
+#define CSTRING_F_IO_MASK                                   (0x0000)
 /** @} */
 
 

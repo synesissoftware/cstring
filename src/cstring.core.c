@@ -289,6 +289,7 @@ alloc_retry:
     switch (CSTRING_F_ARENA_MASK & flags)
     {
         case    CSTRING_F_USE_REALLOC:
+
             /* realloc(pv, 0) allocates on some platforms; free the block,
              * and do nothing when pv is NULL.
              */
@@ -301,16 +302,20 @@ alloc_retry:
 
                 return NULL;
             }
+
             pvNew = realloc(pv, cb);
             break;
 #if defined(CSTRING_USE_WINAPI_)
-        case    CSTRING_F_USE_WIN32_GLOBAL_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
+
             pvNew = win32_global_realloc(pv, cb);
             break;
-        case    CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY:
+
             pvNew = win32_processheap_realloc(pv, cb);
             break;
-        case    CSTRING_F_USE_WIN32_COM_TASK_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY:
+
             pvNew = win32_comtask_realloc(pv, cb);
             break;
 #endif /* CSTRING_USE_WINAPI_ */
@@ -319,6 +324,7 @@ alloc_retry:
 #endif /* CSTRING_USE_SYNESIS_APIS */
         case    CSTRING_F_USE_CUSTOMARENAFUNCTIONS:
         default:
+
             *prc = CSTRING_RC_INVALIDARENA;
             return NULL;
     }
