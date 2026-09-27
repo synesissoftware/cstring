@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    test.component.cstring_readline/entry.cpp
  *
- * Purpose: Unit-tests `cstring_readline()`.
+ * Purpose: Component-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 12th January 2024
+ * Updated: 27th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -39,16 +39,16 @@
 namespace
 {
 
-    static void test_1_0(void);
-    static void test_1_1(void);
-    static void test_1_2(void);
-    static void test_1_3(void);
-    static void test_1_4(void);
-    static void test_1_5(void);
-    static void test_1_6(void);
-    static void test_1_7(void);
-    static void test_1_8(void);
-    static void test_1_9(void);
+    static void TEST_cstring_readline_CALLABILITY(void);
+    static void TEST_cstring_readline_INVALID_STREAM(void);
+    static void TEST_cstring_readline_SHORT_MULTILINE(void);
+    static void TEST_cstring_readline_EMPTY_FILE(void);
+    static void TEST_cstring_readline_CRLF_AND_MIXED_EOL(void);
+    static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL(void);
+    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES(void);
+    static void TEST_cstring_readline_LONG_LINES(void);
+    static void TEST_cstring_readline_MANY_SHORT_LINES(void);
+    static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE(void);
 
     int setup(void*);
     int teardown(void*);
@@ -76,7 +76,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_readline.txt";
  * main
  */
 
-int main(int argc, char **argv)
+int main(int argc, char* argv[])
 {
     int retCode = EXIT_SUCCESS;
     int verbosity = 2;
@@ -85,16 +85,16 @@ int main(int argc, char **argv)
 
     if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_readline", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
     {
-        XTESTS_RUN_CASE(test_1_0);
-        XTESTS_RUN_CASE(test_1_1);
-        XTESTS_RUN_CASE(test_1_2);
-        XTESTS_RUN_CASE(test_1_3);
-        XTESTS_RUN_CASE(test_1_4);
-        XTESTS_RUN_CASE(test_1_5);
-        XTESTS_RUN_CASE(test_1_6);
-        XTESTS_RUN_CASE(test_1_7);
-        XTESTS_RUN_CASE(test_1_8);
-        XTESTS_RUN_CASE(test_1_9);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CALLABILITY);
+        XTESTS_RUN_CASE(TEST_cstring_readline_INVALID_STREAM);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
+        XTESTS_RUN_CASE(TEST_cstring_readline_EMPTY_FILE);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
+        XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES);
+        XTESTS_RUN_CASE(TEST_cstring_readline_LONG_LINES);
+        XTESTS_RUN_CASE(TEST_cstring_readline_MANY_SHORT_LINES);
+        XTESTS_RUN_CASE(TEST_cstring_readline_REUSE_AFTER_LONG_LINE);
 
         XTESTS_PRINT_RESULTS();
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 namespace
 {
 
-    static FILE* fopen_or_throw(char const* fileName, char const* mode /* = "r" */)
+    static FILE* fopen_or_throw(char const* fileName, char const* mode)
     {
 #ifdef CSTRING_USING_SAFE_STR_FUNCTIONS
         FILE*   f;
@@ -155,14 +155,14 @@ namespace
 
 
 
-static void test_1_0()
+static void TEST_cstring_readline_CALLABILITY()
 {
     false && cstring_readline(stdout, NULL, NULL);
 
     XTESTS_TEST_PASSED();
 }
 
-static void test_1_1()
+static void TEST_cstring_readline_INVALID_STREAM()
 {
     cstring_t   cs = cstring_t_DEFAULT;
 
@@ -173,7 +173,7 @@ static void test_1_1()
     XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
 }
 
-static void test_1_2()
+static void TEST_cstring_readline_SHORT_MULTILINE()
 {
     {
         FILE* f = fopen_or_throw(TEST_FILE_NAME, "w");
@@ -195,7 +195,15 @@ static void test_1_2()
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
         CSTRING_RC  rc;
-        cstring_t   strings[7] = { cstring_t_DEFAULT, cstring_t_DEFAULT, cstring_t_DEFAULT, cstring_t_DEFAULT, cstring_t_DEFAULT, cstring_t_DEFAULT };
+        cstring_t   strings[7] = {
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+            cstring_t_DEFAULT,
+        };
         size_t      lengths[7];
 
         rc = cstring_readline(f, &strings[0], &lengths[0]);
@@ -242,31 +250,31 @@ static void test_1_2()
     }
 }
 
-static void test_1_3()
+static void TEST_cstring_readline_EMPTY_FILE()
 {
 }
 
-static void test_1_4()
+static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
 {
 }
 
-static void test_1_5()
+static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 {
 }
 
-static void test_1_6()
+static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
 {
 }
 
-static void test_1_7()
+static void TEST_cstring_readline_LONG_LINES()
 {
 }
 
-static void test_1_8()
+static void TEST_cstring_readline_MANY_SHORT_LINES()
 {
 }
 
-static void test_1_9()
+static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE()
 {
 }
 

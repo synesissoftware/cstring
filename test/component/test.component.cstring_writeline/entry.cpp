@@ -4,7 +4,7 @@
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 12th January 2024
+ * Updated: 27th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -40,16 +40,10 @@
 namespace
 {
 
-    static void test_1_0(void);
-    static void test_1_1(void);
-    static void test_1_2(void);
-    static void test_1_3(void);
-    static void test_1_4(void);
-    static void test_1_5(void);
-    static void test_1_6(void);
-    static void test_1_7(void);
-    static void test_1_8(void);
-    static void test_1_9(void);
+    static void TEST_cstring_writeline_CALLABILITY(void);
+    static void TEST_cstring_writeline_INVALID_STREAM(void);
+    static void TEST_cstring_writeline_MULTIPLE_LINES(void);
+    static void TEST_cstring_write_CONCATENATED(void);
 
     int setup(void*);
     int teardown(void*);
@@ -77,7 +71,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_writeline.txt";
  * main
  */
 
-int main(int argc, char **argv)
+int main(int argc, char* argv[])
 {
     int retCode = EXIT_SUCCESS;
     int verbosity = 2;
@@ -86,16 +80,10 @@ int main(int argc, char **argv)
 
     if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_writeline", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
     {
-        XTESTS_RUN_CASE(test_1_0);
-        XTESTS_RUN_CASE(test_1_1);
-        XTESTS_RUN_CASE(test_1_2);
-        XTESTS_RUN_CASE(test_1_3);
-        XTESTS_RUN_CASE(test_1_4);
-        XTESTS_RUN_CASE(test_1_5);
-        XTESTS_RUN_CASE(test_1_6);
-        XTESTS_RUN_CASE(test_1_7);
-        XTESTS_RUN_CASE(test_1_8);
-        XTESTS_RUN_CASE(test_1_9);
+        XTESTS_RUN_CASE(TEST_cstring_writeline_CALLABILITY);
+        XTESTS_RUN_CASE(TEST_cstring_writeline_INVALID_STREAM);
+        XTESTS_RUN_CASE(TEST_cstring_writeline_MULTIPLE_LINES);
+        XTESTS_RUN_CASE(TEST_cstring_write_CONCATENATED);
 
         XTESTS_PRINT_RESULTS();
 
@@ -140,14 +128,14 @@ namespace
 
 
 
-static void test_1_0()
+static void TEST_cstring_writeline_CALLABILITY()
 {
     false && cstring_writeline(stdout, NULL, NULL);
 
     XTESTS_TEST_PASSED();
 }
 
-static void test_1_1()
+static void TEST_cstring_writeline_INVALID_STREAM()
 {
 #if 0
     cstring_t   cs = cstring_t_DEFAULT;
@@ -158,9 +146,11 @@ static void test_1_1()
 
     XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_INVALIDSTREAM, cstring_writeline(NULL, &cs, &n));
 #endif /* 0 */
+
+    XTESTS_TEST_PASSED();
 }
 
-static void test_1_2()
+static void TEST_cstring_writeline_MULTIPLE_LINES()
 {
     static char const* const s_lines[] =
     {
@@ -212,7 +202,7 @@ static void test_1_2()
     }
 }
 
-static void test_1_3()
+static void TEST_cstring_write_CONCATENATED()
 {
     static char const* const s_lines[] =
     {
@@ -267,30 +257,6 @@ static void test_1_3()
 
         XTESTS_TEST_MULTIBYTE_STRING_EQUAL(expected, out_lines[0]);
     }
-}
-
-static void test_1_4()
-{
-}
-
-static void test_1_5()
-{
-}
-
-static void test_1_6()
-{
-}
-
-static void test_1_7()
-{
-}
-
-static void test_1_8()
-{
-}
-
-static void test_1_9()
-{
 }
 
 
