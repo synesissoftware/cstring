@@ -331,7 +331,7 @@ typedef struct cstring_t                                    cstring_t;
 /* arena */
 
 #define CSTRING_F_ARENA_MASK                                (0x3700)
-#define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
+#define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() (and related) for all memory (de-)allocation */
 #ifdef _WIN32
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)    /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
