@@ -132,6 +132,21 @@ jobs:
           name: sis-build-${{ inputs.cell-id }}
           path: build
 
+      # download-artifact does not reliably restore Unix execute bits;
+      # run_all_*.sh discovery requires -perm -100 (or *.exe on Windows).
+      - name: Restore execute bits on test and example binaries
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          find build -type f \( \
+            -name 'test_unit*' -o -name 'test.unit.*' -o \
+            -name 'test_component*' -o -name 'test.component.*' -o \
+            -name 'test_performance*' -o -name 'test.performance.*' -o \
+            -name 'test_scratch*' -o -name 'test.scratch.*' -o \
+            \( -name 'example*' ! -name '*.md' \) \
+          \) -exec chmod +x {} +
+
       - name: Automated tests (unit then component) [non-Windows]
         if: runner.os != 'Windows'
         shell: bash

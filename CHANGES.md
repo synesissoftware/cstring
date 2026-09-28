@@ -14,6 +14,7 @@
 * Renamed Windows arena flags `CSTRING_F_USE_WIN32_*` to `CSTRING_F_USE_WINDOWS_*` (compat aliases retained);
 * Capitalised Doxygen `\retval` prose in **cstring.h** / **cstring.vector.h**;
 * CI throttles performance suites on non-Windows (`CSTRING_PERF_ITERATIONS=1000` / `WARMUPS=1`) and on MinGW only (`500` / `1`, plus `FILE_TRIALS` when **p99**); **windows-cl** keeps Release defaults;
+* CI restores Unix execute bits on downloaded test/example binaries after **download-artifact** (helpers discover via `-perm -100`);
 
 
 ## 4.0.16 - 27th September 2026
