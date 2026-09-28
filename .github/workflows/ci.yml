@@ -10,7 +10,6 @@ on:
       - rc1
       - rc2
       - rc3
-      - component-tests
   pull_request:
 
 concurrency:

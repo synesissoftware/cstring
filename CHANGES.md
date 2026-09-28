@@ -7,8 +7,13 @@
 * Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;
 * Optional **p99** linkage for per-iteration percentiles throughout; filesystem suite (`cstring_vector_readLines`, `std::ifstream` + `std::getline`, `platformstl::file_lines`) gated on **p99**;
 * **`--no-p99`** / `NO_P99` to skip recognising **p99** (same pattern as **`--no-shwild`**);
-* **`--gap-groups`** on **run_all_performance_tests.sh** sets `SIS_PERFTESTS_GROUPGAPS` for blank lines between scenario groups;
+* **`--gap-groups`** on **run_all_performance_tests.sh** / **run_all_performance_tests.cmd** sets `SIS_PERFTESTS_GROUPGAPS` for blank lines between scenario groups;
 * Declared **cstring.vector** API with `CSTRING_EXTERN_C` for C++ linkage;
+* Fixed `cstring_vector_insertAt()` mid-vector `memmove` / destination indexing;
+* Expanded component coverage: **test.component.cstring_readline**, **test.component.cstring_writeline**, new **test.component.cstring_vector_readLines**;
+* Renamed Windows arena flags `CSTRING_F_USE_WIN32_*` to `CSTRING_F_USE_WINDOWS_*` (compat aliases retained);
+* Capitalised Doxygen `\retval` prose in **cstring.h** / **cstring.vector.h**;
+* CI MinGW performance cells gate PATH / `CSTRING_PERF_FILE_TRIALS` on `toolchain=mingw` (not `c-compiler`);
 
 
 ## 4.0.16 - 27th September 2026
