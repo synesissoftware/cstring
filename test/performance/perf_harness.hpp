@@ -17,10 +17,12 @@
  * includes
  */
 
+#include <platformstl/system/console_functions.h>
 #include <stlsoft/conversion/number/grouping_functions.hpp>
 #include <stlsoft/diagnostics/std_chrono_hrc_stopwatch.hpp>
 #include <stlsoft/std/cstdlib.hpp>
 #include <stlsoft/stlsoft.h>
+
 
 #ifdef HAS_P99
 # include <p99/p99.hpp>
@@ -33,6 +35,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -281,7 +284,16 @@ maybe_emit_group_gap(
         (   prev_scenario != scenario ||
             prev_size != size))
     {
-        std::cout << std::endl;
+        // Bare blank lines are stripped by GitHub Actions log UI; use a
+        // visible rule when stdout is not a TTY (CI / redirected logs).
+        if (platformstl::isatty(stdout))
+        {
+            std::cout << std::endl;
+        }
+        else
+        {
+            std::cout << "\t----------" << std::endl;
+        }
     }
 
     prev_scenario   =   scenario;

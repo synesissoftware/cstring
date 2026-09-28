@@ -152,6 +152,9 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         env:
+          # Mild CI smoke budget (Release default is 100000 / 2).
+          CSTRING_PERF_ITERATIONS: '1000'
+          CSTRING_PERF_WARMUPS: '1'
           SIS_PERFTESTS_GROUPGAPS: '1'
         run: |
           set -euo pipefail
@@ -162,11 +165,15 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         env:
+          # windows-cl keeps Release defaults; MinGW alone is throttled
+          # below (allocator-heavy suites stall on GHA MinGW).
           SIS_PERFTESTS_GROUPGAPS: '1'
         run: |
           set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
           if /I "${{ inputs.toolchain }}"=="mingw" (
             set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+            set "CSTRING_PERF_ITERATIONS=500"
+            set "CSTRING_PERF_WARMUPS=1"
             set "CSTRING_PERF_FILE_TRIALS=10"
           )
           call run_all_performance_tests.cmd
