@@ -10,7 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
-      - component-tests
+      - win32
   pull_request:
 
 concurrency:
