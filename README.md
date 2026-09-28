@@ -143,7 +143,7 @@ Examples live under **examples/** (`c/` and `cpp/`), each with a short **README.
 | [**example.c.cstring_create**](./examples/c/example.c.cstring_create/) | C | Minimal `cstring_create()` |
 | [**example.c.cstring_vector**](./examples/c/example.c.cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (input path or `--`; `SIS_EXAMPLE_SMOKE` enables no-arg demo) |
 | [**example.cpp.cstring.dynload**](./examples/cpp/example.cpp.cstring.dynload/) | C++ | Windows-only dynamic load of the cstring DLL |
-| [**example.cpp.HGLOBAL_on_x64**](./examples/cpp/example.cpp.HGLOBAL_on_x64/) | C++ | Windows-only `CSTRING_F_USE_WIN32_GLOBAL_MEMORY` |
+| [**example.cpp.HGLOBAL_on_x64**](./examples/cpp/example.cpp.HGLOBAL_on_x64/) | C++ | Windows-only `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` |
 
 
 ## Project Information
@@ -172,9 +172,12 @@ The **C** API has no non-standard dependencies.
 | ---------- | ---- | --------- |
 | [**STLSoft**](https://github.com/synesissoftware/STLSoft) 1.11 | Test headers / remaining C++ tests and examples | ⚪ Tests only (`BUILD_TESTING`) |
 | [**xTests**](https://github.com/synesissoftware/xTests) (≥ 0.26) | Unit / component / scratch tests | ⚪ Tests only (`BUILD_TESTING`) |
+| [**p99**](https://github.com/synesissoftware/p99) | Percentiles in performance tests; file_lines suite | ⚪ Optional; tests only (unless `NO_P99` / `--no-p99`) |
 | [**shwild**](https://github.com/synesissoftware/shwild) | Enhanced pattern-match assertions in **xTests** | ⚪ Optional; tests only (unless `NO_SHWILD` / `--no-shwild`) |
 
 When supplying `'--no-cpp'` to **prepare_cmake.sh** — sets the CMake option `NO_CSTRING_CPP_API=ON` — C++ examples and remaining C++ tests are omitted; the **C** unit-tests still require **STLSoft** and **xTests**.
+
+When supplying `'--no-p99'` — sets `NO_P99=ON` — **p99** is not recognised; performance tests still build but omit percentiles and the filesystem file_lines suite.
 
 When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not recognised and pattern-match assertions are compiled out; other unit-tests still run.
 

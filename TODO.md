@@ -14,13 +14,19 @@
 * [x] ~~~Scratch **libver** retained under **test/scratch**~~~ - ✅;
 * [x] ~~~Delete Visual Studio 98 files~~~ - ✅;
 * [x] ~~~Delete Visual Studio 2003+ files~~~ - ✅;
+* [ ] discriminate on `_WIN32` in implementation (and maybe also in API);
+* [ ] check `CSTRING_USE_WINAPI_`;
+* [ ] custom arena(s);
 
 
 ## Performance improvements
 
-* [ ] Performance testing and optimisation:
-  * [ ] Quantify performance;
-  * [ ] Compare with other popular implementations;
+* [x] ~~~Performance testing and optimisation:~~~ - ✅:
+  * [x] ~~~Quantify performance~~~ - ✅;
+  * [x] ~~~Compare with other popular implementations~~~ - ✅;
+* [ ] Analyse performance results and optimise hot paths;
+* [ ] `cstring_readline()` to use block logic on regular files;
+* [ ] `cstring_readlines()` to use block logic on regular files;
 
 
 ## Packaging improvements
@@ -42,7 +48,10 @@
   * [x] ~~~Windows~~~ - ✅;
   * [ ] Debug configuration;
   * [ ] Release configuration;
-  * [ ] exercise `--no-cpp` / `--no-shwild` permutations beyond the current jobs;
+  * [ ] exercise CI permutations:
+    * [ ] `--no-cpp`;
+    * [ ] `--no-p99`;
+    * [ ] `--no-shwild`;
 * [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;
