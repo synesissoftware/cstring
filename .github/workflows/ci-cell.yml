@@ -132,7 +132,7 @@ jobs:
           name: sis-build-${{ inputs.cell-id }}
           path: build
 
-      - name: Automated tests (unit then component) [!Windows]
+      - name: Automated tests (unit then component) [non-Windows]
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -148,7 +148,7 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_automated_tests.cmd
 
-      - name: Performance tests [!Windows]
+      - name: Performance tests [non-Windows]
         if: runner.os != 'Windows'
         shell: bash
         env:
@@ -171,7 +171,7 @@ jobs:
           )
           call run_all_performance_tests.cmd
 
-      - name: Scratch tests [!Windows]
+      - name: Scratch tests [non-Windows]
         if: runner.os != 'Windows'
         continue-on-error: true
         shell: bash
@@ -189,7 +189,7 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_scratch_tests.cmd
 
-      - name: Examples [!Windows]
+      - name: Examples [non-Windows]
         if: runner.os != 'Windows'
         shell: bash
         run: |
