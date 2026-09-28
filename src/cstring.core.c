@@ -4,11 +4,11 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 28th November 2023
+ * Updated: 6th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2023, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -67,6 +67,7 @@
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
@@ -81,11 +82,13 @@
 # define CSTRING_USE_WINAPI_
 #endif
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * debugging
  */
 
 #define CSTRING_ASSERT(expr)                                assert(expr)
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings
@@ -102,6 +105,7 @@
 # endif /* _MSC_VER >= 1310 */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * character encoding
  */
@@ -117,6 +121,7 @@
 # define cstring_strncpy_                                   strncpy
 # define cstring_strstr_                                    strstr
 #endif /* CSTRING_USE_WIDE_STRINGS */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -145,6 +150,7 @@ strncpy_safe(
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
 # define index index_disambiguated_1
 #endif
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * utility functions
@@ -183,9 +189,9 @@ convert_negative_index(
 }
 
 /*
- * \param dst Destination. May NOT be \c NULL
- * \param src Source. May be \c NULL
- * \param lim Maximum number of elements in \c dst
+ * \param dst Destination. May NOT be \c NULL;
+ * \param src Source. May be \c NULL;
+ * \param lim Maximum number of elements in \c dst;
  *
  * \return The actual length of src if not \c NULL; 0 otherwise
  *
@@ -253,6 +259,7 @@ cstring_memcpy_safe_(
     }
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * allocation functions
  */
@@ -304,6 +311,7 @@ alloc_retry:
     switch (CSTRING_F_ARENA_MASK & flags)
     {
         case    CSTRING_F_USE_REALLOC:
+
 #if defined(_MSC_VER) && \
     defined(_DEBUG)
             if (0 == cb)
@@ -315,13 +323,16 @@ alloc_retry:
             pvNew = realloc(pv, cb);
             break;
 #if defined(CSTRING_USE_WINAPI_)
-        case    CSTRING_F_USE_WIN32_GLOBAL_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
+
             pvNew = win32_global_realloc(pv, cb);
             break;
-        case    CSTRING_F_USE_WIN32_PROCESSHEAP_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY:
+
             pvNew = win32_processheap_realloc(pv, cb);
             break;
-        case    CSTRING_F_USE_WIN32_COM_TASK_MEMORY:
+        case    CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY:
+
             pvNew = win32_comtask_realloc(pv, cb);
             break;
 #endif /* CSTRING_USE_WINAPI_ */
@@ -330,6 +341,7 @@ alloc_retry:
 #endif /* CSTRING_USE_SYNESIS_APIS */
         case    CSTRING_F_USE_CUSTOMARENAFUNCTIONS:
         default:
+
             *prc = CSTRING_RC_INVALIDARENA;
             return NULL;
     }
@@ -375,6 +387,7 @@ cstring_realloc_(
 {
     return cstring_realloc_2(pv, cch, flags, prc, NULL, NULL);
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * API
@@ -1365,6 +1378,7 @@ cstring_swap(
     }
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * file functions
  */
@@ -1497,6 +1511,7 @@ cstring_write(
 {
     return cstring_write_(stm, pcs, numWritten, "%.*s");
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * search/replace functions
@@ -1823,8 +1838,17 @@ win32_comtask_realloc(
 
         if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
         {
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif /* __GNUC__ */
+
             s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
             s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
+
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
             if (NULL == s_cstring_ole32_HINSTANCE ||
                 NULL == s_cstring_pfnCoTaskMemRealloc)
@@ -1857,6 +1881,7 @@ win32_comtask_realloc(
 /* ////////////////////////////////////////////////////////////////////// */
 
 #endif /* CSTRING_USE_WINAPI_ */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler warnings

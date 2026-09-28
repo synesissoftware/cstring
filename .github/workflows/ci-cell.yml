@@ -1,0 +1,202 @@
+name: CI cell
+
+on:
+  workflow_call:
+    inputs:
+      cell-id:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      c-compiler:
+        required: true
+        type: string
+      cpp-compiler:
+        required: true
+        type: string
+      build-type:
+        required: false
+        type: string
+        default: Release
+      toolchain:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  build:
+    name: Build (${{ inputs.cell-id }})
+    runs-on: ${{ inputs.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clang (Ubuntu)
+        if: runner.os == 'Linux' && inputs.c-compiler == 'clang'
+        run: sudo apt-get update && sudo apt-get install -y clang
+
+      - name: Setup MSYS2 MinGW
+        if: runner.os == 'Windows' && inputs.toolchain == 'mingw'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+
+      - name: Install test dependencies (STLSoft + shwild + xTests)
+        uses: ./.github/actions/install-sis-deps
+        with:
+          build-type: ${{ inputs.build-type }}
+          c-compiler: ${{ inputs.c-compiler }}
+          cpp-compiler: ${{ inputs.cpp-compiler }}
+          dependencies: STLSoft shwild xTests
+          toolchain: ${{ inputs.toolchain }}
+
+      - name: Configure via prepare_cmake.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build"
+          export SIS_CMAKE_CONFIG="${{ inputs.build-type }}"
+          export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+          # Bash 3.2 (macOS) + set -u treats an empty "${arr[@]}" as
+          # unbound; use the ${arr[@]+…} form so Release/non-mingw is OK.
+          PREPARE_ARGS=()
+          if [ "${{ inputs.build-type }}" = "Debug" ]; then
+            PREPARE_ARGS+=(-d)
+          fi
+          if [ "${{ inputs.toolchain }}" = "mingw" ]; then
+            export PATH="/mingw64/bin:$PATH"
+            PREPARE_ARGS+=(--mingw)
+          elif [ "${{ inputs.c-compiler }}" != "cl" ]; then
+            export CC="${{ inputs.c-compiler }}"
+            export CXX="${{ inputs.cpp-compiler }}"
+          fi
+          ./prepare_cmake.sh ${PREPARE_ARGS[@]+"${PREPARE_ARGS[@]}"}
+
+      - name: Build via build_cmake.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build"
+          export SIS_CMAKE_CONFIG="${{ inputs.build-type }}"
+          if [ "${{ inputs.toolchain }}" = "mingw" ]; then
+            export PATH="/mingw64/bin:$PATH"
+          fi
+          ./build_cmake.sh
+
+      - name: CTest via ctest_cmake.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build"
+          export SIS_CMAKE_CONFIG="${{ inputs.build-type }}"
+          if [ "${{ inputs.toolchain }}" = "mingw" ]; then
+            export PATH="/mingw64/bin:$PATH"
+          fi
+          ./ctest_cmake.sh -M
+
+      - name: Upload build tree
+        uses: actions/upload-artifact@v4
+        with:
+          name: sis-build-${{ inputs.cell-id }}
+          path: build
+          retention-days: 1
+
+  # One post-build job per cell: sequential helper steps (taxonomy in the
+  # log), one checkout / MinGW setup / artifact download — not five jobs.
+  test:
+    name: Tests (${{ inputs.cell-id }})
+    needs: build
+    runs-on: ${{ inputs.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSYS2 MinGW
+        id: msys2
+        if: runner.os == 'Windows' && inputs.toolchain == 'mingw'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: mingw-w64-x86_64-toolchain
+
+      - name: Download build tree
+        uses: actions/download-artifact@v4
+        with:
+          name: sis-build-${{ inputs.cell-id }}
+          path: build
+
+      - name: Automated tests (unit then component)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
+            ./run_all_automated_tests.sh -M
+
+      - name: Automated tests (unit then component)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_automated_tests.cmd
+
+      - name: Performance tests
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
+            ./run_all_performance_tests.sh -M
+
+      - name: Performance tests
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.c-compiler }}"=="mingw" (
+            set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+            set "CSTRING_PERF_FILE_TRIALS=10"
+          )
+          call run_all_performance_tests.cmd
+
+      - name: Scratch tests
+        if: runner.os != 'Windows'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
+            ./run_all_scratch_tests.sh -M
+
+      - name: Scratch tests
+        if: runner.os == 'Windows'
+        continue-on-error: true
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_scratch_tests.cmd
+
+      - name: Examples
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
+            ./run_all_examples.sh -M
+
+      - name: Examples
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
+          if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
+          call run_all_examples.cmd

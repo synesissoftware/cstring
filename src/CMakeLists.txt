@@ -5,18 +5,18 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  ...
-# Updated:  25th October 2024
+# Updated:  2nd August 2026
 #
 # ######################################################################## #
 
 
-if(UNIX)
+if(_BUILD_AS_UNIX)
 
 	add_definitions(-DUNIX)
 	add_definitions(-Dunix)
-endif(UNIX)
+endif(_BUILD_AS_UNIX)
 
-if(WIN32)
+if(_BUILD_AS_WIN32)
 
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
@@ -34,14 +34,11 @@ if(WIN32)
 	add_definitions(-DCSTRING_INCL_CSTRING_H_IMPLICIT_LINK)
 
 	add_definitions(-DCLASP_CMDLINE_ARGS_NO_RECLS_ON_WINDOWS)
-endif(WIN32)
+endif(_BUILD_AS_WIN32)
 
 if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 
-	target_compile_definitions(core
-		PRIVATE
-			"/Zc:__cplusplus"
-	)
+	add_compile_options("/Zc:__cplusplus")
 
 	add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
@@ -78,17 +75,19 @@ target_include_directories(core
 		$<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(core
-	PRIVATE
-		$<$<STREQUAL:${STLSOFT_INCLUDE_DIR},>:STLSoft::STLSoft>
-)
-
 target_compile_options(core
 	PRIVATE
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+
 			-Werror -Wall -Wextra -pedantic
 		>
+		$<$<CXX_COMPILER_ID:GNU>:
+
+			-Wno-array-bounds # needed for experimental features
+			-Wno-stringop-overflow # needed for experimental features
+		>
 		$<$<CXX_COMPILER_ID:MSVC>:
+
 			/WX /W4
 		>
 )
@@ -111,7 +110,6 @@ install(
 	FILES_MATCHING
 	PATTERN "*.h*"
 )
-
 
 
 # ############################## end of file ############################# #
