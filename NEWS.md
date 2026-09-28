@@ -4,8 +4,8 @@
 | Date                | News Item                        | Details |
 | ------------------- | -------------------------------- | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
-| 28th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18)   | Windows arena flags keyed on `_WIN32` |
-| 27th September 2026 | Release of [cstring 4.0.17](https://github.com/synesissoftware/cstring/releases/tag/4.0.17) | Competitive perf tests; optional **p99** |
+| 29th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18) | Windows arena flags keyed on `_WIN32` |
+| 29th September 2026 | Release of [cstring 4.0.17](https://github.com/synesissoftware/cstring/releases/tag/4.0.17) | Perf tests; `insertAt` fix; component I/O; Windows arena rename |
 | 27th September 2026 | Release of [cstring 4.0.16](https://github.com/synesissoftware/cstring/releases/tag/4.0.16) | Phase 4b helpers, native `.cmd`, CI dogfood |
 | 6th September 2026  | Release of [cstring 4.0.15](https://github.com/synesissoftware/cstring/releases/tag/4.0.15) | Doxygen `\param`/`\retval` 76-rule |
 | 9th August 2026     | Release of [cstring 4.0.14](https://github.com/synesissoftware/cstring/releases/tag/4.0.14) | self-assignment safety |

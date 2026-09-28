@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Windows-only C++ example that allocates a `cstring_t` with `CSTRING_F_USE_WIN32_GLOBAL_MEMORY` (process `HGLOBAL` heap) and appends several fragments.
+Windows-only C++ example that allocates a `cstring_t` with `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` (process `HGLOBAL` heap) and appends several fragments.
 
 
 ## Build

@@ -136,6 +136,7 @@ strncpy_safe(
  * helper functions
  */
 
+
 /* /////////////////////////////////////////////////////////
  * utility functions
  */
@@ -205,7 +206,7 @@ cstring_strlcpy_safe_(
         {
             *dst = *src;
 
-            if ('\0' == *src)
+            if ('\0' == src[0])
             {
                 break;
             }
@@ -213,7 +214,7 @@ cstring_strlcpy_safe_(
 
         memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
 
-        for (; '\0' != *src; ++i, ++src)
+        for (; '\0' != src[0]; ++i, ++src)
         {
         }
 

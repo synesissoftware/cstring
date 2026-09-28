@@ -33,7 +33,12 @@ if((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 endif()
 
 
-foreach(d component performance scratch unit)
+foreach(d
+	component
+	performance
+	scratch
+	unit
+)
 
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${d}")
 
