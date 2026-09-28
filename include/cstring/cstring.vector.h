@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 27th September 2026
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
 # define CSTRING_VER_CSTRING_H_VECTOR_REVISION  4
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      10
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      11
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -109,7 +109,7 @@ typedef struct cstring_vector_t                             cstring_vector_t;
 /** \brief Initialises a cstring-vector instance to a default form
  *
  * \note This must only be called on an uninitialised cstring-vector
- *  instance;
+ *   instance;
  *
  * \pre (NULL != pcsv)
  */
