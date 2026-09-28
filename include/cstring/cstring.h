@@ -102,7 +102,7 @@
 # define CSTRING_VER_4_0_15     0x04000fff
 # define CSTRING_VER_4_0_16     0x040010ff
 # define CSTRING_VER_4_0_17     0x040011ff
-# define CSTRING_VER_4_1_0      0x040100ff
+# define CSTRING_VER_4_0_18     0x040012ff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -122,8 +122,8 @@
  */
 
 #define CSTRING_VER_MAJOR                                   4
-#define CSTRING_VER_MINOR                                   1
-#define CSTRING_VER_PATCH                                   0
+#define CSTRING_VER_MINOR                                   0
+#define CSTRING_VER_PATCH                                   18
 #define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \
