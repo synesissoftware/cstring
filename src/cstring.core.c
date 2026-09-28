@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 6th September 2026
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -142,17 +142,22 @@ strncpy_safe(
 
     return dest;
 }
-# define strncpy    strncpy_safe
+# define strncpy                                            strncpy_safe
 #endif /* compiler */
 
 #if defined(UNIX) || \
     defined(unix)
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
-# define index index_disambiguated_1
+# define index                                              index_disambiguated_1
 #endif
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+
+/* /////////////////////////////////////////////////////////
  * utility functions
  */
 
@@ -167,7 +172,7 @@ cstring_strlen_safe_(
 
 static
 CSTRING_RC
-convert_negative_index(
+convert_negative_index_(
     cstring_t const*    pcs
 ,   int                 index
 ,   size_t*             realIndex
@@ -221,7 +226,7 @@ cstring_strlcpy_safe_(
         {
             *dst = *src;
 
-            if ('\0' == *src)
+            if ('\0' == src[0])
             {
                 break;
             }
@@ -229,7 +234,7 @@ cstring_strlcpy_safe_(
 
         memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
 
-        for (; '\0' != *src; ++i, ++src)
+        for (; '\0' != src[0]; ++i, ++src)
         {
         }
 
@@ -260,7 +265,7 @@ cstring_memcpy_safe_(
 }
 
 
-/* /////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////
  * allocation functions
  */
 
@@ -272,7 +277,7 @@ static void* win32_comtask_realloc(void* pv, size_t cb);
 
 static
 void*
-cstring_realloc_2(
+cstring_realloc_2_(
     void*                       pv
 ,   size_t                      cch
 ,   cstring_flags_t             flags
@@ -385,7 +390,7 @@ cstring_realloc_(
 ,   CSTRING_RC*     prc
 )
 {
-    return cstring_realloc_2(pv, cch, flags, prc, NULL, NULL);
+    return cstring_realloc_2_(pv, cch, flags, prc, NULL, NULL);
 }
 
 
@@ -685,7 +690,7 @@ cstring_createLenFn(
             }
             cch = (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
-            pcs->ptr = (cstring_char_t*)cstring_realloc_2(NULL, cch + 1, flags, &rc, pfnAllocFailHandler, param);
+            pcs->ptr = (cstring_char_t*)cstring_realloc_2_(NULL, cch + 1, flags, &rc, pfnAllocFailHandler, param);
 
             if (NULL == pcs->ptr)
             {
@@ -876,7 +881,7 @@ cstring_setCapacityFn(
             cstring_char_t* newPtr;
 
             newCapacity =   (newCapacity + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
-            newPtr      =   (cstring_char_t*)cstring_realloc_2(pcs->ptr, newCapacity + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
+            newPtr      =   (cstring_char_t*)cstring_realloc_2_(pcs->ptr, newCapacity + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
             if (NULL == newPtr)
             {
@@ -970,7 +975,7 @@ cstring_assignFn(
             else
             {
                 CSTRING_RC      rc;
-                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
+                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2_(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
                 if (NULL == newPtr)
                 {
@@ -1070,7 +1075,7 @@ cstring_assignLenFn(
             else
             {
                 CSTRING_RC      rc;
-                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
+                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2_(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
                 if (NULL == newPtr)
                 {
@@ -1189,7 +1194,7 @@ cstring_appendFn(
             else
             {
                 CSTRING_RC      rc;
-                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
+                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2_(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
                 if (NULL == newPtr)
                 {
@@ -1299,7 +1304,7 @@ cstring_appendLenFn(
             else
             {
                 CSTRING_RC      rc;
-                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
+                cstring_char_t* newPtr = (cstring_char_t*)cstring_realloc_2_(pcs->ptr, cch + 1, pcs->flags, &rc, pfnAllocFailHandler, param);
 
                 if (NULL == newPtr)
                 {
@@ -1545,7 +1550,7 @@ cstring_insertLen(
 
     if (index < 0)
     {
-        CSTRING_RC rc = convert_negative_index(pcs, index, &realIndex);
+        CSTRING_RC rc = convert_negative_index_(pcs, index, &realIndex);
 
         if (rc != CSTRING_RC_SUCCESS)
         {
@@ -1617,7 +1622,7 @@ cstring_replaceLen(
 
     if (index < 0)
     {
-        CSTRING_RC rc = convert_negative_index(pcs, index, &realIndex);
+        CSTRING_RC rc = convert_negative_index_(pcs, index, &realIndex);
 
         if (rc != CSTRING_RC_SUCCESS)
         {

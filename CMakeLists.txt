@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  23rd September 2026
+# Updated:  28th September 2026
 #
 # ######################################################################## #
 

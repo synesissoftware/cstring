@@ -4,7 +4,7 @@
  * Purpose: Shared helpers for cstring performance programs.
  *
  * Created: 23rd September 2026
- * Updated: 23rd September 2026
+ * Updated: 29th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -19,19 +19,21 @@
 
 #include <stlsoft/conversion/number/grouping_functions.hpp>
 #include <stlsoft/diagnostics/std_chrono_hrc_stopwatch.hpp>
+#include <stlsoft/std/cstdlib.hpp>
 #include <stlsoft/stlsoft.h>
 
 #ifdef HAS_P99
 # include <p99/p99.hpp>
 #endif
 
-#include <cstdint>
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -44,38 +46,48 @@ typedef stopwatch_t::interval_type                          interval_t;
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * namespace
+ */
+
+namespace cstring_perf
+{
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * configuration
  */
 
-namespace cstring_perf {
-
 inline
-std::size_t
+size_t
 env_size_t(
-    char const*     name
-,   std::size_t     default_value
+    char const* name
+,   size_t      default_value
 )
 {
-    char const* const env = std::getenv(name);
+    char const* const env = ::getenv(name);
 
-    if (NULL == env || '\0' == *env)
+    if (NULL == env ||
+        '\0' == env[0])
     {
         return default_value;
     }
 
-    char* end = NULL;
-    unsigned long const v = std::strtoul(env, &end, 10);
+    char*               end =   NULL;
+    unsigned long const v   =   stlsoft::strtoul(env, &end, 10);
 
-    if (end == env || NULL == end || '\0' != *end || 0 == v)
+    if (end == env ||
+        NULL == end ||
+        '\0' != end[0] ||
+        0 == v)
     {
         return default_value;
     }
 
-    return static_cast<std::size_t>(v);
+    return static_cast<size_t>(v);
 }
 
 inline
-std::size_t
+size_t
 default_iterations()
 {
 #ifdef NDEBUG
@@ -83,19 +95,19 @@ default_iterations()
     return env_size_t("CSTRING_PERF_ITERATIONS", 100000u);
 #else
 
-return env_size_t("CSTRING_PERF_ITERATIONS", 1000u);
+    return env_size_t("CSTRING_PERF_ITERATIONS", 1000u);
 #endif
 }
 
 inline
-std::size_t
+size_t
 default_warmups()
 {
     return env_size_t("CSTRING_PERF_WARMUPS", 2u);
 }
 
 inline
-std::size_t
+size_t
 default_file_trials()
 {
 #ifdef NDEBUG
@@ -115,7 +127,7 @@ default_file_trials()
 inline
 std::string
 make_payload(
-    std::size_t n
+    size_t n
 )
 {
     if (0 == n)
@@ -125,7 +137,7 @@ make_payload(
 
     std::string s(n, 'x');
 
-    for (std::size_t i = 0; n != i; ++i)
+    for (size_t i = 0; n != i; ++i)
     {
         s[i] = static_cast<char>('a' + static_cast<int>(i % 26));
     }
@@ -138,7 +150,7 @@ make_payload(
  * display
  */
 
-template <typename T_integer>
+template <ss_typename_param_k T_integer>
 inline
 std::string
 thousands(
@@ -216,9 +228,10 @@ env_is_truey(
     char const* name
 )
 {
-    char const* const env = std::getenv(name);
+    char const* const env = ::getenv(name);
 
-    if (NULL == env || '\0' == *env)
+    if (NULL == env ||
+        '\0' == env[0])
     {
         return false;
     }
@@ -252,7 +265,7 @@ inline
 void
 maybe_emit_group_gap(
     char const* scenario
-,   std::size_t size
+,   size_t      size
 )
 {
     if (!group_gaps_enabled())
@@ -262,17 +275,18 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static std::size_t  prev_size = 0;
+    static size_t  prev_size = 0;
 
     if (have_prev &&
-        (prev_scenario != scenario || prev_size != size))
+        (   prev_scenario != scenario ||
+            prev_size != size))
     {
         std::cout << std::endl;
     }
 
-    prev_scenario = scenario;
-    prev_size = size;
-    have_prev = true;
+    prev_scenario   =   scenario;
+    prev_size       =   size;
+    have_prev       =   true;
 }
 
 inline
@@ -315,22 +329,22 @@ display_results_title()
 inline
 void
 display_results(
-    char const*     scenario
-,   std::size_t     size
-,   char const*     impl
-,   std::size_t     num_iterations
-,   std::size_t     num_actions
-,   interval_t      tm_ns
-,   double          ratio_vs_cstring
-,   std::uint64_t   anchor_value
+    char const*             scenario
+,   size_t                  size
+,   char const*             impl
+,   size_t                  num_iterations
+,   size_t                  num_actions
+,   interval_t              tm_ns
+,   double                  ratio_vs_cstring
+,   ::uint64_t              anchor_value
 #ifdef HAS_P99
-,   p99::histogram const* hist = NULL
+,   p99::histogram const*   hist = NULL
 #endif /* HAS_P99 */
 )
 {
     maybe_emit_group_gap(scenario, size);
 
-    std::size_t const denom =
+    size_t const denom =
         (0 == num_iterations || 0 == num_actions)
             ? 1u
             : (num_iterations * num_actions)
@@ -400,8 +414,8 @@ ratio_or_dash(
 struct raw_string
 {
     char*       ptr;
-    std::size_t len;
-    std::size_t capacity;
+    size_t len;
+    size_t capacity;
 };
 
 inline
@@ -421,7 +435,7 @@ raw_destroy(
     raw_string* s
 )
 {
-    std::free(s->ptr);
+    ::free(s->ptr);
     raw_init(s);
 }
 
@@ -429,7 +443,7 @@ inline
 int
 raw_reserve(
     raw_string* s
-,   std::size_t capacity
+,   size_t      capacity
 )
 {
     if (capacity <= s->capacity && NULL != s->ptr)
@@ -437,7 +451,7 @@ raw_reserve(
         return 0;
     }
 
-    char* const p = static_cast<char*>(std::realloc(s->ptr, capacity + 1u));
+    char* const p = static_cast<char*>(::realloc(s->ptr, capacity + 1u));
 
     if (NULL == p)
     {
@@ -454,9 +468,9 @@ raw_reserve(
 inline
 int
 raw_assign_len(
-    raw_string*     s
-,   char const*     src
-,   std::size_t     n
+    raw_string* s
+,   char const* src
+,   size_t      n
 )
 {
     if (0 != raw_reserve(s, n))
@@ -478,12 +492,12 @@ raw_assign_len(
 inline
 int
 raw_append_len(
-    raw_string*     s
-,   char const*     src
-,   std::size_t     n
+    raw_string* s
+,   char const* src
+,   size_t      n
 )
 {
-    std::size_t const need = s->len + n;
+    size_t const need = s->len + n;
 
     if (0 != raw_reserve(s, need))
     {
@@ -504,10 +518,10 @@ raw_append_len(
 inline
 int
 raw_insert_len(
-    raw_string*     s
-,   std::size_t     pos
-,   char const*     src
-,   std::size_t     n
+    raw_string* s
+,   size_t      pos
+,   char const* src
+,   size_t      n
 )
 {
     if (pos > s->len)
@@ -515,7 +529,7 @@ raw_insert_len(
         pos = s->len;
     }
 
-    std::size_t const need = s->len + n;
+    size_t const need = s->len + n;
 
     if (0 != raw_reserve(s, need))
     {
@@ -552,8 +566,8 @@ raw_copy(
 struct raw_string_vector
 {
     char**      ptr;
-    std::size_t len;
-    std::size_t capacity;
+    size_t len;
+    size_t capacity;
 };
 
 inline
@@ -575,12 +589,12 @@ raw_vec_destroy(
 {
     if (NULL != v->ptr)
     {
-        for (std::size_t i = 0; v->len != i; ++i)
+        for (size_t i = 0; v->len != i; ++i)
         {
-            std::free(v->ptr[i]);
+            ::free(v->ptr[i]);
         }
 
-        std::free(v->ptr);
+        ::free(v->ptr);
     }
 
     raw_vec_init(v);
@@ -590,7 +604,7 @@ inline
 int
 raw_vec_reserve(
     raw_string_vector*  v
-,   std::size_t         capacity
+,   size_t              capacity
 )
 {
     if (capacity <= v->capacity)
@@ -599,7 +613,7 @@ raw_vec_reserve(
     }
 
     char** const p = static_cast<char**>(
-        std::realloc(v->ptr, capacity * sizeof(char*))
+        ::realloc(v->ptr, capacity * sizeof(char*))
     );
 
     if (NULL == p)
@@ -618,12 +632,12 @@ int
 raw_vec_append_cstr(
     raw_string_vector*  v
 ,   char const*         s
-,   std::size_t         n
+,   size_t              n
 )
 {
     if (v->len == v->capacity)
     {
-        std::size_t const nc =
+        size_t const nc =
             (0 == v->capacity) ? 8u : (v->capacity * 2u)
             ;
 
@@ -633,7 +647,7 @@ raw_vec_append_cstr(
         }
     }
 
-    char* const copy = static_cast<char*>(std::malloc(n + 1u));
+    char* const copy = static_cast<char*>(::malloc(n + 1u));
 
     if (NULL == copy)
     {
@@ -656,13 +670,15 @@ int
 raw_vec_prepend_cstr(
     raw_string_vector*  v
 ,   char const*         s
-,   std::size_t         n
+,   size_t              n
 )
 {
     if (v->len == v->capacity)
     {
-        std::size_t const nc =
-            (0 == v->capacity) ? 8u : (v->capacity * 2u)
+        size_t const nc =
+            (0 == v->capacity)
+                ? 8u
+                : (v->capacity * 2u)
             ;
 
         if (0 != raw_vec_reserve(v, nc))
@@ -671,7 +687,7 @@ raw_vec_prepend_cstr(
         }
     }
 
-    char* const copy = static_cast<char*>(std::malloc(n + 1u));
+    char* const copy = static_cast<char*>(::malloc(n + 1u));
 
     if (NULL == copy)
     {
@@ -695,10 +711,22 @@ raw_vec_prepend_cstr(
 
     return 0;
 }
-} /* namespace cstring_perf */
 
 
-/* ////////////////////////////////////////////////////////////////////// */
+/* /////////////////////////////////////////////////////////////////////////
+ * namespace
+ */
+
+} // namespace cstring_perf
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * inclusion control
+ */
+
+#ifdef STLSOFT_PPF_pragma_once_SUPPORT
+# pragma once
+#endif /* STLSOFT_PPF_pragma_once_SUPPORT */
 
 #endif /* !CSTRING_TEST_PERFORMANCE_PERF_HARNESS_HPP_INCLUDED */
 
