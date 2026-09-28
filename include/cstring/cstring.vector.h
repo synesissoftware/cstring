@@ -128,7 +128,7 @@ cstring_vector_init(
  * \note This must only be called on an initialised cstring-vector instance,
  *   which is then rendered in the uninitialised state.
  *
- * \retval CSTRING_RC_SUCCESS the capacity was destroyed;
+ * \retval CSTRING_RC_SUCCESS The capacity was destroyed;
  *
  * \pre (NULL != pcsv)
  */
@@ -146,9 +146,9 @@ cstring_vector_destroy(
  *
  * \note The cstring instance must not be readonly
  *
- * \retval CSTRING_RC_SUCCESS cstring-vector instance contents were
+ * \retval CSTRING_RC_SUCCESS Cstring-vector instance contents were
  *   truncated (or the truncation length was out of bounds);
- * \retval CSTRING_RC_READONLY the cstring-vector instance is marked
+ * \retval CSTRING_RC_READONLY The cstring-vector instance is marked
  *   readonly (CSTRING_F_MEMORY_IS_READONLY);
  *
  * \pre (NULL != pcsv)
