@@ -132,7 +132,7 @@ jobs:
           name: sis-build-${{ inputs.cell-id }}
           path: build
 
-      - name: Automated tests (unit then component)
+      - name: Automated tests (unit then component) [!Windows]
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -140,7 +140,7 @@ jobs:
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
             ./run_all_automated_tests.sh -M
 
-      - name: Automated tests (unit then component)
+      - name: Automated tests (unit then component) [Windows]
         if: runner.os == 'Windows'
         shell: cmd
         run: |
@@ -148,17 +148,21 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_automated_tests.cmd
 
-      - name: Performance tests
+      - name: Performance tests [!Windows]
         if: runner.os != 'Windows'
         shell: bash
+        env:
+          SIS_PERFTESTS_GROUPGAPS: '1'
         run: |
           set -euo pipefail
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
             ./run_all_performance_tests.sh -M
 
-      - name: Performance tests
+      - name: Performance tests [Windows]
         if: runner.os == 'Windows'
         shell: cmd
+        env:
+          SIS_PERFTESTS_GROUPGAPS: '1'
         run: |
           set SIS_CMAKE_BUILD_DIR=%GITHUB_WORKSPACE%\build
           if /I "${{ inputs.toolchain }}"=="mingw" (
@@ -167,7 +171,7 @@ jobs:
           )
           call run_all_performance_tests.cmd
 
-      - name: Scratch tests
+      - name: Scratch tests [!Windows]
         if: runner.os != 'Windows'
         continue-on-error: true
         shell: bash
@@ -176,7 +180,7 @@ jobs:
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
             ./run_all_scratch_tests.sh -M
 
-      - name: Scratch tests
+      - name: Scratch tests [Windows]
         if: runner.os == 'Windows'
         continue-on-error: true
         shell: cmd
@@ -185,7 +189,7 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_scratch_tests.cmd
 
-      - name: Examples
+      - name: Examples [!Windows]
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -193,7 +197,7 @@ jobs:
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/build" \
             ./run_all_examples.sh -M
 
-      - name: Examples
+      - name: Examples [Windows]
         if: runner.os == 'Windows'
         shell: cmd
         run: |
