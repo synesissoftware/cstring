@@ -52,22 +52,6 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER)
-# if _MSC_VER >= 1200
-#  pragma warning(push)
-# endif /* _MSC_VER >= 1200 */
-# if _MSC_VER >= 1310
-#  if !defined(__COMO__)
-#   pragma warning(disable : 4055)
-#  endif /* !__COMO__ */
-# endif /* _MSC_VER >= 1310 */
-#endif /* compiler */
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * Win32 functions
  */
 
@@ -75,14 +59,9 @@
 # if defined(__MWERKS__)
 #  define  GMEM_FIXED                           0
 #  define  GMEM_MOVEABLE                        2
-#  define  WINAPI                               __stdcall
 typedef int                                     BOOL;
 typedef void*                                   HANDLE;
 typedef void*                                   HGLOBAL;
-typedef void*                                   HMODULE;
-typedef void*                                   HINSTANCE;
-typedef long                                    LONG;
-__declspec(dllimport) long      __stdcall       InterlockedExchange(LONG volatile *, LONG);
 __declspec(dllimport) HANDLE    __stdcall       GetProcessHeap(void);
 __declspec(dllimport) HGLOBAL   __stdcall       GlobalAlloc(unsigned int, unsigned long);
 __declspec(dllimport) HGLOBAL   __stdcall       GlobalFree(HGLOBAL);
@@ -90,13 +69,13 @@ __declspec(dllimport) HGLOBAL   __stdcall       GlobalReAlloc(HGLOBAL, unsigned 
 __declspec(dllimport) void*     __stdcall       HeapAlloc(HANDLE, unsigned long, unsigned int);
 __declspec(dllimport) BOOL      __stdcall       HeapFree(HANDLE, unsigned long, void* );
 __declspec(dllimport) void*     __stdcall       HeapReAlloc(HANDLE, unsigned long, void*, unsigned int);
-__declspec(dllimport) void      __stdcall       Sleep(unsigned long);
-__declspec(dllimport) HINSTANCE __stdcall       LoadLibraryA(char const* );
-__declspec(dllimport) BOOL      __stdcall       FreeLibrary(HMODULE );
-__declspec(dllimport) void*     __stdcall       GetProcAddress(HMODULE, char const*);
+__declspec(dllimport) void*     __stdcall       CoTaskMemAlloc(unsigned long);
+__declspec(dllimport) void      __stdcall       CoTaskMemFree(void* );
+__declspec(dllimport) void*     __stdcall       CoTaskMemRealloc(void* , unsigned long);
 # else /* ? compiler */
 
 #  include <windows.h>
+#  include <objbase.h>
 # endif /* compiler */
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
@@ -162,71 +141,26 @@ win32_comtask_realloc(
 ,   size_t  cb
 )
 {
-    typedef void* (WINAPI *PfnCoTaskMemRealloc)(void* , size_t );
-
-    static LONG                 s_cstring_PfnCoTaskMemRealloc_init  =   0;
-    static LONG                 s_cstring_PfnCoTaskMemRealloc_spin  =   0;
-    static HINSTANCE            s_cstring_ole32_HINSTANCE           =   NULL;
-    static PfnCoTaskMemRealloc  s_cstring_pfnCoTaskMemRealloc       =   NULL;
-
-    if (NULL == pv)
+    /* Direct (statically linked) COM Task Allocator API — CoTaskMemAlloc /
+     * CoTaskMemFree / CoTaskMemRealloc from ole32.
+     */
+    if (NULL != pv)
     {
-        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
-        {}
-
-        if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
+        if (0 == cb)
         {
-#if defined(__GNUC__)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wcast-function-type"
-#endif /* __GNUC__ */
-
-            s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
-            s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
-
-#if defined(__GNUC__)
-# pragma GCC diagnostic pop
-#endif /* __GNUC__ */
-
-            if (NULL == s_cstring_ole32_HINSTANCE ||
-                NULL == s_cstring_pfnCoTaskMemRealloc)
-            {
-                --s_cstring_PfnCoTaskMemRealloc_init;
-            }
+            return (CoTaskMemFree(pv), (void*)NULL);
         }
-
-        InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 0);
+        else
+        {
+            return CoTaskMemRealloc(pv, cb);
+        }
     }
-
-    pv = (NULL != s_cstring_pfnCoTaskMemRealloc) ? s_cstring_pfnCoTaskMemRealloc(pv, cb) : NULL;
-
-    if (0 == cb)
+    else
     {
-        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
-        {}
-
-        if (0 == --s_cstring_PfnCoTaskMemRealloc_init)
-        {
-            FreeLibrary(s_cstring_ole32_HINSTANCE);
-        }
-
-        InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 0);
+        return CoTaskMemAlloc(cb);
     }
-
-    return pv;
 }
 
-/* ////////////////////////////////////////////////////////////////////// */
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER) && \
-    _MSC_VER >= 1200
-# pragma warning(pop)
-#endif /* compiler */
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

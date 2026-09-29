@@ -837,7 +837,7 @@ cstring_swap(
  *   <code>ferror()</code>);
  * \retval CSTRING_RC_SUCCESS A line terminated by a carriage return was
  *   read in;
- * \retval CSTRING_RC_EOF A line terminted by the end-of-file was read in;
+ * \retval CSTRING_RC_EOF A line terminated by the end-of-file was read in;
  * \retval -other- Any other value returned by cstring_appendLen();
  *
  * \pre (NULL != pcs)

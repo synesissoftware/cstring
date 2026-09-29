@@ -60,6 +60,15 @@ add_library(core
 	${CORE_SRCS}
 )
 
+if(_BUILD_AS_WIN32)
+
+	# win.c uses the COM Task Allocator (CoTaskMem*) from ole32
+	target_link_libraries(core
+		PRIVATE
+			ole32
+	)
+endif(_BUILD_AS_WIN32)
+
 # specify the primary public headers for the library, which controls whether
 # they'll be installed
 #
