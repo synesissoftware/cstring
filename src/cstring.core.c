@@ -59,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,13 +75,6 @@
 #define CSTRING_ALLOC_GRANULARITY                           (8)
 
 #define CSTRING_OFFSET_SIZE                                 (16)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_ASSERT(expr)                                assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -302,7 +294,7 @@ alloc_retry:
 
             pvNew = realloc(pv, cb);
             break;
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef _WIN32
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -315,7 +307,7 @@ alloc_retry:
 
             pvNew = win32_comtask_realloc(pv, cb);
             break;
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 #if defined(CSTRING_USE_SYNESIS_APIS)
         case    CSTRING_F_USE_SYNESIS_HATOR:
 #endif /* CSTRING_USE_SYNESIS_APIS */
