@@ -10,7 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
-      - win32
+      - perf-tests-win
   pull_request:
 
 concurrency:
