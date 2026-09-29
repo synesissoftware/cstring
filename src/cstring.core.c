@@ -116,7 +116,7 @@ strncpy_safe(
 # define strncpy                                            strncpy_safe
 #endif /* compiler */
 
-#if defined(UNIX) || \
+#if defined(UNIX) ||\
     defined(unix)
 
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
@@ -372,9 +372,9 @@ cstring_release_to_empty_(
  * API
  */
 
-#if 0 || \
-    defined(_DLL) || \
-    defined(__DLL) || \
+#if 0 ||\
+    defined(_DLL) ||\
+    defined(__DLL) ||\
     0
 
 CSTRING_EXTERN_C

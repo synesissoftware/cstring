@@ -4,7 +4,7 @@
  * Purpose: Internal utility header for the cstring API.
  *
  * Created: 13th May 2008
- * Updated: 2nd August 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MAJOR       1
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_MINOR       0
 # define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_REVISION    1
-# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        4
+# define CSTRING_VER_CSTRING_INTERNAL_H_SAFESTR_EDIT        5
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@
 #elif defined(__GNUC__)
 #elif defined(__INTEL_COMPILER)
 
-# if defined(_MSC_VER) && \
+# if defined(_MSC_VER) &&\
      _MSC_VER >= 1400
 
 #  define CSTRING_SAFE_STR_USE_crtdefs_h_
@@ -101,7 +101,7 @@
 
 #ifdef __STDC_SECURE_LIB__
 
-# if defined(__STDC_WANT_SECURE_LIB__) && \
+# if defined(__STDC_WANT_SECURE_LIB__) &&\
      __STDC_WANT_SECURE_LIB__ == 1
 
 #  define CSTRING_USING_SAFE_STR_FUNCTIONS

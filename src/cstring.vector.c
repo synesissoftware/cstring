@@ -175,7 +175,7 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
 # define strncpy                                            strncpy_safe
 #endif /* compiler */
 
-#if defined(UNIX) || \
+#if defined(UNIX) ||\
     defined(unix)
 
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */

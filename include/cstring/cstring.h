@@ -393,7 +393,7 @@ cstring_getStatusCodeStringLength(
  * \see cstring_getStatusCodeString
  */
 #if 0
-#elif defined(_MSC_VER) && \
+#elif defined(_MSC_VER) &&\
       _MSC_VER >= 1400
 __declspec(deprecated("cstring_error() is deprecated, and may be removed in a future version: instead use cstring_getStatusCodeString()"))
 #endif /* compiler */
