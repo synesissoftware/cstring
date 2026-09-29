@@ -20,9 +20,11 @@
 
 #include "perf_harness.hpp"
 
-#include <string>
-#include <vector>
+#include <stlsoft/memory/auto_buffer.hpp>
 
+#include <string>
+
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +41,6 @@ char const* const IMPL_STD      = "std::string";
 char const* const IMPL_RAW      = "raw_realloc";
 char const* const IMPL_BORROWED = "cstring_borrowed";
 char const* const IMPL_FIXEDBUF = "fixed_char_buf";
-
 #ifdef _WIN32
 
 /* Realloc row is the ratio baseline. These arenas follow unit-test order
@@ -59,7 +60,7 @@ cstring_arena const WINDOWS_CSTRING_ARENAS[] =
 };
 #endif /* _WIN32 */
 
-std::size_t const SIZES[] =
+size_t const SIZES[] =
 {
     16u,
     64u,
@@ -68,6 +69,7 @@ std::size_t const SIZES[] =
     65536u,
 };
 
+const size_t NUM_STACK_ELEMENTS = 512;
 } // anonymous namespace
 
 
@@ -92,15 +94,15 @@ struct run_result
 template <typename F>
 run_result
 time_iterations(
-    std::size_t num_iterations
-,   std::size_t num_warm_loops
-,   F           fn
+    size_t  num_iterations
+,   size_t  num_warm_loops
+,   F       fn
 )
 {
     run_result result = {};
     stopwatch_t sw;
 
-    for (std::size_t w = num_warm_loops; 0 != w; --w)
+    for (size_t w = num_warm_loops; 0 != w; --w)
     {
         result.anchor = 0;
 #ifdef HAS_P99
@@ -110,7 +112,7 @@ time_iterations(
         interval_t tm_ns = 0;
 #ifdef HAS_P99
 
-        for (std::size_t i = 0; num_iterations != i; ++i)
+        for (size_t i = 0; num_iterations != i; ++i)
         {
             sw.start();
             result.anchor += fn();
@@ -124,7 +126,7 @@ time_iterations(
 #else /* ? HAS_P99 */
 
         sw.start();
-        for (std::size_t i = 0; num_iterations != i; ++i)
+        for (size_t i = 0; num_iterations != i; ++i)
         {
             result.anchor += fn();
         }
@@ -143,13 +145,13 @@ time_iterations(
 
 void
 emit_row(
-    char const*     scenario
-,   std::size_t     size
-,   char const*     impl
-,   std::size_t     num_iterations
-,   std::size_t     num_actions
-,   run_result const& r
-,   interval_t      cstring_tm_ns
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+,   interval_t          cstring_tm_ns
 )
 {
     double const ratio =
@@ -180,18 +182,18 @@ emit_row(
 template <typename F>
 void
 emit_windows_cstring_arenas(
-    char const*     scenario
-,   std::size_t     size
-,   std::size_t     num_iterations
-,   std::size_t     num_warm_loops
-,   std::size_t     num_actions
-,   interval_t      baseline_ns
-,   F               body
+    char const* scenario
+,   size_t      size
+,   size_t      num_iterations
+,   size_t      num_warm_loops
+,   size_t      num_actions
+,   interval_t  baseline_ns
+,   F           body
 )
 {
 #ifdef _WIN32
 
-    for (std::size_t i = 0; STLSOFT_NUM_ELEMENTS(WINDOWS_CSTRING_ARENAS) != i; ++i)
+    for (size_t i = 0; STLSOFT_NUM_ELEMENTS(WINDOWS_CSTRING_ARENAS) != i; ++i)
     {
         cstring_flags_t const flags = WINDOWS_CSTRING_ARENAS[i].flags;
 
@@ -236,8 +238,8 @@ namespace {
 
 void
 scenario_create_destroy_empty(
-    std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     run_result const cs = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
@@ -289,9 +291,9 @@ scenario_create_destroy_empty(
 
 void
 scenario_create_destroy_len(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(n);
@@ -348,9 +350,9 @@ scenario_create_destroy_len(
 
 void
 scenario_assign_len_grow(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(n);
@@ -408,10 +410,10 @@ scenario_assign_len_grow(
 
 void
 scenario_append_len_growth(
-    std::size_t chunk
-,   std::size_t num_appends
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t chunk
+,   size_t num_appends
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(chunk);
@@ -420,7 +422,7 @@ scenario_append_len_growth(
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_create(&s, "");
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             cstring_appendLen(&s, p, chunk);
         }
@@ -431,7 +433,7 @@ scenario_append_len_growth(
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
         std::string s;
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             s.append(p, chunk);
         }
@@ -441,7 +443,7 @@ scenario_append_len_growth(
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
         raw_string s;
         raw_init(&s);
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             raw_append_len(&s, p, chunk);
         }
@@ -467,7 +469,7 @@ scenario_append_len_growth(
 
             cstring_createEx(&s, "", flags, NULL, 0);
 
-            for (std::size_t i = 0; num_appends != i; ++i)
+            for (size_t i = 0; num_appends != i; ++i)
             {
                 cstring_appendLen(&s, p, chunk);
             }
@@ -485,21 +487,21 @@ scenario_append_len_growth(
 
 void
 scenario_append_len_reserved(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
-    std::size_t const chunk = (n < 16u) ? n : 16u;
-    std::size_t const num_appends = (0 == chunk) ? 0u : (n / chunk);
+    size_t const chunk = (n < 16u) ? n : 16u;
+    size_t const num_appends = (0 == chunk) ? 0u : (n / chunk);
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_create(&s, "");
         cstring_setCapacity(&s, n);
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             cstring_appendLen(&s, p, chunk);
         }
@@ -511,7 +513,7 @@ scenario_append_len_reserved(
     run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
         std::string s;
         s.reserve(n);
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             s.append(p, chunk);
         }
@@ -522,7 +524,7 @@ scenario_append_len_reserved(
         raw_string s;
         raw_init(&s);
         raw_reserve(&s, n);
-        for (std::size_t i = 0; num_appends != i; ++i)
+        for (size_t i = 0; num_appends != i; ++i)
         {
             raw_append_len(&s, p, chunk);
         }
@@ -546,7 +548,7 @@ scenario_append_len_reserved(
             cstring_createEx(&s, "", flags, NULL, 0);
             cstring_setCapacity(&s, n);
 
-            for (std::size_t i = 0; num_appends != i; ++i)
+            for (size_t i = 0; num_appends != i; ++i)
             {
                 cstring_appendLen(&s, p, chunk);
             }
@@ -564,16 +566,16 @@ scenario_append_len_reserved(
 
 void
 scenario_insert_len_mid(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const base = make_payload(n);
     std::string const ins = make_payload(n / 4u == 0 ? 1u : n / 4u);
     char const* const bp = base.data();
     char const* const ip = ins.data();
-    std::size_t const in = ins.size();
+    size_t const in = ins.size();
     int const pos = static_cast<int>(n / 2u);
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
@@ -629,9 +631,9 @@ scenario_insert_len_mid(
 
 void
 scenario_copy(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(n);
@@ -701,17 +703,64 @@ scenario_copy(
 }
 
 void
-scenario_borrowed_fixed(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+scenario_borrowed_fixed_construct(
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        std::vector<char> buf(n + 1u, '\0');
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+        cstring_t s = cstring_t_DEFAULT;
+        cstring_createLenEx(
+            &s
+        ,   p
+        ,   n
+        ,   CSTRING_F_MEMORY_IS_BORROWED | CSTRING_F_MEMORY_IS_FIXED
+        ,   &buf[0]
+        ,   n + 1u
+        );
+
+        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
+        cstring_destroy(&s);
+
+        return r;
+    });
+
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        std::string s(p, n);
+
+        return s.size() + (s.empty() ? 0 : size_t(s.back()));
+    });
+
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+        ::memcpy(&buf[0], p, n);
+        buf[n] = '\0';
+
+        return n + (n == 0 ? 0 : size_t(buf[n - 1]));
+    });
+
+    emit_row("borrowed_fixed_construct", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
+    emit_row("borrowed_fixed_construct", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
+    emit_row("borrowed_fixed_construct", n, IMPL_FIXEDBUF, num_iterations, 1, fx, cs.tm_ns);
+}
+
+void
+scenario_borrowed_fixed_assign(
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
+)
+{
+    std::string const payload = make_payload(n);
+    char const* const p = payload.data();
+
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
         cstring_t s = cstring_t_DEFAULT;
         cstring_createEx(
             &s
@@ -721,22 +770,25 @@ scenario_borrowed_fixed(
         ,   n + 1u
         );
         cstring_assignLen(&s, p, n);
-        std::uint64_t const a = s.len;
+        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
         cstring_destroy(&s);
-        return a;
+
+        return r;
     });
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
         std::string s;
         s.assign(p, n);
-        return s.size();
+
+        return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
     run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        std::vector<char> buf(n + 1u, '\0');
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
-        return n + static_cast<unsigned char>(buf[0]);
+
+        return n + (n == 0 ? 0 : size_t(buf[n - 1]));
     });
 
     emit_row("borrowed_fixed_assign", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
@@ -752,11 +804,11 @@ scenario_borrowed_fixed(
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-    std::size_t const num_iterations = cstring_perf::default_iterations();
-    std::size_t const num_warm_loops = cstring_perf::default_warmups();
+    size_t const num_iterations = cstring_perf::default_iterations();
+    size_t const num_warm_loops = cstring_perf::default_warmups();
 
     // Fewer outer iters for heavy growth / large sizes
-    std::size_t const heavy_iters =
+    size_t const heavy_iters =
         (num_iterations > 10000u) ? (num_iterations / 10u) : num_iterations
         ;
 
@@ -778,16 +830,17 @@ int main(int /*argc*/, char* /*argv*/[])
 
     scenario_create_destroy_empty(num_iterations, num_warm_loops);
 
-    for (std::size_t i = 0; STLSOFT_NUM_ELEMENTS(SIZES) != i; ++i)
+    for (size_t i = 0; STLSOFT_NUM_ELEMENTS(SIZES) != i; ++i)
     {
-        std::size_t const n = SIZES[i];
-        std::size_t const iters = (n >= 4096u) ? heavy_iters : num_iterations;
+        size_t const n      =   SIZES[i];
+        size_t const iters  =   (n >= 4096u) ? heavy_iters : num_iterations;
 
         scenario_create_destroy_len(n, iters, num_warm_loops);
         scenario_assign_len_grow(n, iters, num_warm_loops);
         scenario_append_len_reserved(n, iters, num_warm_loops);
         scenario_copy(n, iters, num_warm_loops);
-        scenario_borrowed_fixed(n, iters, num_warm_loops);
+        scenario_borrowed_fixed_construct(n, iters, num_warm_loops);
+        scenario_borrowed_fixed_assign(n, iters, num_warm_loops);
 
         if (n <= 4096u)
         {
