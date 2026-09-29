@@ -4,7 +4,7 @@
  * Purpose: Definition of DllMain for the Win32 platform
  *
  * Created: 19th August 2005
- * Updated: 2nd August 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -49,6 +49,8 @@
  */
 
 #include <cstring/cstring.h>
+#include "internal.h"
+
 #if !defined(__MWERKS__)
 # include <windows.h>
 #else /* ? compiler */
