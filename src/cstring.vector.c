@@ -51,6 +51,7 @@
 /* cstring header files */
 
 #include <cstring/cstring.vector.h>
+#include "internal.h"
 
 #ifndef CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
 # include <cstring/internal/safestr.h>
@@ -58,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,13 +69,6 @@
  */
 
 #define CSTRING_VECTOR_DEF_CAPACITY_                        (8)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_VECTOR_ASSERT(expr)                         assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -96,7 +89,7 @@ cstring_vector_init_empty_slots_(
 {
     if (0 != n)
     {
-        CSTRING_VECTOR_ASSERT(NULL != slots);
+        CSTRING_ASSERT(NULL != slots);
 
         memset(slots, 0, sizeof(cstring_t) * n);
     }
@@ -123,7 +116,7 @@ cstring_vector_destroy_slots_(
         return CSTRING_RC_SUCCESS;
     }
 
-    CSTRING_VECTOR_ASSERT(NULL != slots);
+    CSTRING_ASSERT(NULL != slots);
 
     for (i = 0; i != n; ++i)
     {
@@ -200,7 +193,7 @@ cstring_vector_init(
 ,   size_t              minCapacity
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == minCapacity)
     {
@@ -243,7 +236,7 @@ cstring_vector_destroy(
 {
     CSTRING_RC rc;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     rc = cstring_vector_destroy_slots_(pcsv->ptr, pcsv->len);
 
@@ -265,8 +258,8 @@ cstring_vector_truncate(
 {
     CSTRING_RC rc;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(len <= pcsv->len);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(len <= pcsv->len);
 
     rc = cstring_vector_destroy_slots_(pcsv->ptr + len, pcsv->len - len);
 
@@ -281,7 +274,7 @@ cstring_vector_create(
 ,   size_t              initialSize
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == initialSize)
     {
@@ -293,7 +286,7 @@ cstring_vector_create(
 
         if (CSTRING_RC_SUCCESS == rc)
         {
-            CSTRING_VECTOR_ASSERT(pcsv->capacity >= initialSize);
+            CSTRING_ASSERT(pcsv->capacity >= initialSize);
 
             cstring_vector_init_empty_slots_(pcsv->ptr, initialSize);
 
@@ -312,8 +305,8 @@ cstring_vector_insertAt(
 ,   size_t              numStrings
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(NULL != strings || 0 == numStrings);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != strings || 0 == numStrings);
 
     if (0 == numStrings)
     {
@@ -412,7 +405,7 @@ cstring_vector_readLines(
     size_t      numLinesRead_;
     size_t      initialLen;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     initialLen = pcsv->len;
 
