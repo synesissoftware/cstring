@@ -284,7 +284,7 @@ alloc_retry:
 
             pvNew = realloc(pv, cb);
             break;
-#ifdef CSTRING_USE_WINAPI_
+#ifdef _WIN32
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -297,7 +297,7 @@ alloc_retry:
 
             pvNew = win32_comtask_realloc(pv, cb);
             break;
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 #if defined(CSTRING_USE_SYNESIS_APIS)
         case    CSTRING_F_USE_SYNESIS_HATOR:
 #endif /* CSTRING_USE_SYNESIS_APIS */
