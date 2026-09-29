@@ -70,7 +70,7 @@
  * Windows arena allocators
  */
 
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef CSTRING_USE_WINAPI_
 
 CSTRING_EXTERN_C
 void*
