@@ -20,8 +20,9 @@
 
 #include "perf_harness.hpp"
 
+#include <stlsoft/memory/auto_buffer.hpp>
+
 #include <string>
-#include <vector>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -67,6 +68,8 @@ size_t const SIZES[] =
     4096u,
     65536u,
 };
+
+const size_t NUM_STACK_ELEMENTS = 512;
 } // anonymous namespace
 
 
@@ -700,7 +703,7 @@ scenario_copy(
 }
 
 void
-scenario_borrowed_fixed(
+scenario_borrowed_fixed_assign(
     size_t n
 ,   size_t num_iterations
 ,   size_t num_warm_loops
@@ -710,7 +713,7 @@ scenario_borrowed_fixed(
     char const* const p = payload.data();
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        std::vector<char> buf(n + 1u, '\0');
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
         cstring_t s = cstring_t_DEFAULT;
         cstring_createEx(
             &s
@@ -732,7 +735,7 @@ scenario_borrowed_fixed(
     });
 
     run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        std::vector<char> buf(n + 1u, '\0');
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
         return n + static_cast<unsigned char>(buf[0]);
@@ -786,7 +789,7 @@ int main(int /*argc*/, char* /*argv*/[])
         scenario_assign_len_grow(n, iters, num_warm_loops);
         scenario_append_len_reserved(n, iters, num_warm_loops);
         scenario_copy(n, iters, num_warm_loops);
-        scenario_borrowed_fixed(n, iters, num_warm_loops);
+        scenario_borrowed_fixed_assign(n, iters, num_warm_loops);
 
         if (n <= 4096u)
         {
