@@ -59,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,13 +75,6 @@
 #define CSTRING_ALLOC_GRANULARITY                           (8)
 
 #define CSTRING_OFFSET_SIZE                                 (16)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_ASSERT(expr)                                assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
