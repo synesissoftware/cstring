@@ -723,22 +723,25 @@ scenario_borrowed_fixed_assign(
         ,   n + 1u
         );
         cstring_assignLen(&s, p, n);
-        std::uint64_t const a = s.len;
+        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
         cstring_destroy(&s);
-        return a;
+
+        return r;
     });
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
         std::string s;
         s.assign(p, n);
-        return s.size();
+
+        return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
     run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
         stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
-        return n + static_cast<unsigned char>(buf[0]);
+
+        return n + (n == 0 ? 0 : size_t(buf[n - 1]));
     });
 
     emit_row("borrowed_fixed_assign", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
