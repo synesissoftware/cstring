@@ -186,7 +186,7 @@ display_banner(
         << ", CSTRING_PERF_FILE_TRIALS"
         << ", SIS_PERFTESTS_GROUPGAPS."
 #else /* ? HAS_P99 */
-        << "  p99: not linked — mean ns/op only; file_lines suite skipped."
+        << "  p99: not linked — mean ns/op only; filesystem suites skipped."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", SIS_PERFTESTS_GROUPGAPS."
