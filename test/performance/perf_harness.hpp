@@ -23,7 +23,6 @@
 #include <stlsoft/std/cstdlib.hpp>
 #include <stlsoft/stlsoft.h>
 
-
 #ifdef HAS_P99
 # include <p99/p99.hpp>
 #endif

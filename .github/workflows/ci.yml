@@ -10,6 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
+      - win32
   pull_request:
 
 concurrency:

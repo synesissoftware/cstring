@@ -1,6 +1,11 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.0.18 - 29th September 2026
+
+* Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;
+
+
 ## 4.0.17 - 29th September 2026
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
