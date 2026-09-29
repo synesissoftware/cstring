@@ -59,18 +59,18 @@
  * constants & definitions
  */
 
-#if defined(WIN32) || \
-    defined(WIN64)
-
-# define CSTRING_USE_WINAPI_
-#endif /* WIN32 || WIN64 */
-
 
 /* /////////////////////////////////////////////////////////////////////////
+ * Internal functions
+ */
+
+
+
+/* /////////////////////////////////////////////////////////
  * Windows arena allocators
  */
 
-#ifdef CSTRING_USE_WINAPI_
+#ifdef _WIN32
 
 CSTRING_EXTERN_C
 void*
@@ -92,7 +92,7 @@ win32_comtask_realloc(
     void*   pv
 ,   size_t  cb
 );
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 
 
 /* ////////////////////////////////////////////////////////////////////// */
