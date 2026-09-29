@@ -62,6 +62,7 @@
  */
 
 #include <assert.h>
+#include <stdio.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -126,6 +127,25 @@ CSTRING_EXTERN_C
 int
 cstring_try_get_regular_file_size_m_(
     char const*         name
+,   cstring_uint64_t*   pFileSize
+);
+
+/** Attempts to obtain the remaining size of a stream.
+ *
+ * Probes via seek-to-end from the current position and always restores that
+ * position, whether or not the size can be determined.
+ *
+ * \param stm Stream. May not be NULL;
+ * \param pFileSize Pointer to variable to receive the remaining size. May
+ *   not be NULL;
+ *
+ * \retval !0 The remaining size was obtained;
+ * \retval 0 The remaining size was not obtained;
+ */
+CSTRING_EXTERN_C
+int
+cstring_try_get_stream_size_m_(
+    FILE*               stm
 ,   cstring_uint64_t*   pFileSize
 );
 
