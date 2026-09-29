@@ -65,6 +65,28 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * types
+ */
+
+#if 0
+#elif defined(_MSC_VER) &&\
+      _MSC_VER < 1600
+
+typedef unsigned __int64                                    cstring_uint64_t;
+typedef   signed __int64                                    cstring_int64_t;
+#elif defined(__clang__) ||\
+      defined(__GNUC__)
+
+typedef unsigned long long                                  cstring_uint64_t;
+typedef   signed long long                                  cstring_int64_t;
+#else
+
+typedef unsigned long long                                  cstring_uint64_t;
+typedef   signed long long                                  cstring_int64_t;
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
@@ -85,6 +107,27 @@
  * internal functions
  */
 
+
+
+/* /////////////////////////////////////////////////////////
+ * file-system
+ */
+
+/** Attempts to obtain the size of a regular file.
+ *
+ * \param name C-style string of the name. May not be NULL;
+ * \param pFileSize Pointer to variable to receive the size. May not be
+ *   NULL;
+ *
+ * \retval !0 The size was obtained;
+ * \retval 0 The size was not obtained;
+ */
+CSTRING_EXTERN_C
+int
+cstring_try_get_regular_file_size_m_(
+    char const*         name
+,   cstring_uint64_t*   pFileSize
+);
 
 
 /* /////////////////////////////////////////////////////////

@@ -52,7 +52,13 @@ set(CORE_SRCS
 if(_BUILD_AS_WIN32)
 
 	list(APPEND CORE_SRCS
+		fs.win.c
 		win.c
+	)
+else(_BUILD_AS_WIN32)
+
+	list(APPEND CORE_SRCS
+		fs.c
 	)
 endif(_BUILD_AS_WIN32)
 
