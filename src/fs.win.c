@@ -16,16 +16,16 @@ cstring_try_get_regular_file_size_m_(
     CSTRING_ASSERT(NULL != pFileSize);
 
     {
-        WIN32_FILE_ATTRIBUTE_DATAA fi;
+        WIN32_FILE_ATTRIBUTE_DATA fi;
 
         if (GetFileAttributesExA(name, GetFileExInfoStandard, &fi))
         {
-            if (0 == (fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+            if (0 == (fi.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
             {
                 ULARGE_INTEGER size;
 
-                size.HighPart   =   fileInfo.nFileSizeHigh;
-                size.LowPart    =   fileInfo.nFileSizeLow;
+                size.HighPart   =   fi.nFileSizeHigh;
+                size.LowPart    =   fi.nFileSizeLow;
 
                 *pFileSize      =   size.QuadPart;
 
