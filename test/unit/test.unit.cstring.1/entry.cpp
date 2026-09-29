@@ -36,6 +36,7 @@
 /* STLSoft header files */
 #ifdef WIN32
 # include <comstl/memory/functions.h>
+# include <comstl/util/initialisers.hpp>
 #endif
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
@@ -107,6 +108,12 @@ int main(int argc, char **argv)
 {
     int retCode = EXIT_SUCCESS;
     int verbosity = 2;
+
+#ifdef _WIN32
+
+    /* CoTaskMem* / CoGetMalloc require COM on this thread. */
+    comstl::com_init  init;
+#endif /* Windows */
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
@@ -955,9 +962,18 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -977,9 +993,18 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -999,9 +1024,18 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1097,10 +1131,19 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1119,10 +1162,19 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1141,10 +1193,19 @@ static void test_2_4()
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
