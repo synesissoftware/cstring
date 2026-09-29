@@ -47,18 +47,21 @@ endif()
 set(CORE_SRCS
 	cstring.vector.c
 	cstring.core.c
+	fs.c
 )
+
+if(_BUILD_AS_UNIX)
+
+	list(APPEND CORE_SRCS
+		fs.unix.c
+	)
+endif(_BUILD_AS_UNIX)
 
 if(_BUILD_AS_WIN32)
 
 	list(APPEND CORE_SRCS
 		fs.win.c
 		win.c
-	)
-else(_BUILD_AS_WIN32)
-
-	list(APPEND CORE_SRCS
-		fs.c
 	)
 endif(_BUILD_AS_WIN32)
 
