@@ -4,7 +4,7 @@
  * Purpose: Windows memory arenas for the cstring core API.
  *
  * Created: 28th September 2026
- * Updated: 28th September 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
