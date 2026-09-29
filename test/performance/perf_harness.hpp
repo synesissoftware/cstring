@@ -23,7 +23,6 @@
 #include <stlsoft/std/cstdlib.hpp>
 #include <stlsoft/stlsoft.h>
 
-
 #ifdef HAS_P99
 # include <p99/p99.hpp>
 #endif
@@ -425,9 +424,9 @@ ratio_or_dash(
 
 struct raw_string
 {
-    char*       ptr;
-    size_t len;
-    size_t capacity;
+    char*   ptr;
+    size_t  len;
+    size_t  capacity;
 };
 
 inline
@@ -577,9 +576,9 @@ raw_copy(
 
 struct raw_string_vector
 {
-    char**      ptr;
-    size_t len;
-    size_t capacity;
+    char**  ptr;
+    size_t  len;
+    size_t  capacity;
 };
 
 inline

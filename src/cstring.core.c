@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 28th September 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -51,6 +51,7 @@
 /* cstring header files */
 
 #include <cstring/cstring.h>
+#include "internal.h"
 
 #ifndef CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
 # include <cstring/internal/safestr.h>
@@ -76,34 +77,12 @@
 
 #define CSTRING_OFFSET_SIZE                                 (16)
 
-#if defined(WIN32) || \
-    defined(WIN64)
-
-# define CSTRING_USE_WINAPI_
-#endif
-
 
 /* /////////////////////////////////////////////////////////////////////////
  * debugging
  */
 
 #define CSTRING_ASSERT(expr)                                assert(expr)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER)
-# if _MSC_VER >= 1200
-#  pragma warning(push)
-# endif /* _MSC_VER >= 1200 */
-# if _MSC_VER >= 1310
-#  if !defined(__COMO__)
-#   pragma warning(disable : 4055)
-#  endif /* !__COMO__ */
-# endif /* _MSC_VER >= 1310 */
-#endif /* compiler */
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -147,6 +126,7 @@ strncpy_safe(
 
 #if defined(UNIX) || \
     defined(unix)
+
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
 # define index                                              index_disambiguated_1
 #endif
@@ -269,12 +249,6 @@ cstring_memcpy_safe_(
  * allocation functions
  */
 
-#if defined(CSTRING_USE_WINAPI_)
-static void* win32_global_realloc(void* pv, size_t cb);
-static void* win32_processheap_realloc(void* pv, size_t cb);
-static void* win32_comtask_realloc(void* pv, size_t cb);
-#endif /* CSTRING_USE_WINAPI_ */
-
 static
 void*
 cstring_realloc_2_(
@@ -327,7 +301,7 @@ alloc_retry:
 #endif /* _DEBUG */
             pvNew = realloc(pv, cb);
             break;
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef CSTRING_USE_WINAPI_
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -1384,7 +1358,7 @@ cstring_swap(
 }
 
 
-/* /////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////
  * file functions
  */
 
@@ -1518,7 +1492,7 @@ cstring_write(
 }
 
 
-/* /////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////
  * search/replace functions
  */
 
@@ -1729,173 +1703,6 @@ cstring_replaceAll(
     }
 }
 
-
-/* /////////////////////////////////////////////////////////////////////////
- * Win32 functions
- */
-
-#if defined(CSTRING_USE_WINAPI_)
-
-# ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
-#  if defined(__MWERKS__)
-#   define  GMEM_FIXED      0
-#   define  GMEM_MOVEABLE   2
-#   define  WINAPI          __stdcall
-typedef int             BOOL;
-typedef void*           HANDLE;
-typedef void*           HGLOBAL;
-typedef void*           HMODULE;
-typedef void*           HINSTANCE;
-typedef long            LONG;
-__declspec(dllimport) long      __stdcall   InterlockedExchange(LONG volatile *, LONG);
-__declspec(dllimport) HANDLE    __stdcall   GetProcessHeap(void);
-__declspec(dllimport) HGLOBAL   __stdcall   GlobalAlloc(unsigned int, unsigned long);
-__declspec(dllimport) HGLOBAL   __stdcall   GlobalFree(HGLOBAL);
-__declspec(dllimport) HGLOBAL   __stdcall   GlobalReAlloc(HGLOBAL, unsigned long, unsigned int);
-__declspec(dllimport) void*     __stdcall  HeapAlloc(HANDLE, unsigned long, unsigned int);
-__declspec(dllimport) BOOL      __stdcall   HeapFree(HANDLE, unsigned long, void* );
-__declspec(dllimport) void*     __stdcall  HeapReAlloc(HANDLE, unsigned long, void*, unsigned int);
-__declspec(dllimport) void      __stdcall   Sleep(unsigned long);
-__declspec(dllimport) HINSTANCE __stdcall   LoadLibraryA(char const* );
-__declspec(dllimport) BOOL      __stdcall   FreeLibrary(HMODULE );
-__declspec(dllimport) void*     __stdcall  GetProcAddress(HMODULE, char const*);
-#  else /* ? compiler */
-#   include <windows.h>
-#  endif /* compiler */
-# endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
-
-/* ////////////////////////////////////////////////////////////////////// */
-
-static
-void*
-win32_global_realloc(
-    void*   pv
-,   size_t  cb
-)
-{
-    /* Logic borrowed from implementation of SynesisWin::GlobalAtor class (in
-     * file MWAtors.h) from the Synesis Software Public Domain Source Code
-     * Library (http://synesis.com.au/software).
-     */
-    if (NULL != pv)
-    {
-        if (0 == cb)
-        {
-            return (GlobalFree((HGLOBAL)pv), (void*)NULL);
-        }
-        else
-        {
-            return (void*)GlobalReAlloc((HGLOBAL)pv, cb, GMEM_MOVEABLE);
-        }
-    }
-    else
-    {
-        return (void*)GlobalAlloc(GMEM_FIXED, cb);
-    }
-}
-
-static
-void*
-win32_processheap_realloc(
-    void*   pv
-,   size_t  cb
-)
-{
-    /* Logic borrowed from implementation of SynesisWin::HeapAtor class (in
-     * file MWAtors.h) from the Synesis Software Public Domain Source Code
-     * Library (http://synesis.com.au/software).
-     */
-    if (NULL != pv)
-    {
-        if (0 == cb)
-        {
-            return (HeapFree(GetProcessHeap(), 0, (HGLOBAL)pv), (void*)NULL);
-        }
-        else
-        {
-            return (void*)HeapReAlloc(GetProcessHeap(), 0, (HGLOBAL)pv, cb);
-        }
-    }
-    else
-    {
-        return (void*)HeapAlloc(GetProcessHeap(), 0, cb);
-    }
-}
-
-static
-void*
-win32_comtask_realloc(
-    void*   pv
-,   size_t  cb
-)
-{
-    typedef void* (WINAPI *PfnCoTaskMemRealloc)(void* , size_t );
-
-    static LONG                 s_cstring_PfnCoTaskMemRealloc_init  =   0;
-    static LONG                 s_cstring_PfnCoTaskMemRealloc_spin  =   0;
-    static HINSTANCE            s_cstring_ole32_HINSTANCE           =   NULL;
-    static PfnCoTaskMemRealloc  s_cstring_pfnCoTaskMemRealloc       =   NULL;
-
-    if (NULL == pv)
-    {
-        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
-        {}
-
-        if (1 == ++s_cstring_PfnCoTaskMemRealloc_init)
-        {
-#if defined(__GNUC__)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wcast-function-type"
-#endif /* __GNUC__ */
-
-            s_cstring_ole32_HINSTANCE       =   LoadLibraryA("OLE32");
-            s_cstring_pfnCoTaskMemRealloc   =   (PfnCoTaskMemRealloc)GetProcAddress(s_cstring_ole32_HINSTANCE, "CoTaskMemRealloc");
-
-#if defined(__GNUC__)
-# pragma GCC diagnostic pop
-#endif /* __GNUC__ */
-
-            if (NULL == s_cstring_ole32_HINSTANCE ||
-                NULL == s_cstring_pfnCoTaskMemRealloc)
-            {
-                --s_cstring_PfnCoTaskMemRealloc_init;
-            }
-        }
-
-        InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 0);
-    }
-
-    pv = (NULL != s_cstring_pfnCoTaskMemRealloc) ? s_cstring_pfnCoTaskMemRealloc(pv, cb) : NULL;
-
-    if (0 == cb)
-    {
-        for (; 0 != InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 1); Sleep(0))
-        {}
-
-        if (0 == --s_cstring_PfnCoTaskMemRealloc_init)
-        {
-            FreeLibrary(s_cstring_ole32_HINSTANCE);
-        }
-
-        InterlockedExchange(&s_cstring_PfnCoTaskMemRealloc_spin, 0);
-    }
-
-    return pv;
-}
-
-/* ////////////////////////////////////////////////////////////////////// */
-
-#endif /* CSTRING_USE_WINAPI_ */
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER) && \
-    _MSC_VER >= 1200
-# pragma warning(pop)
-#endif /* compiler */
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

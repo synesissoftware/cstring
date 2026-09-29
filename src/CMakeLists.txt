@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  ...
-# Updated:  2nd August 2026
+# Updated:  29th September 2026
 #
 # ######################################################################## #
 
@@ -49,9 +49,25 @@ set(CORE_SRCS
 	cstring.core.c
 )
 
+if(_BUILD_AS_WIN32)
+
+	list(APPEND CORE_SRCS
+		win.c
+	)
+endif(_BUILD_AS_WIN32)
+
 add_library(core
 	${CORE_SRCS}
 )
+
+if(_BUILD_AS_WIN32)
+
+	# win.c uses the COM Task Allocator (CoTaskMem*) from ole32
+	target_link_libraries(core
+		PRIVATE
+			ole32
+	)
+endif(_BUILD_AS_WIN32)
 
 # specify the primary public headers for the library, which controls whether
 # they'll be installed
