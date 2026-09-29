@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 28th September 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    11
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 15
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     89
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     90
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -102,7 +102,7 @@
 # define CSTRING_VER_4_0_15     0x04000fff
 # define CSTRING_VER_4_0_16     0x040010ff
 # define CSTRING_VER_4_0_17     0x040011ff
-# define CSTRING_VER_4_1_0      0x04010081
+# define CSTRING_VER_4_0_18     0x040012ff
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -122,9 +122,9 @@
  */
 
 #define CSTRING_VER_MAJOR                                   4
-#define CSTRING_VER_MINOR                                   1
-#define CSTRING_VER_PATCH                                   0
-#define CSTRING_VER_ALPHABETA                               0x81
+#define CSTRING_VER_MINOR                                   0
+#define CSTRING_VER_PATCH                                   18
+#define CSTRING_VER_ALPHABETA                               0xFF
 
 #define CSTRING_VER \
     (0\
@@ -331,16 +331,12 @@ typedef struct cstring_t                                    cstring_t;
 /* arena */
 
 #define CSTRING_F_ARENA_MASK                                (0x3700)
-#define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() for all memory (de-)allocation */
-#if 0
-#elif 0 ||\
-      defined(WIN32) ||\
-      defined(WIN64) ||\
-      0
+#define CSTRING_F_USE_REALLOC                               (0x0000)    /*!< Uses C standard library function realloc() (and related) for all memory (de-)allocation */
+#ifdef _WIN32
 # define CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY                (0x0100)    /*!< Uses Win32 Global Memory API for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY           (0x0200)    /*!< Uses Win32 Process Heap for all memory (de-)allocation (Windows only); arena parameter is ignored. */
 # define CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY              (0x0400)    /*!< Uses COM Task Allocator for all memory (de-)allocation (Windows only); arena parameter is ignored. */
-#endif /* WIN32 || WIN64 */
+#endif /* Windows */
 #if defined(CSTRING_USE_SYNESIS_APIS)
 # define CSTRING_F_USE_SYNESIS_HATOR                        (0x1000)    /*!< Assumes that the arena variable is a Synesis Software memory allocator */
 #endif /* CSTRING_USE_SYNESIS_APIS */
@@ -427,8 +423,8 @@ cstring_init(
  *
  * \note This must only be called on an uninitialised cstring instance
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -449,8 +445,8 @@ cstring_create(
  *
  * \note This must only be called on an uninitialised cstring instance
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -471,8 +467,8 @@ cstring_createLen(
  *
  * \note This must only be called on an uninitialised cstring instance
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -501,10 +497,10 @@ cstring_createN(
  *
  * \note This must only be called on an uninitialised cstring instance
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
- * \retval CSTRING_RC_INVALIDARENA an invalid arena specification was given
+ * \retval CSTRING_RC_INVALIDARENA An invalid arena specification was given
  *   in the \c flags parameter;
  * \retval CSTRING_RC_CUSTOMARENANOTSUPPORTED A custom arena was specified,
  *   which is not yet supported;
@@ -539,10 +535,10 @@ cstring_createEx(
  *
  * \note This must only be called on an uninitialised cstring instance
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
- * \retval CSTRING_RC_INVALIDARENA an invalid arena specification was given
+ * \retval CSTRING_RC_INVALIDARENA An invalid arena specification was given
  *   in the \c flags parameter;
  * \retval CSTRING_RC_CUSTOMARENANOTSUPPORTED A custom arena was specified,
  *   which is not yet supported;
@@ -566,7 +562,7 @@ cstring_createLenEx(
  * \note This must only be called on an initialised cstring instance, which is
  *   then rendered in the uninitialised state.
  *
- * \retval CSTRING_RC_SUCCESS the capacity was destroyed;
+ * \retval CSTRING_RC_SUCCESS The capacity was destroyed;
  */
 CSTRING_EXTERN_C
 CSTRING_RC
@@ -587,12 +583,12 @@ cstring_destroy(
  *
  * \note The values of *pRaw and *pPayload may not be equal
  *
- * \retval CSTRING_RC_SUCCESS the buffer was yielded;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_SUCCESS The buffer was yielded;
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_BORROWED the cstring instance is marked fixed
+ * \retval CSTRING_RC_BORROWED The cstring instance is marked fixed
  *   (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_CANNOTYIELDFROMSO the cstring instance uses realloc()
+ * \retval CSTRING_RC_CANNOTYIELDFROMSO The cstring instance uses realloc()
  *   in a Win32 dynamic library;
  *
  * \note When linked to cstring as a Win32 dynamic library, this function will not
@@ -628,14 +624,14 @@ cstring_yield(
  *   truncated, the value is adjusted to the minimum possible without
  *   requiring truncation.
  *
- * \retval CSTRING_RC_SUCCESS the capacity was adjusted;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_SUCCESS The capacity was adjusted;
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -652,15 +648,15 @@ cstring_setCapacity(
  * \param pcs The cstring to assign to;
  * \param s Pointer to the C-style string to assign. May be NULL;
  *
- * \retval CSTRING_RC_SUCCESS the requested number of bytes were assigned to
+ * \retval CSTRING_RC_SUCCESS The requested number of bytes were assigned to
  *   the cstring;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  *
  * \note The function is safe with respect to 'self-assignment', i.e, \c s can
@@ -686,15 +682,15 @@ cstring_assign(
  *   into the cstring contents, which means that calling strlen() on the payload
  *   pointer may give inconsistent results
  *
- * \retval CSTRING_RC_SUCCESS the requested number of bytes were assigned to
+ * \retval CSTRING_RC_SUCCESS The requested number of bytes were assigned to
  *   the cstring;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -711,15 +707,15 @@ cstring_assignLen(
  * \param pcs The cstring to assign to;
  * \param pcsSrc The cstring whose contents will be copied;
  *
- * \retval CSTRING_RC_SUCCESS the requested number of bytes were copied to
+ * \retval CSTRING_RC_SUCCESS The requested number of bytes were copied to
  *   the cstring;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -735,15 +731,15 @@ cstring_copy(
  * \param pcs The cstring to append to;
  * \param s Pointer to the C-style string to append. May be NULL;
  *
- * \retval CSTRING_RC_SUCCESS the requested number of bytes were appended to
+ * \retval CSTRING_RC_SUCCESS The requested number of bytes were appended to
  *   the cstring;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -765,15 +761,15 @@ cstring_append(
  *   into the cstring contents, which means that calling strlen() on the payload
  *   pointer may give inconsistent results
  *
- * \retval CSTRING_RC_SUCCESS the requested number of bytes were appended to
+ * \retval CSTRING_RC_SUCCESS The requested number of bytes were appended to
  *   the cstring;
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDFIXEDCAPACITY The cstring instance is marked
  *   fixed (CSTRING_F_MEMORY_IS_FIXED);
- * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY the cstring instance is marked
+ * \retval CSTRING_RC_EXCEEDBORROWEDCAPACITY The cstring instance is marked
  *   borrowed (CSTRING_F_MEMORY_IS_BORROWED);
- * \retval CSTRING_RC_OUTOFMEMORY insufficient memory to carry out the
+ * \retval CSTRING_RC_OUTOFMEMORY Insufficient memory to carry out the
  *   operation;
  */
 CSTRING_EXTERN_C
@@ -793,9 +789,9 @@ cstring_appendLen(
  *
  * \note The cstring instance must not be readonly
  *
- * \retval CSTRING_RC_SUCCESS cstring instance contents were truncated (or
+ * \retval CSTRING_RC_SUCCESS Cstring instance contents were truncated (or
  *   the truncation length was out of bounds);
- * \retval CSTRING_RC_READONLY the cstring instance is marked readonly
+ * \retval CSTRING_RC_READONLY The cstring instance is marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
  */
 CSTRING_EXTERN_C
@@ -815,10 +811,10 @@ cstring_truncate(
  *
  * \note Neither instance can be either readonly or fixed-and-borrowed
  *
- * \retval CSTRING_RC_SUCCESS string instance contents were swapped;
- * \retval CSTRING_RC_READONLY one or both instances are marked readonly
+ * \retval CSTRING_RC_SUCCESS String instance contents were swapped;
+ * \retval CSTRING_RC_READONLY One or both instances are marked readonly
  *   (CSTRING_F_MEMORY_IS_READONLY);
- * \retval CSTRING_RC_BORROWED one or both instances are marked fixed
+ * \retval CSTRING_RC_BORROWED One or both instances are marked fixed
  *   (CSTRING_F_MEMORY_IS_BORROWED);
  */
 CSTRING_EXTERN_C
@@ -842,7 +838,7 @@ cstring_swap(
  * \retval CSTRING_RC_SUCCESS A line terminated by a carriage return was
  *   read in;
  * \retval CSTRING_RC_EOF A line terminted by the end-of-file was read in;
- * \retval -other- any other value returned by cstring_appendLen();
+ * \retval -other- Any other value returned by cstring_appendLen();
  *
  * \pre (NULL != pcs)
  */

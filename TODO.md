@@ -14,8 +14,8 @@
 * [x] ~~~Scratch **libver** retained under **test/scratch**~~~ - ✅;
 * [x] ~~~Delete Visual Studio 98 files~~~ - ✅;
 * [x] ~~~Delete Visual Studio 2003+ files~~~ - ✅;
-* [ ] discriminate on `_WIN32` in implementation (and maybe also in API);
-* [ ] check `CSTRING_USE_WINAPI_`
+* [x] ~~~discriminate on `_WIN32` in implementation (and maybe also in API)~~~ - ✅;
+* [ ] check `CSTRING_USE_WINAPI_`;
 * [ ] custom arena(s);
 
 

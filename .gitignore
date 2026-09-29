@@ -43,49 +43,49 @@ __pycache__/
 /examples/cpp/lib/
 /examples/lib/
 
-Debug Multithreaded Dll/
 Debug Multithreaded DLL/
-Debug Multithreaded pseudoUnix/
+Debug Multithreaded Dll/
 Debug Multithreaded pseudoUNIX/
+Debug Multithreaded pseudoUnix/
 Debug Multithreaded/
 Debug/
-DebugDll/
 DebugDLL/
 DebugDLLUNIX/
-DebugMt/
-DebugMTDll/
+DebugDll/
 DebugMTDLL/
+DebugMTDll/
 DebugMTUnix/
+DebugMt/
 DebugNox/
-DebugUnix/
 DebugUNIX/
-Release Multithreaded Dll/
+DebugUnix/
 Release Multithreaded DLL/
-Release Multithreaded pseudoUnix/
+Release Multithreaded Dll/
 Release Multithreaded pseudoUNIX/
+Release Multithreaded pseudoUnix/
 Release Multithreaded/
 Release/
-ReleaseDll/
 ReleaseDLL/
 ReleaseDLLUNIX/
-ReleaseMt/
-ReleaseMTDll/
+ReleaseDll/
 ReleaseMTDLL/
+ReleaseMTDll/
 ReleaseMTUnix/
+ReleaseMt/
 ReleaseNox/
 ReleaseUnix/
 UDebug/
 UDebugMt/
-Unicode Debug Multithreaded Dll/
-Unicode Debug Multithreaded DLL/
-Unicode Debug Multithreaded/
-Unicode Debug/
-Unicode Release Multithreaded Dll/
-Unicode Release Multithreaded DLL/
-Unicode Release Multithreaded/
-Unicode Release/
 URelease/
 UReleaseMt/
+Unicode Debug Multithreaded DLL/
+Unicode Debug Multithreaded Dll/
+Unicode Debug Multithreaded/
+Unicode Debug/
+Unicode Release Multithreaded DLL/
+Unicode Release Multithreaded Dll/
+Unicode Release Multithreaded/
+Unicode Release/
 
 
 # directories (by pattern)

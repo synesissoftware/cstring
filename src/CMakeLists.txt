@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  ...
-# Updated:  2nd August 2026
+# Updated:  29th September 2026
 #
 # ######################################################################## #
 
@@ -48,6 +48,13 @@ set(CORE_SRCS
 	cstring.vector.c
 	cstring.core.c
 )
+
+if(_BUILD_AS_WIN32)
+
+	list(APPEND CORE_SRCS
+		win.c
+	)
+endif(_BUILD_AS_WIN32)
 
 add_library(core
 	${CORE_SRCS}
