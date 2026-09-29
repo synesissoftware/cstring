@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.vector API.
  *
  * Created: 21st January 2012
- * Updated: 27th September 2026
+ * Updated: 28th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_VECTOR_MAJOR     1
 # define CSTRING_VER_CSTRING_H_VECTOR_MINOR     0
 # define CSTRING_VER_CSTRING_H_VECTOR_REVISION  4
-# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      10
+# define CSTRING_VER_CSTRING_H_VECTOR_EDIT      11
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -109,7 +109,7 @@ typedef struct cstring_vector_t                             cstring_vector_t;
 /** \brief Initialises a cstring-vector instance to a default form
  *
  * \note This must only be called on an uninitialised cstring-vector
- *  instance;
+ *   instance;
  *
  * \pre (NULL != pcsv)
  */
@@ -128,7 +128,7 @@ cstring_vector_init(
  * \note This must only be called on an initialised cstring-vector instance,
  *   which is then rendered in the uninitialised state.
  *
- * \retval CSTRING_RC_SUCCESS the capacity was destroyed;
+ * \retval CSTRING_RC_SUCCESS The capacity was destroyed;
  *
  * \pre (NULL != pcsv)
  */
@@ -146,9 +146,9 @@ cstring_vector_destroy(
  *
  * \note The cstring instance must not be readonly
  *
- * \retval CSTRING_RC_SUCCESS cstring-vector instance contents were
+ * \retval CSTRING_RC_SUCCESS Cstring-vector instance contents were
  *   truncated (or the truncation length was out of bounds);
- * \retval CSTRING_RC_READONLY the cstring-vector instance is marked
+ * \retval CSTRING_RC_READONLY The cstring-vector instance is marked
  *   readonly (CSTRING_F_MEMORY_IS_READONLY);
  *
  * \pre (NULL != pcsv)

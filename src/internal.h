@@ -4,7 +4,7 @@
  * Purpose: Private declarations for the cstring implementation units.
  *
  * Created: 28th September 2026
- * Updated: 28th September 2026
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *

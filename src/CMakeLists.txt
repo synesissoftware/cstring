@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  ...
-# Updated:  28th September 2026
+# Updated:  29th September 2026
 #
 # ######################################################################## #
 

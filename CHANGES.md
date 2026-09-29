@@ -1,20 +1,27 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.1.0 - 28th September 2026
+## 4.0.18 - 29th September 2026
 
 * Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;
+* Moved Windows Global / process-heap / COM task allocators from **cstring.core.c** into **src/win.c** (declared from **src/internal.h**);
 * Timed Windows Global, process-heap, and COM task arenas in **test.performance.cstring** (`cstring_win_global`, `cstring_win_processheap`, `cstring_win_comtask`) against the realloc `cstring` baseline;
 
 
-## 4.0.17 - 27th September 2026
+## 4.0.17 - 29th September 2026
 
 * Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
 * Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;
 * Optional **p99** linkage for per-iteration percentiles throughout; filesystem suite (`cstring_vector_readLines`, `std::ifstream` + `std::getline`, `platformstl::file_lines`) gated on **p99**;
 * **`--no-p99`** / `NO_P99` to skip recognising **p99** (same pattern as **`--no-shwild`**);
-* **`--gap-groups`** on **run_all_performance_tests.sh** sets `SIS_PERFTESTS_GROUPGAPS` for blank lines between scenario groups;
+* **`--gap-groups`** on **run_all_performance_tests.sh** / **run_all_performance_tests.cmd** sets `SIS_PERFTESTS_GROUPGAPS`; TTY emits a blank line between scenario groups, non-TTY / CI emits `\t----------` via `platformstl::isatty`; CI sets `SIS_PERFTESTS_GROUPGAPS=1` on performance cells;
 * Declared **cstring.vector** API with `CSTRING_EXTERN_C` for C++ linkage;
+* Fixed `cstring_vector_insertAt()` mid-vector `memmove` / destination indexing;
+* Expanded component coverage: **test.component.cstring_readline**, **test.component.cstring_writeline**, new **test.component.cstring_vector_readLines**;
+* Renamed Windows arena flags `CSTRING_F_USE_WIN32_*` to `CSTRING_F_USE_WINDOWS_*` (compat aliases retained);
+* Capitalised Doxygen `\retval` prose in **cstring.h** / **cstring.vector.h**;
+* CI throttles performance suites on non-Windows (`CSTRING_PERF_ITERATIONS=1000` / `WARMUPS=1`) and on MinGW only (`500` / `1`, plus `FILE_TRIALS` when **p99**); **windows-cl** keeps Release defaults;
+* CI restores Unix execute bits on downloaded test/example binaries after **download-artifact** (helpers discover via `-perm -100`);
 
 
 ## 4.0.16 - 27th September 2026
