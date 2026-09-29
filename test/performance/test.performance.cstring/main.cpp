@@ -703,6 +703,53 @@ scenario_copy(
 }
 
 void
+scenario_borrowed_fixed_construct(
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
+)
+{
+    std::string const payload = make_payload(n);
+    char const* const p = payload.data();
+
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+        cstring_t s = cstring_t_DEFAULT;
+        cstring_createLenEx(
+            &s
+        ,   p
+        ,   n
+        ,   CSTRING_F_MEMORY_IS_BORROWED | CSTRING_F_MEMORY_IS_FIXED
+        ,   &buf[0]
+        ,   n + 1u
+        );
+
+        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
+        cstring_destroy(&s);
+
+        return r;
+    });
+
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        std::string s(p, n);
+
+        return s.size() + (s.empty() ? 0 : size_t(s.back()));
+    });
+
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+        ::memcpy(&buf[0], p, n);
+        buf[n] = '\0';
+
+        return n + (n == 0 ? 0 : size_t(buf[n - 1]));
+    });
+
+    emit_row("borrowed_fixed_construct", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
+    emit_row("borrowed_fixed_construct", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
+    emit_row("borrowed_fixed_construct", n, IMPL_FIXEDBUF, num_iterations, 1, fx, cs.tm_ns);
+}
+
+void
 scenario_borrowed_fixed_assign(
     size_t n
 ,   size_t num_iterations
@@ -792,6 +839,7 @@ int main(int /*argc*/, char* /*argv*/[])
         scenario_assign_len_grow(n, iters, num_warm_loops);
         scenario_append_len_reserved(n, iters, num_warm_loops);
         scenario_copy(n, iters, num_warm_loops);
+        scenario_borrowed_fixed_construct(n, iters, num_warm_loops);
         scenario_borrowed_fixed_assign(n, iters, num_warm_loops);
 
         if (n <= 4096u)
