@@ -4,7 +4,7 @@
 | Date                | News Item                        | Details |
 | ------------------- | -------------------------------- | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
-| 29th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18) | `_WIN32` arena gate; **win.c**; Windows arena perf rows |
+| 29th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18) | `_WIN32` arena gate; **win.c**; static `CoTaskMem*` (**ole32**) |
 | 29th September 2026 | Release of [cstring 4.0.17](https://github.com/synesissoftware/cstring/releases/tag/4.0.17) | Perf tests; `insertAt` fix; component I/O; Windows arena rename |
 | 27th September 2026 | Release of [cstring 4.0.16](https://github.com/synesissoftware/cstring/releases/tag/4.0.16) | Phase 4b helpers, native `.cmd`, CI dogfood |
 | 6th September 2026  | Release of [cstring 4.0.15](https://github.com/synesissoftware/cstring/releases/tag/4.0.15) | Doxygen `\param`/`\retval` 76-rule |
