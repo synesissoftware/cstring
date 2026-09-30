@@ -144,7 +144,7 @@ cstring_try_get_regular_file_size_m_(
  */
 CSTRING_EXTERN_C
 int
-cstring_try_get_stream_size_m_(
+cstring_stream_try_get_size_(
     FILE*               stm
 ,   cstring_uint64_t*   pFileSize
 );
