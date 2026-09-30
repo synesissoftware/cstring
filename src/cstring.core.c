@@ -1457,13 +1457,13 @@ cstring_readline(
 )
 {
     int     previous = '\0';
-    size_t  numRead_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numRead)
     {
-        numRead = &numRead_;
+        numRead = &dummy;
     }
 
     *numRead = 0u;
@@ -1524,13 +1524,13 @@ cstring_write_(
 )
 {
     int     r;
-    size_t  numWritten_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numWritten)
     {
-        numWritten = &numWritten_;
+        numWritten = &dummy;
     }
 
     if (NULL == stm ||
@@ -1748,13 +1748,13 @@ cstring_replaceAll(
 ,   size_t*                 numReplaced /* = NULL */
 )
 {
-    size_t  numReplaced_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numReplaced)
     {
-        numReplaced = &numReplaced_;
+        numReplaced = &dummy;
     }
 
     *numReplaced = 0u;
