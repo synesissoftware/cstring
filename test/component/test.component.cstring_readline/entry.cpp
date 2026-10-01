@@ -48,8 +48,8 @@ namespace
 
     static void TEST_cstring_readline_CALLABILITY();
     static void TEST_cstring_readline_INVALID_STREAM();
-    static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_EMPTY_FILE();
+    static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
     static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
     static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES();
@@ -96,8 +96,8 @@ int main(int argc, char* argv[])
     {
         XTESTS_RUN_CASE(TEST_cstring_readline_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_readline_INVALID_STREAM);
-        XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_EMPTY_FILE);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES);
@@ -213,6 +213,27 @@ static void TEST_cstring_readline_INVALID_STREAM()
     TEST_ENUM_EQ(CSTRING_RC_INVALIDSTREAM, cstring_readline(NULL, &cs, &n));
 }
 
+static void TEST_cstring_readline_EMPTY_FILE()
+{
+    /* empty file → first read is EOF with empty payload */
+    write_bytes(TEST_FILE_NAME, "", 0);
+
+    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
+
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, numRead);
+    TEST_INT_EQ(0u, cs.len);
+    TEST_MS_EQ("", cs);
+
+    cstring_destroy(&cs);
+}
+
 static void TEST_cstring_readline_SHORT_MULTILINE()
 {
     {
@@ -295,27 +316,6 @@ static void TEST_cstring_readline_SHORT_MULTILINE()
     }
 }
 
-static void TEST_cstring_readline_EMPTY_FILE()
-{
-    /* empty file → first read is EOF with empty payload */
-    write_bytes(TEST_FILE_NAME, "", 0);
-
-    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
-
-    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
-
-    cstring_t   cs = cstring_t_DEFAULT;
-    size_t      n = 123u;
-    CSTRING_RC  rc = cstring_readline(f, &cs, &n);
-
-    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(0u, n);
-    TEST_INT_EQ(0u, cs.len);
-    TEST_MS_EQ("", cs);
-
-    cstring_destroy(&cs);
-}
-
 static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
 {
     /* CRLF, mixed EOL, and lone CR mid-line (binary I/O so CR is visible) */
@@ -336,37 +336,37 @@ static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
     stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
-    size_t      n;
+    size_t      numRead;
     CSTRING_RC  rc;
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
     /* CRLF: CR is appended then stripped; numRead still counts the CR */
-    TEST_INT_EQ(4u, n);
+    TEST_INT_EQ(4u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("one", cs);
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(3u, n);
+    TEST_INT_EQ(3u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("two", cs);
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(6u, n);
+    TEST_INT_EQ(6u, numRead);
     TEST_INT_EQ(5u, cs.len);
     TEST_MS_EQ("three", cs);
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(10u, n);
+    TEST_INT_EQ(10u, numRead);
     TEST_INT_EQ(9u, cs.len);
     TEST_MS_EQ("has\rembed", cs);
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(3u, n);
+    TEST_INT_EQ(3u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("end", cs);
 
@@ -384,20 +384,20 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
         cstring_t   cs = cstring_t_DEFAULT;
-        size_t      n;
+        size_t      numRead;
         CSTRING_RC  rc;
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_MS_EQ("alpha", cs);
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_MS_EQ("beta", cs);
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(0u, numRead);
         TEST_INT_EQ(0u, cs.len);
 
         cstring_destroy(&cs);
@@ -411,16 +411,16 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
         cstring_t   cs = cstring_t_DEFAULT;
-        size_t      n;
+        size_t      numRead;
         CSTRING_RC  rc;
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_MS_EQ("alpha", cs);
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-        TEST_INT_EQ(4u, n);
+        TEST_INT_EQ(4u, numRead);
         TEST_MS_EQ("beta", cs);
 
         cstring_destroy(&cs);
@@ -437,23 +437,23 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
     stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
-    size_t      n;
+    size_t      numRead;
     CSTRING_RC  rc;
 
     { for (int i = 0; i != 3; ++i)
     {
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(0u, numRead);
         TEST_INT_EQ(0u, cs.len);
         TEST_MS_EQ("", cs);
     }}
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
 
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(0u, n);
+    TEST_INT_EQ(0u, numRead);
 
     cstring_destroy(&cs);
 }
@@ -484,18 +484,18 @@ static void TEST_cstring_readline_LONG_LINES()
         stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
         cstring_t   cs = cstring_t_DEFAULT;
-        size_t      n;
+        size_t      numRead;
         CSTRING_RC  rc;
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(len, n);
+        TEST_INT_EQ(len, numRead);
         TEST_INT_EQ(len, cs.len);
         REQUIRE(TEST_MS_EQ(line.c_str(), cs));
 
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-        TEST_INT_EQ(len / 2u == 0 ? 1u : len / 2u, n);
+        TEST_INT_EQ(len / 2u == 0 ? 1u : len / 2u, numRead);
 
         cstring_destroy(&cs);
     }}
@@ -528,22 +528,22 @@ static void TEST_cstring_readline_MANY_SHORT_LINES()
     stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
-    size_t      n;
+    size_t      numRead;
     CSTRING_RC  rc;
 
     { for (size_t i = 0; i != num_lines; ++i)
     {
-        rc = cstring_readline(f, &cs, &n);
+        rc = cstring_readline(f, &cs, &numRead);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(expected[i].size(), n);
+        TEST_INT_EQ(expected[i].size(), numRead);
         TEST_MS_EQ(expected[i].c_str(), cs);
     }}
 
-    rc = cstring_readline(f, &cs, &n);
+    rc = cstring_readline(f, &cs, &numRead);
 
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(0u, n);
+    TEST_INT_EQ(0u, numRead);
 
     cstring_destroy(&cs);
 }
