@@ -23,6 +23,7 @@
 /* xTests header files */
 #include <xtests/xtests.h>
 #include <xtests/terse-api.h>
+#include <xtests/util/temp_file.hpp>
 
 /* STLSoft header files */
 #include <platformstl/exception/platformstl_exception.hpp>
@@ -49,6 +50,7 @@ namespace
     static void TEST_cstring_readline_CALLABILITY();
     static void TEST_cstring_readline_INVALID_STREAM();
     static void TEST_cstring_readline_EMPTY_FILE();
+    static void TEST_cstring_readline_SINGLE_LINE_NO_EOL();
     static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
     static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
@@ -97,6 +99,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_readline_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_readline_INVALID_STREAM);
         XTESTS_RUN_CASE(TEST_cstring_readline_EMPTY_FILE);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_NO_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
@@ -194,6 +197,8 @@ namespace
 
 namespace
 {
+    using ::xtests::cpp::util::temp_file;
+
 
 static void TEST_cstring_readline_CALLABILITY()
 {
@@ -230,6 +235,26 @@ static void TEST_cstring_readline_EMPTY_FILE()
     TEST_INT_EQ(0u, numRead);
     TEST_INT_EQ(0u, cs.len);
     TEST_MS_EQ("", cs);
+
+    cstring_destroy(&cs);
+}
+
+static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
+{
+    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc", 3);
+
+    FILE* f = fopen_or_throw(ft.c_str(), "rb");
+
+    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
+
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(3u, numRead);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("abc", cs);
 
     cstring_destroy(&cs);
 }
