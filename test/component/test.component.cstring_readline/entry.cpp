@@ -401,12 +401,12 @@ static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
 static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 {
     /* final line with EOL vs without EOL */
+
     {
-        write_string_bytes(TEST_FILE_NAME, std::string("alpha\nbeta\n"));
-
-        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
-
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+        static char const               input[] =   "alpha\nbeta\n";
+        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+        FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+        stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
         cstring_t   cs = cstring_t_DEFAULT;
         size_t      numRead;
@@ -429,11 +429,10 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
     }
 
     {
-        write_string_bytes(TEST_FILE_NAME, std::string("alpha\nbeta"));
-
-        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
-
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+        static char const               input[] =   "alpha\nbeta";
+        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+        FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+        stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
         cstring_t   cs = cstring_t_DEFAULT;
         size_t      numRead;
@@ -455,11 +454,11 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
 {
     /* consecutive empty lines */
-    write_string_bytes(TEST_FILE_NAME, std::string("\n\n\n"));
 
-    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
-
-    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+    static char const               input[] =   "\n\n\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
     size_t      numRead;
