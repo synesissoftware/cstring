@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_vector_readLines()`.
  *
  * Created: 27th September 2026
- * Updated: 27th September 2026
+ * Updated: 2nd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -46,16 +46,16 @@
 namespace
 {
 
-    static void TEST_cstring_vector_readLines_CALLABILITY(void);
-    static void TEST_cstring_vector_readLines_EMPTY_FILE(void);
-    static void TEST_cstring_vector_readLines_SHORT_MULTILINE(void);
-    static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL(void);
-    static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF(void);
-    static void TEST_cstring_vector_readLines_CONSECUTIVE_EMPTY_LINES(void);
-    static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING(void);
-    static void TEST_cstring_vector_readLines_LONG_LINES(void);
-    static void TEST_cstring_vector_readLines_MANY_SHORT_LINES(void);
-    static void TEST_cstring_vector_readLines_EMPTY_LINE_IN_MIDDLE(void);
+    static void TEST_cstring_vector_readLines_CALLABILITY();
+    static void TEST_cstring_vector_readLines_EMPTY_FILE();
+    static void TEST_cstring_vector_readLines_SHORT_MULTILINE();
+    static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL();
+    static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF();
+    static void TEST_cstring_vector_readLines_CONSECUTIVE_EMPTY_LINES();
+    static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING();
+    static void TEST_cstring_vector_readLines_LONG_LINES();
+    static void TEST_cstring_vector_readLines_MANY_SHORT_LINES();
+    static void TEST_cstring_vector_readLines_EMPTY_LINE_IN_MIDDLE();
 
     int setup(void*);
     int teardown(void*);

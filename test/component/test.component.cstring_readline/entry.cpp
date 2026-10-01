@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 27th September 2026
+ * Updated: 2nd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -46,16 +46,16 @@
 namespace
 {
 
-    static void TEST_cstring_readline_CALLABILITY(void);
-    static void TEST_cstring_readline_INVALID_STREAM(void);
-    static void TEST_cstring_readline_SHORT_MULTILINE(void);
-    static void TEST_cstring_readline_EMPTY_FILE(void);
-    static void TEST_cstring_readline_CRLF_AND_MIXED_EOL(void);
-    static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL(void);
-    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES(void);
-    static void TEST_cstring_readline_LONG_LINES(void);
-    static void TEST_cstring_readline_MANY_SHORT_LINES(void);
-    static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE(void);
+    static void TEST_cstring_readline_CALLABILITY();
+    static void TEST_cstring_readline_INVALID_STREAM();
+    static void TEST_cstring_readline_SHORT_MULTILINE();
+    static void TEST_cstring_readline_EMPTY_FILE();
+    static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
+    static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
+    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES();
+    static void TEST_cstring_readline_LONG_LINES();
+    static void TEST_cstring_readline_MANY_SHORT_LINES();
+    static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE();
 
     int setup(void*);
     int teardown(void*);

@@ -4,7 +4,7 @@
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 27th September 2026
+ * Updated: 2nd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -41,15 +41,15 @@
 namespace
 {
 
-    static void TEST_cstring_writeline_CALLABILITY(void);
-    static void TEST_cstring_writeline_INVALID_STREAM(void);
-    static void TEST_cstring_writeline_MULTIPLE_LINES(void);
-    static void TEST_cstring_write_CONCATENATED(void);
+    static void TEST_cstring_writeline_CALLABILITY();
+    static void TEST_cstring_writeline_INVALID_STREAM();
+    static void TEST_cstring_writeline_MULTIPLE_LINES();
+    static void TEST_cstring_write_CONCATENATED();
 
     int setup(void*);
     int teardown(void*);
-
 } // anonymous namespace
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
@@ -259,10 +259,8 @@ static void TEST_cstring_write_CONCATENATED()
         TEST_MS_EQ(expected, out_lines[0]);
     }
 }
-
-
-
 } // anonymous namespace
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 
