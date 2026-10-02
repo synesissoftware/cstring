@@ -54,6 +54,7 @@ namespace
     static void TEST_cstring_readline_SINGLE_LINE_WITH_LF();
     static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF();
     static void TEST_cstring_readline_SINGLE_LINE_WITH_CR();
+    static void TEST_cstring_readline_SINGLE_LONG_LINE_WITH_CRLF();
     static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
     static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
@@ -106,6 +107,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_WITH_LF);
         XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_WITH_CRLF);
         XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_WITH_CR);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LONG_LINE_WITH_CRLF);
         XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
@@ -316,6 +318,25 @@ static void TEST_cstring_readline_SINGLE_LINE_WITH_CR()
     TEST_INT_EQ(4u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("abc", cs);
+
+    cstring_destroy(&cs);
+}
+
+static void TEST_cstring_readline_SINGLE_LONG_LINE_WITH_CRLF()
+{
+    static char const               input[] =   "01234567890123456789012345678901234567890123456789012345678901234567890123456789\r\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
+
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(82u, numRead);
+    TEST_INT_EQ(80u, cs.len);
+    TEST_MS_EQ("01234567890123456789012345678901234567890123456789012345678901234567890123456789", cs);
 
     cstring_destroy(&cs);
 }
