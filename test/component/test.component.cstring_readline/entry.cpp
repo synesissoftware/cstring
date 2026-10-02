@@ -234,7 +234,7 @@ static void TEST_cstring_readline_EMPTY_FILE()
 {
     /* empty file → first read is EOF with empty payload */
 
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -253,7 +253,7 @@ static void TEST_cstring_readline_EMPTY_FILE()
 static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
 {
     static char const               input[] =   "abc";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -272,7 +272,7 @@ static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
 static void TEST_cstring_readline_SINGLE_LINE_WITH_LF()
 {
     static char const               input[] =   "abc\n";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -291,7 +291,7 @@ static void TEST_cstring_readline_SINGLE_LINE_WITH_LF()
 static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF()
 {
     static char const               input[] =   "abc\r\n";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -310,7 +310,7 @@ static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF()
 static void TEST_cstring_readline_SINGLE_LINE_WITH_CR()
 {
     static char const               input[] =   "abc\r";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -329,7 +329,7 @@ static void TEST_cstring_readline_SINGLE_LINE_WITH_CR()
 static void TEST_cstring_readline_SINGLE_LONG_LINE_WITH_CRLF()
 {
     static char const               input[] =   "01234567890123456789012345678901234567890123456789012345678901234567890123456789\r\n";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -496,7 +496,7 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 
     {
         static char const               input[] =   "alpha\nbeta\n";
-        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
         FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
         stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -522,7 +522,7 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
 
     {
         static char const               input[] =   "alpha\nbeta";
-        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+        temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
         FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
         stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -548,7 +548,7 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_LF()
     /* consecutive empty lines */
 
     static char const               input[] =   "\n\n\n";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -579,7 +579,7 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CRLF()
     /* consecutive empty lines */
 
     static char const               input[] =   "\r\n\r\n\r\n";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
@@ -610,7 +610,7 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CR()
     /* consecutive empty lines */
 
     static char const               input[] =   "\r\r\r";
-    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose | temp_file::CloseOnOpen, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
