@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 3rd October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -62,7 +62,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #ifdef CSTRING_USE_WIDE_STRINGS
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
@@ -1393,6 +1392,8 @@ cstring_readline(
         }
         else
         {
+            ++*numRead;
+
             if ('\n' == ch)
             {
                 if ('\r' == previous)
@@ -1411,8 +1412,6 @@ cstring_readline(
                 {
                     return rc;
                 }
-
-                ++*numRead;
 
                 previous = ch;
             }

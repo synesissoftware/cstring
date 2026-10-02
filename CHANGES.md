@@ -1,6 +1,12 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.0.19 - 3rd October 2026
+
+* Corrected `cstring_readline()` so `numRead` counts every character read from the stream, including the terminating newline; a CRLF's CR is still counted and still stripped from the string;
+* Added single-line LF and CRLF cases to **test.component.cstring_readline**, and aligned existing `numRead` expectations with that count;
+
+
 ## 4.0.18 - 29th September 2026
 
 * Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;

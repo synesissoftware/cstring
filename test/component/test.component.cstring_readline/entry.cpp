@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 2nd October 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -51,6 +51,8 @@ namespace
     static void TEST_cstring_readline_INVALID_STREAM();
     static void TEST_cstring_readline_EMPTY_FILE();
     static void TEST_cstring_readline_SINGLE_LINE_NO_EOL();
+    static void TEST_cstring_readline_SINGLE_LINE_WITH_LF();
+    static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF();
     static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
     static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
@@ -100,6 +102,8 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_readline_INVALID_STREAM);
         XTESTS_RUN_CASE(TEST_cstring_readline_EMPTY_FILE);
         XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_NO_EOL);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_WITH_LF);
+        XTESTS_RUN_CASE(TEST_cstring_readline_SINGLE_LINE_WITH_CRLF);
         XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
@@ -259,6 +263,50 @@ static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
     cstring_destroy(&cs);
 }
 
+static void TEST_cstring_readline_SINGLE_LINE_WITH_LF()
+{
+    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc\n", 4);
+
+    {
+        FILE* f = fopen_or_throw(ft.c_str(), "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs = cstring_t_DEFAULT;
+        size_t      numRead = 123u;
+        CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(4u, numRead);
+        TEST_INT_EQ(3u, cs.len);
+        TEST_MS_EQ("abc", cs);
+
+        cstring_destroy(&cs);
+    }
+}
+
+static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF()
+{
+    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc\r\n", 5);
+
+    {
+        FILE* f = fopen_or_throw(ft.c_str(), "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs = cstring_t_DEFAULT;
+        size_t      numRead = 123u;
+        CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(5u, numRead);
+        TEST_INT_EQ(3u, cs.len);
+        TEST_MS_EQ("abc", cs);
+
+        cstring_destroy(&cs);
+    }
+}
+
 static void TEST_cstring_readline_SHORT_MULTILINE()
 {
     {
@@ -290,48 +338,48 @@ static void TEST_cstring_readline_SHORT_MULTILINE()
             cstring_t_DEFAULT,
             cstring_t_DEFAULT,
         };
-        size_t      lengths[7];
+        size_t      readCounts[7];
 
-        rc = cstring_readline(f, &strings[0], &lengths[0]);
+        rc = cstring_readline(f, &strings[0], &readCounts[0]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(0u, lengths[0]);
+        TEST_INT_EQ(1u, readCounts[0]);
         TEST_MS_EQ("", strings[0]);
 
-        rc = cstring_readline(f, &strings[1], &lengths[1]);
+        rc = cstring_readline(f, &strings[1], &readCounts[1]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(3u, lengths[1]);
+        TEST_INT_EQ(4u, readCounts[1]);
         TEST_MS_EQ("abc", strings[1]);
 
-        rc = cstring_readline(f, &strings[2], &lengths[2]);
+        rc = cstring_readline(f, &strings[2], &readCounts[2]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(6u, lengths[2]);
+        TEST_INT_EQ(7u, readCounts[2]);
         TEST_MS_EQ("abcdef", strings[2]);
 
-        rc = cstring_readline(f, &strings[3], &lengths[3]);
+        rc = cstring_readline(f, &strings[3], &readCounts[3]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(12u, lengths[3]);
+        TEST_INT_EQ(13u, readCounts[3]);
         TEST_MS_EQ("abcdefghijkl", strings[3]);
 
-        rc = cstring_readline(f, &strings[4], &lengths[4]);
+        rc = cstring_readline(f, &strings[4], &readCounts[4]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(26u, lengths[4]);
+        TEST_INT_EQ(27u, readCounts[4]);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz", strings[4]);
 
-        rc = cstring_readline(f, &strings[5], &lengths[5]);
+        rc = cstring_readline(f, &strings[5], &readCounts[5]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(62u, lengths[5]);
+        TEST_INT_EQ(63u, readCounts[5]);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", strings[5]);
 
-        rc = cstring_readline(f, &strings[6], &lengths[6]);
+        rc = cstring_readline(f, &strings[6], &readCounts[6]);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-        TEST_INT_EQ(3u, lengths[6]);
+        TEST_INT_EQ(3u, readCounts[6]);
         TEST_MS_EQ("xyz", strings[6]);
 
         { for (size_t i = 0; i != 7; ++i)
@@ -366,26 +414,26 @@ static void TEST_cstring_readline_CRLF_AND_MIXED_EOL()
 
     rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    /* CRLF: CR is appended then stripped; numRead still counts the CR */
-    TEST_INT_EQ(4u, numRead);
+    /* CRLF: CR is appended then stripped; numRead counts the CR and the LF */
+    TEST_INT_EQ(5u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("one", cs);
 
     rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(3u, numRead);
+    TEST_INT_EQ(4u, numRead);
     TEST_INT_EQ(3u, cs.len);
     TEST_MS_EQ("two", cs);
 
     rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(6u, numRead);
+    TEST_INT_EQ(7u, numRead);
     TEST_INT_EQ(5u, cs.len);
     TEST_MS_EQ("three", cs);
 
     rc = cstring_readline(f, &cs, &numRead);
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-    TEST_INT_EQ(10u, numRead);
+    TEST_INT_EQ(11u, numRead);
     TEST_INT_EQ(9u, cs.len);
     TEST_MS_EQ("has\rembed", cs);
 
@@ -469,7 +517,7 @@ static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
         rc = cstring_readline(f, &cs, &numRead);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(0u, numRead);
+        TEST_INT_EQ(1u, numRead);
         TEST_INT_EQ(0u, cs.len);
         TEST_MS_EQ("", cs);
     }}
@@ -513,7 +561,7 @@ static void TEST_cstring_readline_LONG_LINES()
 
         rc = cstring_readline(f, &cs, &numRead);
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(len, numRead);
+        TEST_INT_EQ(len + 1, numRead);
         TEST_INT_EQ(len, cs.len);
         REQUIRE(TEST_MS_EQ(line.c_str(), cs));
 
@@ -560,7 +608,7 @@ static void TEST_cstring_readline_MANY_SHORT_LINES()
         rc = cstring_readline(f, &cs, &numRead);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(expected[i].size(), numRead);
+        TEST_INT_EQ(expected[i].size() + 1, numRead);
         TEST_MS_EQ(expected[i].c_str(), cs);
     }}
 
