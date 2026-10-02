@@ -58,7 +58,9 @@ namespace
     static void TEST_cstring_readline_SHORT_MULTILINE();
     static void TEST_cstring_readline_CRLF_AND_MIXED_EOL();
     static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL();
-    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES();
+    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_LF();
+    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CRLF();
+    static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CR();
     static void TEST_cstring_readline_LONG_LINES();
     static void TEST_cstring_readline_MANY_SHORT_LINES();
     static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE();
@@ -111,7 +113,9 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_readline_SHORT_MULTILINE);
         XTESTS_RUN_CASE(TEST_cstring_readline_CRLF_AND_MIXED_EOL);
         XTESTS_RUN_CASE(TEST_cstring_readline_FINAL_EOL_VS_NO_EOL);
-        XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_LF);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CRLF);
+        XTESTS_RUN_CASE(TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CR);
         XTESTS_RUN_CASE(TEST_cstring_readline_LONG_LINES);
         XTESTS_RUN_CASE(TEST_cstring_readline_MANY_SHORT_LINES);
         XTESTS_RUN_CASE(TEST_cstring_readline_REUSE_AFTER_LONG_LINE);
@@ -539,11 +543,73 @@ static void TEST_cstring_readline_FINAL_EOL_VS_NO_EOL()
     }
 }
 
-static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES()
+static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_LF()
 {
     /* consecutive empty lines */
 
     static char const               input[] =   "\n\n\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead;
+    CSTRING_RC  rc;
+
+    { for (int i = 0; i != 3; ++i)
+    {
+        rc = cstring_readline(f, &cs, &numRead);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(1u, numRead);
+        TEST_INT_EQ(0u, cs.len);
+        TEST_MS_EQ("", cs);
+    }}
+
+    rc = cstring_readline(f, &cs, &numRead);
+
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, numRead);
+
+    cstring_destroy(&cs);
+}
+
+static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CRLF()
+{
+    /* consecutive empty lines */
+
+    static char const               input[] =   "\r\n\r\n\r\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
+
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead;
+    CSTRING_RC  rc;
+
+    { for (int i = 0; i != 3; ++i)
+    {
+        rc = cstring_readline(f, &cs, &numRead);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(2u, numRead);
+        TEST_INT_EQ(0u, cs.len);
+        TEST_MS_EQ("", cs);
+    }}
+
+    rc = cstring_readline(f, &cs, &numRead);
+
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+    TEST_INT_EQ(0u, numRead);
+
+    cstring_destroy(&cs);
+}
+
+static void TEST_cstring_readline_CONSECUTIVE_EMPTY_LINES_BY_CR()
+{
+    /* consecutive empty lines */
+
+    static char const               input[] =   "\r\r\r";
     temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
     FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
     stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
