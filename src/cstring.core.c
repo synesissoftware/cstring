@@ -1405,8 +1405,8 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1 = (char)ch;
-                CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
+                cstring_char_t  c1  =   (char)ch;
+                CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
 
                 if (CSTRING_RC_SUCCESS != rc)
                 {
@@ -1415,7 +1415,6 @@ cstring_readline(
 
                 previous = ch;
             }
-
         }
     }
 }

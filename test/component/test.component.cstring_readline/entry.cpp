@@ -225,11 +225,10 @@ static void TEST_cstring_readline_INVALID_STREAM()
 static void TEST_cstring_readline_EMPTY_FILE()
 {
     /* empty file → first read is EOF with empty payload */
-    write_bytes(TEST_FILE_NAME, "", 0);
 
-    FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
-
-    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
     size_t      numRead = 123u;
@@ -245,11 +244,10 @@ static void TEST_cstring_readline_EMPTY_FILE()
 
 static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
 {
-    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc", 3);
-
-    FILE* f = fopen_or_throw(ft.c_str(), "rb");
-
-    stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+    static char const               input[] =   "abc";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
     cstring_t   cs = cstring_t_DEFAULT;
     size_t      numRead = 123u;
@@ -265,46 +263,40 @@ static void TEST_cstring_readline_SINGLE_LINE_NO_EOL()
 
 static void TEST_cstring_readline_SINGLE_LINE_WITH_LF()
 {
-    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc\n", 4);
+    static char const               input[] =   "abc\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
-    {
-        FILE* f = fopen_or_throw(ft.c_str(), "rb");
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
 
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(4u, numRead);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("abc", cs);
 
-        cstring_t   cs = cstring_t_DEFAULT;
-        size_t      numRead = 123u;
-        CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
-
-        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(4u, numRead);
-        TEST_INT_EQ(3u, cs.len);
-        TEST_MS_EQ("abc", cs);
-
-        cstring_destroy(&cs);
-    }
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_SINGLE_LINE_WITH_CRLF()
 {
-    temp_file ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, "abc\r\n", 5);
+    static char const               input[] =   "abc\r\n";
+    temp_file                       ft(temp_file::EmptyOnOpen | temp_file::DeleteOnClose, input, STLSOFT_NUM_ELEMENTS(input) - 1);
+    FILE* const                     f       =   fopen_or_throw(ft.c_str(), "rb");
+    stlsoft::scoped_handle<FILE*>   scoper(f, ::fclose);
 
-    {
-        FILE* f = fopen_or_throw(ft.c_str(), "rb");
+    cstring_t   cs = cstring_t_DEFAULT;
+    size_t      numRead = 123u;
+    CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
 
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+    TEST_INT_EQ(5u, numRead);
+    TEST_INT_EQ(3u, cs.len);
+    TEST_MS_EQ("abc", cs);
 
-        cstring_t   cs = cstring_t_DEFAULT;
-        size_t      numRead = 123u;
-        CSTRING_RC  rc = cstring_readline(f, &cs, &numRead);
-
-        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(5u, numRead);
-        TEST_INT_EQ(3u, cs.len);
-        TEST_MS_EQ("abc", cs);
-
-        cstring_destroy(&cs);
-    }
+    cstring_destroy(&cs);
 }
 
 static void TEST_cstring_readline_SHORT_MULTILINE()
