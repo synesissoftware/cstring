@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     92
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     93
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -828,17 +828,20 @@ cstring_swap(
 
 /** Reads in a line of text from the given text stream
  *
+ * A line ends at LF, at CRLF, or at a lone CR, including a CR at end of
+ * stream. The terminator is not stored. A lone CR pushes the next character
+ * back onto the stream;
+ *
  * \param stm The stream from which the line will be read;
  * \param pcs The initialised string instance into which the line will be
  *   stored;
  * \param numRead An optional pointer to a variable to receive the number of
- *   characters read from the stream, including the terminating newline. May
- *   be NULL;
+ *   characters read from the stream, including any terminator. May be NULL;
  *
  * \retval CSTRING_RC_INVALIDSTREAM The stream was not valid (as tested by
  *   <code>ferror()</code>);
- * \retval CSTRING_RC_SUCCESS A line terminated by a carriage return was
- *   read in;
+ * \retval CSTRING_RC_SUCCESS A line terminated by CR, LF, or CRLF was read
+ *   in;
  * \retval CSTRING_RC_EOF A line terminated by the end-of-file was read in;
  * \retval -other- Any other value returned by cstring_appendLen();
  *

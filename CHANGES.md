@@ -3,8 +3,9 @@
 
 ## 4.0.19 - 3rd October 2026
 
-* Corrected `cstring_readline()` so `numRead` counts every character read from the stream, including the terminating newline; a CRLF's CR is still counted and still stripped from the string;
-* Added single-line LF and CRLF cases to **test.component.cstring_readline**, and aligned existing `numRead` expectations with that count;
+* Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
+* Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
+* Added single-line LF, CRLF, and CR cases to **test.component.cstring_readline**; **test.component.cstring_vector_readLines** splits an embedded CR into its own line;
 
 
 ## 4.0.18 - 29th September 2026

@@ -1388,6 +1388,13 @@ cstring_readline(
 
         if (EOF == ch)
         {
+            if ('\r' == previous)
+            {
+                cstring_truncate(pcs, pcs->len - 1u);
+
+                return CSTRING_RC_SUCCESS;
+            }
+
             return CSTRING_RC_EOF;
         }
         else
@@ -1405,16 +1412,29 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1  =   (char)ch;
-                CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
-
-                if (CSTRING_RC_SUCCESS != rc)
+                if ('\r' == previous)
                 {
-                    return rc;
-                }
+                    ungetc(ch, stm);
 
-                previous = ch;
+                    --*numRead;
+
+                    cstring_truncate(pcs, pcs->len - 1u);
+
+                    return CSTRING_RC_SUCCESS;
+                }
+                else
+                {
+                    cstring_char_t  c1  =   (char)ch;
+                    CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
+
+                    if (CSTRING_RC_SUCCESS != rc)
+                    {
+                        return rc;
+                    }
+                }
             }
+
+            previous = ch;
         }
     }
 }

@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_vector_readLines()`.
  *
  * Created: 27th September 2026
- * Updated: 2nd October 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -281,13 +281,14 @@ static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL()
     CSTRING_RC          rc = cstring_vector_readLines(f, &csv, &numLinesRead);
 
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(5u, numLinesRead);
-    REQUIRE(TEST_INT_EQ(5u, csv.len));
+    TEST_INT_EQ(6u, numLinesRead);
+    REQUIRE(TEST_INT_EQ(6u, csv.len));
     TEST_MS_EQ("one", csv.ptr[0]);
     TEST_MS_EQ("two", csv.ptr[1]);
     TEST_MS_EQ("three", csv.ptr[2]);
-    TEST_MS_EQ("has\rembed", csv.ptr[3]);
-    TEST_MS_EQ("end", csv.ptr[4]);
+    TEST_MS_EQ("has", csv.ptr[3]);
+    TEST_MS_EQ("embed", csv.ptr[4]);
+    TEST_MS_EQ("end", csv.ptr[5]);
 
     cstring_vector_destroy(&csv);
 }
