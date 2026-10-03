@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 27th September 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -56,6 +56,7 @@ namespace
     static void TEST_cstring_readline_LONG_LINES(void);
     static void TEST_cstring_readline_MANY_SHORT_LINES(void);
     static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE(void);
+    static void TEST_cstring_readline_READONLY_RETAINS_PAYLOAD(void);
 
     int setup(void*);
     int teardown(void*);
@@ -104,6 +105,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_readline_LONG_LINES);
         XTESTS_RUN_CASE(TEST_cstring_readline_MANY_SHORT_LINES);
         XTESTS_RUN_CASE(TEST_cstring_readline_REUSE_AFTER_LONG_LINE);
+        XTESTS_RUN_CASE(TEST_cstring_readline_READONLY_RETAINS_PAYLOAD);
 
         XTESTS_PRINT_RESULTS();
 
@@ -577,6 +579,81 @@ static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE()
     TEST_MS_EQ("short", cs);
 
     cstring_destroy(&cs);
+}
+
+static void TEST_cstring_readline_READONLY_RETAINS_PAYLOAD()
+{
+    /* non-empty readonly string: a failed clear must be reported, and the
+     * stream must not be consumed
+     */
+
+    {
+        write_string_bytes(TEST_FILE_NAME, std::string("\nnext\n"));
+
+        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs;
+        CSTRING_RC  rc;
+
+        rc = cstring_createEx(&cs, "stale", CSTRING_F_MEMORY_IS_READONLY, NULL, 0);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+
+        size_t      n = 99u;
+
+        rc = cstring_readline(f, &cs, &n);
+
+        TEST_ENUM_EQ(CSTRING_RC_READONLY, rc);
+        TEST_INT_EQ(5u, cs.len);
+        TEST_MS_EQ("stale", cs);
+
+        cstring_t   fresh = cstring_t_DEFAULT;
+
+        rc = cstring_readline(f, &fresh, &n);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+        TEST_INT_EQ(0u, n);
+        TEST_MS_EQ("", fresh);
+
+        cstring_destroy(&fresh);
+        cstring_destroy(&cs);
+    }
+
+    {
+        write_bytes(TEST_FILE_NAME, "", 0);
+
+        FILE* f = fopen_or_throw(TEST_FILE_NAME, "rb");
+
+        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
+
+        cstring_t   cs;
+        CSTRING_RC  rc;
+
+        rc = cstring_createEx(&cs, "stale", CSTRING_F_MEMORY_IS_READONLY, NULL, 0);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
+
+        size_t      n = 99u;
+
+        rc = cstring_readline(f, &cs, &n);
+
+        TEST_ENUM_EQ(CSTRING_RC_READONLY, rc);
+        TEST_INT_EQ(5u, cs.len);
+        TEST_MS_EQ("stale", cs);
+
+        cstring_t   fresh = cstring_t_DEFAULT;
+
+        rc = cstring_readline(f, &fresh, &n);
+
+        REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
+        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(0u, fresh.len);
+
+        cstring_destroy(&fresh);
+        cstring_destroy(&cs);
+    }
 }
 } // anonymous namespace
 
