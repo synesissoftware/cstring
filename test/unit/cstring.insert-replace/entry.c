@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.2/entry.c
+ * File:    test/unit/insert-replace/entry.c
  *
- * Purpose: Unit-tests for general functionality.
+ * Purpose: Unit-tests for cstring insert and replace functionality.
  *
  * Created: 4th June 2009
- * Updated: 2nd August 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -45,21 +45,19 @@
  * forward declarations
  */
 
-static void test_createN(void);
-static void test_insert(void);
-static void test_insertLen(void);
-static void test_replace(void);
-static void test_replaceLen(void);
-static void test_replaceAll_1(void);
-static void test_replaceAll_2(void);
-static void test_replaceAll_3(void);
+static void TEST_cstring_createN(void);
+static void TEST_cstring_insert(void);
+static void TEST_cstring_insertLen(void);
+static void TEST_cstring_replace(void);
+static void TEST_cstring_replaceLen(void);
+static void TEST_cstring_replaceAll_EMPTY(void);
+static void TEST_cstring_replaceAll_SAME_LENGTH(void);
+static void TEST_cstring_replaceAll_CHAINED(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
-
-static char const TEST_FILE_NAME[] = "test.unit.cstring.2.txt";
 
 static char const alphabet[] = "abcdefghijklmnopqrstuvwxyz";
 
@@ -89,21 +87,19 @@ int main(int argc, char **argv)
 
     if (XTESTS_START_RUNNER("test.unit.cstring.2", verbosity))
     {
-        XTESTS_RUN_CASE(test_createN);
-        XTESTS_RUN_CASE(test_insert);
-        XTESTS_RUN_CASE(test_insertLen);
-        XTESTS_RUN_CASE(test_replace);
-        XTESTS_RUN_CASE(test_replaceLen);
-        XTESTS_RUN_CASE(test_replaceAll_1);
-        XTESTS_RUN_CASE(test_replaceAll_2);
-        XTESTS_RUN_CASE(test_replaceAll_3);
+        XTESTS_RUN_CASE(TEST_cstring_createN);
+        XTESTS_RUN_CASE(TEST_cstring_insert);
+        XTESTS_RUN_CASE(TEST_cstring_insertLen);
+        XTESTS_RUN_CASE(TEST_cstring_replace);
+        XTESTS_RUN_CASE(TEST_cstring_replaceLen);
+        XTESTS_RUN_CASE(TEST_cstring_replaceAll_EMPTY);
+        XTESTS_RUN_CASE(TEST_cstring_replaceAll_SAME_LENGTH);
+        XTESTS_RUN_CASE(TEST_cstring_replaceAll_CHAINED);
 
         XTESTS_PRINT_RESULTS();
 
         XTESTS_END_RUNNER_UPDATE_EXITCODE(&retCode);
     }
-
-    STLSOFT_SUPPRESS_UNUSED(TEST_FILE_NAME);
 
     return retCode;
 }
@@ -121,10 +117,15 @@ int main(int argc, char **argv)
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
 
-static void test_createN(void)
+static void TEST_cstring_createN(void)
 {
     { for (size_t volatile i = 0; i != 1000000u; i = (0u == i) ? 1u : i * 10u)
     {
@@ -157,12 +158,12 @@ static void test_createN(void)
         }
         else
         {
-            XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_OUTOFMEMORY, rc);
+            TEST_ENUM_EQ(CSTRING_RC_OUTOFMEMORY, rc);
         }
     }}
 }
 
-static void test_insert(void)
+static void TEST_cstring_insert(void)
 {
     { /* Forwards */
 
@@ -178,7 +179,7 @@ static void test_insert(void)
             char const  sz[2] = { alphabet[i], '\0' };
             cstring_insert(&str, (int)i, sz);
 
-            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet, str.ptr, (int)i);
+            TEST_MS_EQ_N(alphabet, str.ptr, (int)i);
         }}
 
         cstring_destroy(&str);
@@ -203,7 +204,7 @@ static void test_insert(void)
             char const  sz[2] = { alphabet[(STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)], '\0' };
             cstring_insert(&str, 0, sz);
 
-            XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N(alphabet + ((STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)), (char const*)str.ptr, (int)i);
+            TEST_MS_EQ_N(alphabet + ((STLSOFT_NUM_ELEMENTS(alphabet) - 1) - (1 + i)), (char const*)str.ptr, (int)i);
         }}
 
         cstring_destroy(&str);
@@ -215,7 +216,7 @@ static void test_insert(void)
     }
 }
 
-static void test_insertLen(void)
+static void TEST_cstring_insertLen(void)
 {
     cstring_t   str = cstring_t_DEFAULT;
 
@@ -287,7 +288,7 @@ static void test_insertLen(void)
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_replace(void)
+static void TEST_cstring_replace(void)
 {
     cstring_t   str = cstring_t_DEFAULT;
 
@@ -317,14 +318,14 @@ static void test_replace(void)
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_replaceLen(void)
+static void TEST_cstring_replaceLen(void)
 {
     cstring_t   str;
     CSTRING_RC  rc = cstring_create(&str, "abcdefghijklmnopqrstuvwxyz");
 
     if (CSTRING_RC_SUCCESS != rc)
     {
-        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create string", cstring_getStatusCodeString(rc));
+        TEST_FAIL_WITH_QUALIFIER("could not create string", cstring_getStatusCodeString(rc));
     }
     else
     {
@@ -354,7 +355,7 @@ static void test_replaceLen(void)
     }
 }
 
-static void test_replaceAll_1(void)
+static void TEST_cstring_replaceAll_EMPTY(void)
 {
     {
         cstring_t   str = cstring_t_DEFAULT;
@@ -363,7 +364,7 @@ static void test_replaceAll_1(void)
 
         rc = cstring_replaceAll(&str, NULL, NULL, NULL);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(0u, str.len);
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
@@ -371,7 +372,7 @@ static void test_replaceAll_1(void)
 
         rc = cstring_replaceAll(&str, NULL, NULL, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(0u, str.len);
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
@@ -380,7 +381,7 @@ static void test_replaceAll_1(void)
 
         rc = cstring_replaceAll(&str, "abc", "def", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(0u, str.len);
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
@@ -396,18 +397,18 @@ static void test_replaceAll_1(void)
     }
 }
 
-static void test_replaceAll_2(void)
+static void TEST_cstring_replaceAll_SAME_LENGTH(void)
 {
     {
         cstring_t   str;
         CSTRING_RC  rc = cstring_create(&str, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
         size_t      n;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
 
         rc = cstring_replaceAll(&str, NULL, NULL, NULL);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(52u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", str.ptr);
@@ -416,7 +417,7 @@ static void test_replaceAll_2(void)
 
         rc = cstring_replaceAll(&str, NULL, NULL, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(52u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", str.ptr);
@@ -426,7 +427,7 @@ static void test_replaceAll_2(void)
 
         rc = cstring_replaceAll(&str, "abc", "def", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(52u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("defdefghijklmnopqrstuvwxyzdefdefghijklmnopqrstuvwxyz", str.ptr);
@@ -443,18 +444,18 @@ static void test_replaceAll_2(void)
     }
 }
 
-static void test_replaceAll_3(void)
+static void TEST_cstring_replaceAll_CHAINED(void)
 {
     {
         cstring_t   str;
         CSTRING_RC  rc = cstring_create(&str, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
         size_t      n;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
 
         rc = cstring_replaceAll(&str, NULL, NULL, NULL);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(52u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", str.ptr);
@@ -463,7 +464,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, NULL, NULL, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(52u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", str.ptr);
@@ -473,7 +474,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "abc", "de", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(50u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("dedefghijklmnopqrstuvwxyzdedefghijklmnopqrstuvwxyz", str.ptr);
@@ -483,7 +484,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "de", "g", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(46u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("ggfghijklmnopqrstuvwxyzggfghijklmnopqrstuvwxyz", str.ptr);
@@ -493,7 +494,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "fg", "", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(42u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("gghijklmnopqrstuvwxyzgghijklmnopqrstuvwxyz", str.ptr);
@@ -503,7 +504,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "g", "", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(38u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijklmnopqrstuvwxyzhijklmnopqrstuvwxyz", str.ptr);
@@ -513,7 +514,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "xyzhij", "", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(32u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijklmnopqrstuvwklmnopqrstuvwxyz", str.ptr);
@@ -523,7 +524,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "mno", "MNO", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(32u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijklMNOpqrstuvwklMNOpqrstuvwxyz", str.ptr);
@@ -533,7 +534,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "MNO", "<<mno>>", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(40u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijkl<<mno>>pqrstuvwkl<<mno>>pqrstuvwxyz", str.ptr);
@@ -543,7 +544,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, ">>", ">>>", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(42u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijkl<<mno>>>pqrstuvwkl<<mno>>>pqrstuvwxyz", str.ptr);
@@ -553,7 +554,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "<<", "<<  <<", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(50u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("hijkl<<  <<mno>>>pqrstuvwkl<<  <<mno>>>pqrstuvwxyz", str.ptr);
@@ -563,7 +564,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "hijkl<<  <<mno>>>", NULL, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(33u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("pqrstuvwkl<<  <<mno>>>pqrstuvwxyz", str.ptr);
@@ -573,7 +574,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "<<  <<mno>>>", NULL, &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(21u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("pqrstuvwklpqrstuvwxyz", str.ptr);
@@ -583,7 +584,7 @@ static void test_replaceAll_3(void)
 
         rc = cstring_replaceAll(&str, "kl", "xyz", &n);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(22u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
         TEST_MS_EQ("pqrstuvwxyzpqrstuvwxyz", str.ptr);
@@ -597,7 +598,7 @@ static void test_replaceAll_3(void)
 
             rc = cstring_replaceAll(&str, sz, NULL, &n);
 
-            XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+            XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
             TEST_INT_EQ(22u - 2 * (1 + i), str.len);
             TEST_PTR_NE(NULL, str.ptr);
 /*          TEST_MS_EQ("pqrstuvwklpqrstuvwxyz", str.ptr); */

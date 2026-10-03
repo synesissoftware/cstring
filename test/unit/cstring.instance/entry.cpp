@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.1/entry.cpp
+ * File:    test/unit/cstring.instance/entry.cpp
  *
- * Purpose: Unit-tests for general functionality.
+ * Purpose: Unit-tests for cstring instance general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 2nd October 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -51,37 +51,33 @@
 namespace
 {
 
-    static void test_1_0();
-    static void test_1_1();
-    static void test_1_2();
-    static void test_1_3();
-    static void test_1_4();
-    static void test_1_5();
-    static void test_1_6();
-    static void test_1_7();
-    static void test_1_8();
-    static void test_1_9();
+    static void TEST_cstring_t_DEFAULT();
+    static void TEST_cstring_init();
+    static void TEST_cstring_setCapacity();
+    static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AND_EMPTY();
+    static void TEST_cstring_assign_AND_cstring_create();
+    static void TEST_cstring_assignLen_AND_cstring_createLen();
+    static void TEST_cstring_append_AND_cstring_appendLen();
+    static void TEST_cstring_truncate();
+    static void TEST_cstring_appendLen_KEEPS_CAPACITY();
 
-    static void test_2_0();
-    static void test_2_1();
-    static void test_2_2();
-    static void test_2_3();
-    static void test_2_4();
-    static void test_2_5();
-    static void test_2_6();
-    static void test_2_7();
-    static void test_2_8();
-    static void test_2_9();
-    static void test_2_10();
-    static void test_2_11();
+    static void TEST_cstring_init_AND_cstring_destroy();
+    static void TEST_cstring_create();
+    static void TEST_cstring_createLen();
+    static void TEST_cstring_createEx();
+    static void TEST_cstring_createLenEx();
+    static void TEST_cstring_assignLen_KEEPS_CAPACITY();
+    static void TEST_cstring_assign_KEEPS_CAPACITY();
+    static void TEST_cstring_copy();
+    static void TEST_cstring_yield();
+    static void TEST_cstring_yield2();
+    static void TEST_cstring_swap();
 } // anonymous namespace
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
-
-const char TEST_FILE_NAME[] = "test.unit.cstring.1.txt";
 
 const size_t    APPEND_ITERATIONS   =   1000000u;
 const size_t    ASSIGN_ITERATIONS   =   100000u;
@@ -112,36 +108,32 @@ int main(int argc, char **argv)
 
     if (XTESTS_START_RUNNER("test.unit.cstring.1", verbosity))
     {
-        XTESTS_RUN_CASE(test_1_0);
-        XTESTS_RUN_CASE(test_1_1);
-        XTESTS_RUN_CASE(test_1_2);
-        XTESTS_RUN_CASE(test_1_3);
-        XTESTS_RUN_CASE(test_1_4);
-        XTESTS_RUN_CASE(test_1_5);
-        XTESTS_RUN_CASE(test_1_6);
-        XTESTS_RUN_CASE(test_1_7);
-        XTESTS_RUN_CASE(test_1_8);
-        XTESTS_RUN_CASE(test_1_9);
+        XTESTS_RUN_CASE(TEST_cstring_t_DEFAULT);
+        XTESTS_RUN_CASE(TEST_cstring_init);
+        XTESTS_RUN_CASE(TEST_cstring_setCapacity);
+        XTESTS_RUN_CASE(TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AND_EMPTY);
+        XTESTS_RUN_CASE(TEST_cstring_assign_AND_cstring_create);
+        XTESTS_RUN_CASE(TEST_cstring_assignLen_AND_cstring_createLen);
+        XTESTS_RUN_CASE(TEST_cstring_append_AND_cstring_appendLen);
+        XTESTS_RUN_CASE(TEST_cstring_truncate);
+        XTESTS_RUN_CASE(TEST_cstring_appendLen_KEEPS_CAPACITY);
 
-        XTESTS_RUN_CASE(test_2_0);
-        XTESTS_RUN_CASE(test_2_1);
-        XTESTS_RUN_CASE(test_2_2);
-        XTESTS_RUN_CASE(test_2_3);
-        XTESTS_RUN_CASE(test_2_4);
-        XTESTS_RUN_CASE(test_2_5);
-        XTESTS_RUN_CASE(test_2_6);
-        XTESTS_RUN_CASE(test_2_7);
-        XTESTS_RUN_CASE(test_2_8);
-        XTESTS_RUN_CASE(test_2_9);
-        XTESTS_RUN_CASE(test_2_10);
-        XTESTS_RUN_CASE(test_2_11);
+        XTESTS_RUN_CASE(TEST_cstring_init_AND_cstring_destroy);
+        XTESTS_RUN_CASE(TEST_cstring_create);
+        XTESTS_RUN_CASE(TEST_cstring_createLen);
+        XTESTS_RUN_CASE(TEST_cstring_createEx);
+        XTESTS_RUN_CASE(TEST_cstring_createLenEx);
+        XTESTS_RUN_CASE(TEST_cstring_assignLen_KEEPS_CAPACITY);
+        XTESTS_RUN_CASE(TEST_cstring_assign_KEEPS_CAPACITY);
+        XTESTS_RUN_CASE(TEST_cstring_copy);
+        XTESTS_RUN_CASE(TEST_cstring_yield);
+        XTESTS_RUN_CASE(TEST_cstring_yield2);
+        XTESTS_RUN_CASE(TEST_cstring_swap);
 
         XTESTS_PRINT_RESULTS();
 
         XTESTS_END_RUNNER_UPDATE_EXITCODE(&retCode);
     }
-
-    STLSOFT_SUPPRESS_UNUSED(TEST_FILE_NAME);
 
     return retCode;
 }
@@ -159,21 +151,30 @@ int main(int argc, char **argv)
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * test function implementations
+ * compatibility
  */
 
 #ifdef CSTRING_USE_WIDE_STRINGS
 
 # define CSTRING_T_(x)                                      L ## x
-# define XTESTS_TEST_STRING_EQUAL_                          XTESTS_TEST_WIDE_STRING_EQUAL
-# define XTESTS_TEST_STRING_EQUAL_N_                        XTESTS_TEST_WIDE_STRING_EQUAL_N
+# define TEST_STR_EQ_                                       TEST_WS_EQ
+# define TEST_STR_EQ_N_                                     TEST_WS_EQ_N
 #else /* ? CSTRING_USE_WIDE_STRINGS */
 
 # define CSTRING_T_(x)                                      x
-# define XTESTS_TEST_STRING_EQUAL_                          XTESTS_TEST_MULTIBYTE_STRING_EQUAL
-# define XTESTS_TEST_STRING_EQUAL_N_                        XTESTS_TEST_MULTIBYTE_STRING_EQUAL_N
+# define TEST_STR_EQ_                                       TEST_MS_EQ
+# define TEST_STR_EQ_N_                                     TEST_MS_EQ_N
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
+
+/* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * test function implementations
+ */
 
 namespace
 {
@@ -187,7 +188,7 @@ namespace
     static const cstring_char_t alphabet[] = CSTRING_T_("abcdefghijklmnopqrstuvwxyz");
 
 
-static void test_1_0()
+static void TEST_cstring_t_DEFAULT()
 {
     cstring_t str = cstring_t_DEFAULT;
 
@@ -197,7 +198,7 @@ static void test_1_0()
     TEST_INT_GE(str.len, str.capacity);
 }
 
-static void test_1_1()
+static void TEST_cstring_init()
 {
     cstring_t str;
 
@@ -209,14 +210,14 @@ static void test_1_1()
     TEST_INT_GE(str.len, str.capacity);
 }
 
-static void test_1_2()
+static void TEST_cstring_setCapacity()
 {
     cstring_t   str =   cstring_t_DEFAULT;
     CSTRING_RC  rc  =   cstring_setCapacity(&str, 10);
 
     if (CSTRING_RC_SUCCESS != rc)
     {
-        XTESTS_TEST_FAIL_WITH_QUALIFIER("could not set capacity", cstring_getStatusCodeString(rc));
+        TEST_FAIL_WITH_QUALIFIER("could not set capacity", cstring_getStatusCodeString(rc));
     }
     else
     {
@@ -234,7 +235,7 @@ static void test_1_2()
     }
 }
 
-static void test_1_3()
+static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AND_EMPTY()
 {
     {
         cstring_t   str =   cstring_t_DEFAULT;
@@ -242,13 +243,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -267,13 +268,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -292,13 +293,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -317,13 +318,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -342,13 +343,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -367,13 +368,13 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_INT_GT(0u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -392,19 +393,19 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(5u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[0]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[1]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[2]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[3]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[4]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[5]);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
+            TEST_CHAR_EQ('\0', str.ptr[0]);
+            TEST_CHAR_EQ('\0', str.ptr[1]);
+            TEST_CHAR_EQ('\0', str.ptr[2]);
+            TEST_CHAR_EQ('\0', str.ptr[3]);
+            TEST_CHAR_EQ('\0', str.ptr[4]);
+            TEST_CHAR_EQ('\0', str.ptr[5]);
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -423,19 +424,19 @@ static void test_1_3()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(5u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(CSTRING_T_(""), str.ptr);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[0]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[1]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[2]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[3]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[4]);
-            XTESTS_TEST_CHARACTER_EQUAL('\0', str.ptr[5]);
+            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
+            TEST_CHAR_EQ('\0', str.ptr[0]);
+            TEST_CHAR_EQ('\0', str.ptr[1]);
+            TEST_CHAR_EQ('\0', str.ptr[2]);
+            TEST_CHAR_EQ('\0', str.ptr[3]);
+            TEST_CHAR_EQ('\0', str.ptr[4]);
+            TEST_CHAR_EQ('\0', str.ptr[5]);
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -449,7 +450,7 @@ static void test_1_3()
     }
 }
 
-static void test_1_4()
+static void TEST_cstring_assign_AND_cstring_create()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -460,13 +461,13 @@ static void test_1_4()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(cch, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
+            TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str.ptr));
             TEST_INT_GE(cch, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -490,13 +491,13 @@ static void test_1_4()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
+                TEST_FAIL_WITH_QUALIFIER("could not assign", cstring_getStatusCodeString(rc));
             }
             else
             {
                 TEST_INT_EQ(cch, str.len);
                 TEST_PTR_NE(NULL, str.ptr);
-                XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
+                TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str.ptr));
                 TEST_INT_GT(cch, str.capacity);
                 TEST_INT_GE(str.len, str.capacity);
             }
@@ -519,13 +520,13 @@ static void test_1_4()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(cch, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
+            TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str.ptr));
             TEST_INT_GE(cch, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -539,7 +540,7 @@ static void test_1_4()
     }}
 }
 
-static void test_1_5()
+static void TEST_cstring_assignLen_AND_cstring_createLen()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -550,13 +551,13 @@ static void test_1_5()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(cch, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+            TEST_STR_EQ_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
             TEST_INT_GE(cch, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -580,13 +581,13 @@ static void test_1_5()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
+                TEST_FAIL_WITH_QUALIFIER("could not assign (with length)", cstring_getStatusCodeString(rc));
             }
             else
             {
                 TEST_INT_EQ(cch, str.len);
                 TEST_PTR_NE(NULL, str.ptr);
-                XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+                TEST_STR_EQ_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
                 TEST_INT_GE(cch, str.capacity);
                 TEST_INT_GE(str.len, str.capacity);
             }
@@ -609,13 +610,13 @@ static void test_1_5()
 
         if (CSTRING_RC_SUCCESS != rc)
         {
-            XTESTS_TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
+            TEST_FAIL_WITH_QUALIFIER("could not create (with length)", cstring_getStatusCodeString(rc));
         }
         else
         {
             TEST_INT_EQ(cch, str.len);
             TEST_PTR_NE(NULL, str.ptr);
-            XTESTS_TEST_STRING_EQUAL_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
+            TEST_STR_EQ_N_(s, stlsoft::apply_const_ptr(str.ptr), int(i));
             TEST_INT_GE(cch, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -629,7 +630,7 @@ static void test_1_5()
     }}
 }
 
-static void test_1_6()
+static void TEST_cstring_append_AND_cstring_appendLen()
 {
     {
         cstring_t str = cstring_t_DEFAULT;
@@ -641,13 +642,13 @@ static void test_1_6()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append", cstring_getStatusCodeString(rc));
+                TEST_FAIL_WITH_QUALIFIER("could not append", cstring_getStatusCodeString(rc));
             }
             else
             {
                 TEST_INT_EQ(i + 1, str.len);
                 TEST_PTR_NE(NULL, str.ptr);
-                XTESTS_TEST_STRING_EQUAL_N_(alphabet, str.ptr, int(i));
+                TEST_STR_EQ_N_(alphabet, str.ptr, int(i));
                 TEST_INT_GE(i + 1, str.capacity);
                 TEST_INT_GE(str.len, str.capacity);
             }
@@ -670,13 +671,13 @@ static void test_1_6()
 
             if (CSTRING_RC_SUCCESS != rc)
             {
-                XTESTS_TEST_FAIL_WITH_QUALIFIER("could not append (with length)", cstring_getStatusCodeString(rc));
+                TEST_FAIL_WITH_QUALIFIER("could not append (with length)", cstring_getStatusCodeString(rc));
             }
             else
             {
                 TEST_INT_EQ(i + 1, str.len);
                 TEST_PTR_NE(NULL, str.ptr);
-                XTESTS_TEST_STRING_EQUAL_N_(alphabet, str.ptr, int(i));
+                TEST_STR_EQ_N_(alphabet, str.ptr, int(i));
                 TEST_INT_GT(i, str.capacity);
                 TEST_INT_GE(str.len, str.capacity);
             }
@@ -691,24 +692,24 @@ static void test_1_6()
     }
 }
 
-static void test_1_7()
+static void TEST_cstring_truncate()
 {
     {
         cstring_t str = cstring_t_DEFAULT;
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 0u));
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_truncate(&str, 0u));
         TEST_INT_EQ(0u, str.len);
         TEST_INT_EQ(0u, str.capacity);
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 1u));
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_truncate(&str, 1u));
         TEST_INT_EQ(0u, str.len);
         TEST_INT_EQ(0u, str.capacity);
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100u));
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100u));
         TEST_INT_EQ(0u, str.len);
         TEST_INT_EQ(0u, str.capacity);
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100000u));
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_truncate(&str, 100000u));
         TEST_INT_EQ(0u, str.len);
         TEST_INT_EQ(0u, str.capacity);
 
@@ -729,7 +730,7 @@ static void test_1_7()
             {
                 cstring_truncate(&str, i);
 
-                XTESTS_TEST_INTEGER_LESS_OR_EQUAL(26u, str.len);
+                TEST_INT_LE(26u, str.len);
 
                 if (i < 26u)
                 {
@@ -752,7 +753,7 @@ static void test_1_7()
     }
 }
 
-static void test_1_8()
+static void TEST_cstring_appendLen_KEEPS_CAPACITY()
 {
     cstring_t str = cstring_t_DEFAULT;
 
@@ -782,13 +783,8 @@ static void test_1_8()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_1_9()
-{
-}
 
-
-
-static void test_2_0()
+static void TEST_cstring_init_AND_cstring_destroy()
 {
     cstring_t   str;
 
@@ -804,7 +800,7 @@ static void test_2_0()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_2_1()
+static void TEST_cstring_create()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -815,7 +811,7 @@ static void test_2_1()
         cstring_create(&str, s);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
@@ -827,7 +823,7 @@ static void test_2_1()
     }}
 }
 
-static void test_2_2()
+static void TEST_cstring_createLen()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -838,7 +834,7 @@ static void test_2_2()
         cstring_createLen(&str, s, i);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
@@ -850,7 +846,7 @@ static void test_2_2()
     }}
 }
 
-static void test_2_3()
+static void TEST_cstring_createEx()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -862,7 +858,7 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
@@ -884,16 +880,16 @@ static void test_2_3()
 
         rc = cstring_createEx(&str, s, flags, &buff[0] + 1, STLSOFT_NUM_ELEMENTS(buff) - 3);
 
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_('['), buff[0]);
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_(']'), buff[STLSOFT_NUM_ELEMENTS(buff) - 2]);
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_('\0'), buff[STLSOFT_NUM_ELEMENTS(buff) - 1]);
+        TEST_CHAR_EQ(CSTRING_T_('['), buff[0]);
+        TEST_CHAR_EQ(CSTRING_T_(']'), buff[STLSOFT_NUM_ELEMENTS(buff) - 2]);
+        TEST_CHAR_EQ(CSTRING_T_('\0'), buff[STLSOFT_NUM_ELEMENTS(buff) - 1]);
 
         if (i < STLSOFT_NUM_ELEMENTS(buff) - 3)
         {
-            XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
+            TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
             TEST_INT_GE(i, str.len);
-            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
             TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
@@ -905,7 +901,7 @@ static void test_2_3()
         }
         else
         {
-            XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
+            TEST_ENUM_EQ(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
 
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_EQ(NULL, str.ptr);
@@ -926,7 +922,7 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
 
@@ -948,7 +944,7 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
 
@@ -970,7 +966,7 @@ static void test_2_3()
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
 
@@ -984,7 +980,7 @@ static void test_2_3()
 #endif /* WIN32 */
 }
 
-static void test_2_4()
+static void TEST_cstring_createLenEx()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -996,7 +992,7 @@ static void test_2_4()
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
 
         cstring_destroy(&str);
@@ -1018,16 +1014,16 @@ static void test_2_4()
 
         rc = cstring_createLenEx(&str, s, i, flags, &buff[0] + 1, STLSOFT_NUM_ELEMENTS(buff) - 3);
 
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_('['), buff[0]);
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_(']'), buff[STLSOFT_NUM_ELEMENTS(buff) - 2]);
-        XTESTS_TEST_CHARACTER_EQUAL(CSTRING_T_('\0'), buff[STLSOFT_NUM_ELEMENTS(buff) - 1]);
+        TEST_CHAR_EQ(CSTRING_T_('['), buff[0]);
+        TEST_CHAR_EQ(CSTRING_T_(']'), buff[STLSOFT_NUM_ELEMENTS(buff) - 2]);
+        TEST_CHAR_EQ(CSTRING_T_('\0'), buff[STLSOFT_NUM_ELEMENTS(buff) - 1]);
 
         if (i < STLSOFT_NUM_ELEMENTS(buff) - 3)
         {
-            XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
+            TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
             TEST_INT_GE(i, str.len);
-            XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
             TEST_INT_GE(str.len, str.capacity);
 
             cstring_destroy(&str);
@@ -1039,7 +1035,7 @@ static void test_2_4()
         }
         else
         {
-            XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
+            TEST_ENUM_EQ(CSTRING_RC_EXCEEDBORROWEDCAPACITY, rc);
 
             TEST_INT_EQ(0u, str.len);
             TEST_PTR_EQ(NULL, str.ptr);
@@ -1060,7 +1056,7 @@ static void test_2_4()
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, ::GlobalSize(str.ptr));
 
@@ -1082,7 +1078,7 @@ static void test_2_4()
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, ::HeapSize(::GetProcessHeap(), 0, str.ptr));
 
@@ -1104,7 +1100,7 @@ static void test_2_4()
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        XTESTS_TEST_STRING_EQUAL_(s, str.ptr);
+        TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
         TEST_INT_GE(str.capacity, comstl::CoTaskMemGetSize(str.ptr));
 
@@ -1118,7 +1114,7 @@ static void test_2_4()
 #endif /* WIN32 */
 }
 
-static void test_2_5()
+static void TEST_cstring_assignLen_KEEPS_CAPACITY()
 {
     cstring_t   str =   cstring_t_DEFAULT;
 
@@ -1142,7 +1138,7 @@ static void test_2_5()
 
         TEST_INT_EQ(0u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_NOT_EQUAL(0u, str.capacity);
+        TEST_INT_NE(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
     }}
 
@@ -1154,7 +1150,7 @@ static void test_2_5()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_2_6()
+static void TEST_cstring_assign_KEEPS_CAPACITY()
 {
     cstring_t   str =   cstring_t_DEFAULT;
 
@@ -1178,7 +1174,7 @@ static void test_2_6()
 
         TEST_INT_EQ(0u, str.len);
         TEST_PTR_NE(NULL, str.ptr);
-        XTESTS_TEST_INTEGER_NOT_EQUAL(0u, str.capacity);
+        TEST_INT_NE(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
     }}
 
@@ -1190,7 +1186,7 @@ static void test_2_6()
     TEST_INT_EQ(0, str.flags);
 }
 
-static void test_2_7()
+static void TEST_cstring_copy()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -1200,19 +1196,19 @@ static void test_2_7()
         cstring_t               str2    =   cstring_t_DEFAULT;
         CSTRING_RC              rc      =   cstring_assign(&str1, s);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(cch, str1.len);
         TEST_PTR_NE(NULL, str1.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str1.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str1.ptr));
         TEST_INT_GE(cch, str1.capacity);
         TEST_INT_GE(str1.len, str1.capacity);
 
         rc = cstring_copy(&str2, &str1);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(cch, str2.len);
         TEST_PTR_NE(NULL, str2.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str2.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str2.ptr));
         TEST_INT_GE(cch, str2.capacity);
         TEST_INT_GE(str2.len, str2.capacity);
 
@@ -1233,14 +1229,14 @@ static void test_2_7()
     }}
 }
 
-static void test_2_8()
+static void TEST_cstring_yield()
 {
     {
         cstring_t       str =   cstring_t_DEFAULT;
         cstring_char_t* p;
         CSTRING_RC      rc  =   cstring_yield(&str, &p);
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
         TEST_PTR_EQ(NULL, stlsoft::apply_const_ptr(stlsoft::apply_const_ptr(str.ptr)));
         TEST_INT_EQ(0u, str.capacity);
@@ -1264,10 +1260,10 @@ static void test_2_8()
         CSTRING_RC              rc  =   cstring_assign(&str, s);
         cstring_char_t*         p;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(cch, str.len);
         TEST_PTR_NE(NULL, str.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str.ptr));
         TEST_INT_GE(cch, str.capacity);
         TEST_INT_GE(str.len, str.capacity);
 
@@ -1275,13 +1271,13 @@ static void test_2_8()
 
         stlsoft::scoped_handle<void*>   scoper(p, ::free);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
 
         TEST_PTR_NE(NULL, p);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(p));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(p));
 
         cstring_destroy(&str);
 
@@ -1292,7 +1288,7 @@ static void test_2_8()
     }}
 }
 
-static void test_2_9()
+static void TEST_cstring_yield2()
 {
     {
         cstring_t       str =   cstring_t_DEFAULT;
@@ -1300,7 +1296,7 @@ static void test_2_9()
         void*           raw;
         CSTRING_RC      rc  =   cstring_yield2(&str, &p, &raw);
 
-        XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc);
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
@@ -1325,10 +1321,10 @@ static void test_2_9()
         cstring_char_t*         p;
         void*                   raw;
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(cch, str.len);
         TEST_PTR_NE(NULL, str.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str.ptr));
         TEST_INT_GE(cch, str.capacity);
         TEST_INT_GE(str.len, str.capacity);
 
@@ -1336,13 +1332,13 @@ static void test_2_9()
 
         stlsoft::scoped_handle<void*>   scoper(raw, ::free);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_PTR_EQ(NULL, str.ptr);
         TEST_INT_EQ(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
 
         TEST_PTR_NE(NULL, p);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(p));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(p));
 
         cstring_destroy(&str);
 
@@ -1353,7 +1349,7 @@ static void test_2_9()
     }}
 }
 
-static void test_2_10()
+static void TEST_cstring_swap()
 {
     { for (size_t i = 0; i != STLSOFT_NUM_ELEMENTS(alphabet) - 1; ++i)
     {
@@ -1363,10 +1359,10 @@ static void test_2_10()
         cstring_t               str2    =   cstring_t_DEFAULT;
         CSTRING_RC              rc      =   cstring_assign(&str1, s);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(cch, str1.len);
         TEST_PTR_NE(NULL, str1.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str1.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str1.ptr));
         TEST_INT_GE(cch, str1.capacity);
         TEST_INT_GE(str1.len, str1.capacity);
 
@@ -1377,7 +1373,7 @@ static void test_2_10()
 
         rc = cstring_swap(&str2, &str1);
 
-        XTESTS_REQUIRE(XTESTS_TEST_ENUM_EQUAL(CSTRING_RC_SUCCESS, rc));
+        XTESTS_REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
         TEST_INT_EQ(0u, str1.len);
         TEST_PTR_EQ(NULL, str1.ptr);
         TEST_INT_EQ(0u, str1.capacity);
@@ -1385,7 +1381,7 @@ static void test_2_10()
 
         TEST_INT_EQ(cch, str2.len);
         TEST_PTR_NE(NULL, str2.ptr);
-        XTESTS_TEST_STRING_EQUAL_(s, stlsoft::apply_const_ptr(str2.ptr));
+        TEST_STR_EQ_(s, stlsoft::apply_const_ptr(str2.ptr));
         TEST_INT_GE(cch, str2.capacity);
         TEST_INT_GE(str2.len, str2.capacity);
 
@@ -1404,10 +1400,6 @@ static void test_2_10()
         TEST_INT_EQ(0u, str2.capacity);
         TEST_INT_EQ(0, str2.flags);
     }}
-}
-
-static void test_2_11()
-{
 }
 } // anonymous namespace
 
