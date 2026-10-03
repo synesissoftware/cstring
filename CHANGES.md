@@ -9,6 +9,14 @@
 * Passed `temp_file::CloseOnOpen` in **test.component.cstring_readline** so the creating handle is closed before `fopen`, which Windows otherwise rejects as a sharing violation;
 * `cstring_readline()` returns the result of its opening `cstring_truncate()`, so a readonly destination yields `CSTRING_RC_READONLY` for an empty line or immediate end of file, and the payload and stream position are left unchanged;
 * Added **test.component.cstring_readline** case `TEST_cstring_readline_READONLY_RETAINS_PAYLOAD`;
+* Freed a zero-size realloc-arena block on every platform (`realloc(pv, 0)` allocates on some), and left a NULL pointer unchanged;
+* Added **test.performance.cstring_readline** (filesystem timings gated on **p99**);
+* Added borrowed-fixed construct and assign scenarios to **test.performance.cstring**, using `stlsoft::auto_buffer` for the borrowed anchor;
+* Suppressed the GCC 15 `-Wfree-nonheap-object` false positive on inlined `stlsoft::auto_buffer` destruction in **test.performance.cstring**;
+* Shortened test directories under **test/** to the subject, and renamed the unit suites to **test.unit.cstring.instance**, **test.unit.cstring.insert-replace**, and **test.unit.cstring.borrowed** (formerly **test.unit.cstring.1**, **test.unit.cstring.2**, and **test.unit.cstring.auto_buffer**);
+* Named unit cases `TEST_` in shouting snake case, keeping each API or type in its real spelling, and switched assertions to the terse xTests API;
+* Removed empty unit cases and unused temporary-file names;
+* Used `size_t` in the performance programs;
 
 
 ## 4.0.18 - 29th September 2026
