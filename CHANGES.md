@@ -1,6 +1,11 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.2.0 - 30th September 2026
+
+* performance optimisations;
+
+
 ## 4.0.19 - 3rd October 2026
 
 * Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;

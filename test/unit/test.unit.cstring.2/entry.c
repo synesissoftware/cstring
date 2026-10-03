@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for general functionality.
  *
  * Created: 4th June 2009
- * Updated: 2nd August 2026
+ * Updated: 23rd September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -135,18 +135,26 @@ static void test_createN(void)
         if (CSTRING_RC_SUCCESS == rc)
         {
             TEST_INT_EQ((size_t)i, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == i)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                TEST_INT_GE(str.len, str.capacity);
 
 #ifdef XTESTS_HAS_SHWILD
 
-            /* created string must be entirely '~' */
-            TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
-            TEST_MS_DOES_NOT_MATCH("*[ ,.<>/?'\";:[{]}`!@#$%^&*()=_+\\\\|-]*", str.ptr);
+                /* created string must be entirely '~' */
+                TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
+                TEST_MS_DOES_NOT_MATCH("*[ ,.<>/?'\";:[{]}`!@#$%^&*()=_+\\\\|-]*", str.ptr);
 #else /* ? XTESTS_HAS_SHWILD */
 
-            TEST_PTR_EQ(NULL, strpbrk(str.ptr, "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,<.>/?'\";:[{]}`!@#$%^&*()-_=+\\|"));
+                TEST_PTR_EQ(NULL, strpbrk(str.ptr, "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,<.>/?'\";:[{]}`!@#$%^&*()-_=+\\|"));
 #endif /* XTESTS_HAS_SHWILD */
+            }
 
             cstring_destroy(&str);
 

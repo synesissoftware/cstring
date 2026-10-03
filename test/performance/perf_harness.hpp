@@ -277,7 +277,7 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static size_t  prev_size = 0;
+    static size_t       prev_size = 0;
 
     if (have_prev &&
         (   prev_scenario != scenario ||

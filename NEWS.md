@@ -4,6 +4,7 @@
 | Date                | News Item                        | Details |
 | ------------------- | -------------------------------- | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
+| 5th October 2026    | Release of [cstring 4.2.0](https://github.com/synesissoftware/cstring/releases/tag/4.2.0) | Performance optimisations |
 | 3rd October 2026    | Release of [cstring 4.0.19](https://github.com/synesissoftware/cstring/releases/tag/4.0.19) | lone CR ends a line; `cstring_readline()` `numRead` includes EOL; `cstring_readline()` reports failed readonly |
 | 29th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18) | `_WIN32` arena gate; **win.c**; static `CoTaskMem*` (**ole32**) |
 | 29th September 2026 | Release of [cstring 4.0.17](https://github.com/synesissoftware/cstring/releases/tag/4.0.17) | Perf tests; `insertAt` fix; component I/O; Windows arena rename |
