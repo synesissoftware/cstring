@@ -4,7 +4,7 @@
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 2nd October 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -21,7 +21,6 @@
  */
 
 /* xTests header files */
-#include <xtests/xtests.h>
 #include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
@@ -57,6 +56,7 @@ namespace
 
 const char TEST_FILE_NAME[] = "test.component.cstring_writeline.txt";
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -67,6 +67,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_writeline.txt";
 # endif /* compiler */
 # pragma warning(disable : 4702)
 #endif /* compiler */
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * main
@@ -94,6 +95,7 @@ int main(int argc, char* argv[])
     return retCode;
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -104,8 +106,9 @@ int main(int argc, char* argv[])
 # endif /* compiler */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
- * test function implementations
+ * helper functions
  */
 
 namespace
@@ -120,14 +123,25 @@ namespace
 
     int teardown(void* arg)
     {
-        char const* filename = static_cast<char const*>(arg);
+        char const* path = static_cast<char const*>(arg);
 
-        ::remove(filename);
+        if (NULL != path &&
+            '\0' != path[0])
+        {
+            ::remove(path);
+        }
 
         return 0;
     }
+} // anonymous namespace
 
 
+/* /////////////////////////////////////////////////////////////////////////
+ * test function implementations
+ */
+
+namespace
+{
 
 static void TEST_cstring_writeline_CALLABILITY()
 {

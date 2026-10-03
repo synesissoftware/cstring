@@ -3,8 +3,8 @@
  *
  * Purpose: Minimal example of `cstring_create()` / `cstring_destroy()`.
  *
- * Created: ...
- * Updated: 2nd August 2026
+ * Created: 12th January 2024
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

@@ -9,7 +9,7 @@
  *          require p99.
  *
  * Created: 27th September 2026
- * Updated: 27th September 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -65,8 +65,8 @@ enum instance_mode_t
 struct readline_case
 {
     char const*     scenario;
-    std::size_t     num_lines;
-    std::size_t     line_len;
+    size_t          num_lines;
+    size_t          line_len;
     line_ending_t   ending;
     instance_mode_t mode;
 };
@@ -105,22 +105,22 @@ struct run_result
 template <typename F>
 run_result
 time_iterations(
-    std::size_t num_iterations
-,   std::size_t num_warm_loops
-,   F           fn
+    size_t  num_iterations
+,   size_t  num_warm_loops
+,   F       fn
 )
 {
     run_result result = {};
     stopwatch_t sw;
 
-    for (std::size_t w = num_warm_loops; 0 != w; --w)
+    for (size_t w = num_warm_loops; 0 != w; --w)
     {
         result.anchor = 0;
         result.hist.clear();
 
         interval_t tm_ns = 0;
 
-        for (std::size_t i = 0; num_iterations != i; ++i)
+        for (size_t i = 0; num_iterations != i; ++i)
         {
             sw.start();
             result.anchor += fn();
@@ -144,10 +144,10 @@ time_iterations(
 void
 emit_row(
     char const*         scenario
-,   std::size_t         size
+,   size_t              size
 ,   char const*         impl
-,   std::size_t         num_iterations
-,   std::size_t         num_actions
+,   size_t              num_iterations
+,   size_t              num_actions
 ,   run_result const&   r
 ,   interval_t          cstring_tm_ns
 )
@@ -173,7 +173,7 @@ emit_row(
 
 std::uint64_t
 line_anchor(
-    std::size_t     len
+    size_t          len
 ,   unsigned char   head
 )
 {
@@ -183,7 +183,7 @@ line_anchor(
 unsigned char
 content_head(
     char const* p
-,   std::size_t n
+,   size_t      n
 )
 {
     if (0 == n || NULL == p)
@@ -197,8 +197,8 @@ content_head(
 bool
 write_lines_file(
     char const*     path
-,   std::size_t     num_lines
-,   std::size_t     line_len
+,   size_t          num_lines
+,   size_t          line_len
 ,   line_ending_t   ending
 )
 {
@@ -211,7 +211,7 @@ write_lines_file(
 
     std::string const line = make_payload(line_len);
 
-    for (std::size_t i = 0; num_lines != i; ++i)
+    for (size_t i = 0; num_lines != i; ++i)
     {
         out.write(line.data(), static_cast<std::streamsize>(line.size()));
 
@@ -230,9 +230,9 @@ write_lines_file(
 
 std::uint64_t
 read_all_cstring(
-    char const*         path
-,   std::size_t         line_len
-,   instance_mode_t     mode
+    char const*     path
+,   size_t          line_len
+,   instance_mode_t mode
 )
 {
     FILE* const f = std::fopen(path, "rb");
@@ -291,9 +291,9 @@ read_all_cstring(
 
 std::uint64_t
 read_all_getline(
-    char const*         path
-,   std::size_t         line_len
-,   instance_mode_t     mode
+    char const*     path
+,   size_t          line_len
+,   instance_mode_t mode
 )
 {
     std::ifstream in(path, std::ios::in | std::ios::binary);
@@ -334,7 +334,7 @@ read_all_getline(
 std::uint64_t
 read_all_fgets(
     char const* path
-,   std::size_t line_len
+,   size_t      line_len
 )
 {
     FILE* const f = std::fopen(path, "rb");
@@ -350,7 +350,7 @@ read_all_fgets(
 
     while (NULL != std::fgets(&buf[0], static_cast<int>(buf.size()), f))
     {
-        std::size_t n = std::strlen(&buf[0]);
+        size_t n = std::strlen(&buf[0]);
 
         if (0 != n && '\n' == buf[n - 1u])
         {
@@ -372,9 +372,9 @@ read_all_fgets(
 
 std::uint64_t
 read_all_raw_fgetc(
-    char const*         path
-,   std::size_t         line_len
-,   instance_mode_t     mode
+    char const*     path
+,   size_t          line_len
+,   instance_mode_t mode
 )
 {
     FILE* const f = std::fopen(path, "rb");
@@ -462,7 +462,7 @@ read_all_raw_fgetc(
 bool
 anchors_agree(
     char const*         scenario
-,   std::size_t         line_len
+,   size_t              line_len
 ,   run_result const&   cs
 ,   run_result const&   gl
 ,   run_result const&   fg
@@ -493,8 +493,8 @@ anchors_agree(
 bool
 scenario_readline(
     readline_case const&    spec
-,   std::size_t             num_trials
-,   std::size_t             num_warm_loops
+,   size_t                  num_trials
+,   size_t                  num_warm_loops
 )
 {
     if (LINE_ENDING_NONE == spec.ending && 1u != spec.num_lines)
@@ -520,9 +520,9 @@ scenario_readline(
         return true;
     }
 
-    char const* const path = TEST_FILE_NAME;
-    std::size_t const line_len = spec.line_len;
-    instance_mode_t const mode = spec.mode;
+    char const* const       path        =   TEST_FILE_NAME;
+    size_t const            line_len    =   spec.line_len;
+    instance_mode_t const   mode        =   spec.mode;
 
     run_result const cs = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
         return read_all_cstring(path, line_len, mode);
@@ -566,8 +566,8 @@ int main(int /*argc*/, char* /*argv*/[])
 {
 #ifdef HAS_P99
 
-    std::size_t const num_trials = cstring_perf::default_file_trials();
-    std::size_t const num_warm_loops = cstring_perf::default_warmups();
+    size_t const    num_trials      =   cstring_perf::default_file_trials();
+    size_t const    num_warm_loops  =   cstring_perf::default_warmups();
 
     cstring_perf::display_banner("test.performance.cstring_readline");
 
@@ -582,7 +582,7 @@ int main(int /*argc*/, char* /*argv*/[])
 
     cstring_perf::display_results_title();
 
-    for (std::size_t i = 0; STLSOFT_NUM_ELEMENTS(CASES) != i; ++i)
+    for (size_t i = 0; STLSOFT_NUM_ELEMENTS(CASES) != i; ++i)
     {
         if (!scenario_readline(CASES[i], num_trials, num_warm_loops))
         {

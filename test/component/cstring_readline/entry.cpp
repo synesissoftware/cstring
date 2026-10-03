@@ -21,7 +21,6 @@
  */
 
 /* xTests header files */
-#include <xtests/xtests.h>
 #include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
@@ -196,9 +195,13 @@ namespace
 
     int teardown(void* arg)
     {
-        char const* filename = static_cast<char const*>(arg);
+        char const* path = static_cast<char const*>(arg);
 
-        ::remove(filename);
+        if (NULL != path &&
+            '\0' != path[0])
+        {
+            ::remove(path);
+        }
 
         return 0;
     }
