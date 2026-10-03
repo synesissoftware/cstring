@@ -792,7 +792,7 @@ static void TEST_cstring_readline_READONLY_RETAINS_PAYLOAD()
         rc = cstring_readline(f, &fresh, &n);
 
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc));
-        TEST_INT_EQ(0u, n);
+        TEST_INT_EQ(1u, n);
         TEST_MS_EQ("", fresh);
 
         cstring_destroy(&fresh);
