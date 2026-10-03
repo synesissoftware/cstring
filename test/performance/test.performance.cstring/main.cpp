@@ -7,7 +7,7 @@
  *          p99 is available, also report per-iteration percentiles.
  *
  * Created: 23rd September 2026
- * Updated: 29th September 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -70,6 +70,17 @@ size_t const SIZES[] =
 };
 
 const size_t NUM_STACK_ELEMENTS = 512;
+
+/* append_len_inc8 appends this many characters, from an empty string up to
+ * the limit. The limit is a multiple of the chunk.
+ */
+size_t const APPEND_INC8_CHUNK = 8u;
+size_t const APPEND_INC8_LIMIT = 8000u;
+
+static_assert(
+    0u == (APPEND_INC8_LIMIT % APPEND_INC8_CHUNK)
+,   "APPEND_INC8_LIMIT must be a multiple of APPEND_INC8_CHUNK"
+);
 } // anonymous namespace
 
 
@@ -485,6 +496,86 @@ scenario_append_len_growth(
     emit_row(scenario, chunk, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
 }
 
+/* Repeated 8-character appends growing a string from length 0 to 8,000. The
+ * size column is the final length, and each action is one append. The chunk
+ * matches cstring's allocation granularity. std::string and an exact
+ * realloc floor run the same growth.
+ */
+void
+scenario_append_len_inc8(
+    size_t num_iterations
+,   size_t num_warm_loops
+)
+{
+    size_t const chunk = APPEND_INC8_CHUNK;
+    size_t const final_len = APPEND_INC8_LIMIT;
+    size_t const num_appends = final_len / chunk;
+    std::string const payload = make_payload(chunk);
+    char const* const p = payload.data();
+
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+        cstring_t s = cstring_t_DEFAULT;
+        cstring_create(&s, "");
+        for (size_t i = 0; num_appends != i; ++i)
+        {
+            cstring_appendLen(&s, p, chunk);
+        }
+        std::uint64_t const a = s.len;
+        cstring_destroy(&s);
+        return a;
+    });
+
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+        std::string s;
+        for (size_t i = 0; num_appends != i; ++i)
+        {
+            s.append(p, chunk);
+        }
+        return s.size();
+    });
+
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+        raw_string s;
+        raw_init(&s);
+        for (size_t i = 0; num_appends != i; ++i)
+        {
+            raw_append_len(&s, p, chunk);
+        }
+        std::uint64_t const a = s.len;
+        raw_destroy(&s);
+        return a;
+    });
+
+    emit_row("append_len_inc8", final_len, IMPL_CSTRING, num_iterations, num_appends, cs, cs.tm_ns);
+    emit_windows_cstring_arenas(
+        "append_len_inc8"
+    ,   final_len
+    ,   num_iterations
+    ,   num_warm_loops
+    ,   num_appends
+    ,   cs.tm_ns
+    ,   [p, chunk, num_appends](cstring_flags_t flags) -> std::uint64_t
+        {
+            cstring_t s = cstring_t_DEFAULT;
+
+            cstring_createEx(&s, "", flags, NULL, 0);
+
+            for (size_t i = 0; num_appends != i; ++i)
+            {
+                cstring_appendLen(&s, p, chunk);
+            }
+
+            std::uint64_t const a = s.len;
+
+            cstring_destroy(&s);
+
+            return a;
+        }
+    );
+    emit_row("append_len_inc8", final_len, IMPL_STD, num_iterations, num_appends, st, cs.tm_ns);
+    emit_row("append_len_inc8", final_len, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
+}
+
 void
 scenario_append_len_reserved(
     size_t n
@@ -849,8 +940,11 @@ int main(int /*argc*/, char* /*argv*/[])
         }
     }
 
+    scenario_append_len_inc8(heavy_iters, num_warm_loops);
+
     return EXIT_SUCCESS;
 }
 
 
 /* ///////////////////////////// end of file //////////////////////////// */
+
