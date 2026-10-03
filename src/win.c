@@ -53,7 +53,7 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * Win32 functions
+ * Windows functions
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
@@ -80,7 +80,10 @@ __declspec(dllimport) void*     __stdcall       CoTaskMemRealloc(void* , unsigne
 # endif /* compiler */
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-/* ////////////////////////////////////////////////////////////////////// */
+
+/* /////////////////////////////////////////////////////////////////////////
+ * internal API functions
+ */
 
 void*
 win32_global_realloc(

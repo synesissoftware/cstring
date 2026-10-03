@@ -72,13 +72,6 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_VECTOR_ASSERT(expr)                         assert(expr)
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * helper functions
  */
 
@@ -96,7 +89,7 @@ cstring_vector_init_empty_slots_(
 {
     if (0 != n)
     {
-        CSTRING_VECTOR_ASSERT(NULL != slots);
+        CSTRING_ASSERT(NULL != slots);
 
         memset(slots, 0, sizeof(cstring_t) * n);
     }
@@ -123,7 +116,7 @@ cstring_vector_destroy_slots_(
         return CSTRING_RC_SUCCESS;
     }
 
-    CSTRING_VECTOR_ASSERT(NULL != slots);
+    CSTRING_ASSERT(NULL != slots);
 
     for (i = 0; i != n; ++i)
     {
@@ -182,7 +175,7 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
 # define strncpy                                            strncpy_safe
 #endif /* compiler */
 
-#if defined(UNIX) || \
+#if defined(UNIX) ||\
     defined(unix)
 
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */

@@ -63,15 +63,15 @@
  */
 
 #if 1 &&\
-    !defined(WIN32) && \
-    !defined(_WIN32) && \
-    !defined(WIN64) && \
-    !defined(_WIN64) && \
+    !defined(WIN32) &&\
+    !defined(_WIN32) &&\
+    !defined(WIN64) &&\
+    !defined(_WIN64) &&\
     1
 # error This file is only used for Win32 or Win64 builds
 #endif /* Win32 */
 
-#if !defined(_DLL) && \
+#if !defined(_DLL) &&\
     !defined(__DLL)
 /* # error This file is only used for DLL builds */
 #endif /* dll */
