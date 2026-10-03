@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 3rd October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -62,7 +62,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #ifdef CSTRING_USE_WIDE_STRINGS
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
@@ -1456,8 +1455,9 @@ cstring_readline(
 ,   size_t*             numRead /* = NULL */
 )
 {
-    int     previous = '\0';
-    size_t  dummy;
+    int         previous = '\0';
+    size_t      dummy;
+    CSTRING_RC  rc0;
 
     CSTRING_ASSERT(NULL != pcs);
 
@@ -1474,7 +1474,19 @@ cstring_readline(
         return CSTRING_RC_INVALIDSTREAM;
     }
 
-    cstring_truncate(pcs, 0);
+    *numRead = 0u;
+
+    rc0 = cstring_truncate(pcs, 0);
+
+    if (CSTRING_RC_SUCCESS != rc0)
+    {
+        /* NOTE: have to check for failure here, because a non-empty
+         * readonly string could be left if the stream is empty or its first
+         * character is LF.
+         */
+
+        return rc0;
+    }
 
     for (;;)
     {
@@ -1482,10 +1494,19 @@ cstring_readline(
 
         if (EOF == ch)
         {
+            if ('\r' == previous)
+            {
+                cstring_truncate(pcs, pcs->len - 1u);
+
+                return CSTRING_RC_SUCCESS;
+            }
+
             return CSTRING_RC_EOF;
         }
         else
         {
+            ++*numRead;
+
             if ('\n' == ch)
             {
                 if ('\r' == previous)
@@ -1497,19 +1518,29 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1 = (char)ch;
-                CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
-
-                if (CSTRING_RC_SUCCESS != rc)
+                if ('\r' == previous)
                 {
-                    return rc;
+                    ungetc(ch, stm);
+
+                    --*numRead;
+
+                    cstring_truncate(pcs, pcs->len - 1u);
+
+                    return CSTRING_RC_SUCCESS;
                 }
+                else
+                {
+                    cstring_char_t  c1  =   (char)ch;
+                    CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
 
-                ++*numRead;
-
-                previous = ch;
+                    if (CSTRING_RC_SUCCESS != rc)
+                    {
+                        return rc;
+                    }
+                }
             }
 
+            previous = ch;
         }
     }
 }
