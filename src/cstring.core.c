@@ -1362,8 +1362,9 @@ cstring_readline(
 ,   size_t*             numRead /* = NULL */
 )
 {
-    int     previous = '\0';
-    size_t  dummy;
+    int         previous = '\0';
+    size_t      dummy;
+    CSTRING_RC  rc0;
 
     CSTRING_ASSERT(NULL != pcs);
 
@@ -1380,7 +1381,17 @@ cstring_readline(
 
     *numRead = 0u;
 
-    cstring_truncate(pcs, 0);
+    rc0 = cstring_truncate(pcs, 0);
+
+    if (CSTRING_RC_SUCCESS != rc0)
+    {
+        /* NOTE: have to check for failure here, because a non-empty
+         * readonly string could be left if the stream is empty or its first
+         * character is LF.
+         */
+
+        return rc0;
+    }
 
     for (;;)
     {

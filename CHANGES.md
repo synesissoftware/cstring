@@ -7,6 +7,8 @@
 * Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
 * Added single-line LF, CRLF, and CR cases to **test.component.cstring_readline**; **test.component.cstring_vector_readLines** splits an embedded CR into its own line;
 * Passed `temp_file::CloseOnOpen` in **test.component.cstring_readline** so the creating handle is closed before `fopen`, which Windows otherwise rejects as a sharing violation;
+* `cstring_readline()` returns the result of its opening `cstring_truncate()`, so a readonly destination yields `CSTRING_RC_READONLY` for an empty line or immediate end of file, and the payload and stream position are left unchanged;
+* Added **test.component.cstring_readline** case `TEST_cstring_readline_READONLY_RETAINS_PAYLOAD`;
 
 
 ## 4.0.18 - 29th September 2026
