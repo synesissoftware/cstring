@@ -17,6 +17,7 @@
 * Named unit cases `TEST_` in shouting snake case, keeping each API or type in its real spelling, and switched assertions to the terse xTests API;
 * Removed empty unit cases and unused temporary-file names;
 * Used `size_t` in the performance programs;
+* Shared component file fixtures in **test/component/component_fixture.hpp**, and shared `time_iterations`, `emit_row`, and `write_lines_file` in **test/performance/perf_harness.hpp**;
 
 
 ## 4.0.18 - 29th September 2026

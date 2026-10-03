@@ -10,28 +10,32 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
  * test component header file include(s)
  */
 
 #include <cstring/cstring.h>
-#include <cstring/internal/safestr.h>
 
-/* /////////////////////////////////////////////////////////////////////////
- * includes
+/* /////////////////////////////////////
+ * general includes
  */
+
+#include "component_fixture.hpp"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
 /* STLSoft header files */
-#include <platformstl/exception/platformstl_exception.hpp>
 #include <platformstl/filesystem/file_lines.hpp>
-#include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C header files */
 #include <stdlib.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
@@ -44,9 +48,6 @@ namespace
     static void TEST_cstring_writeline_INVALID_STREAM();
     static void TEST_cstring_writeline_MULTIPLE_LINES();
     static void TEST_cstring_write_CONCATENATED();
-
-    int setup(void*);
-    int teardown(void*);
 } // anonymous namespace
 
 
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
-    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_writeline", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
+    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_writeline", verbosity, cstring_component::setup, cstring_component::teardown, (void*)TEST_FILE_NAME))
     {
         XTESTS_RUN_CASE(TEST_cstring_writeline_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_writeline_INVALID_STREAM);
@@ -108,40 +109,14 @@ int main(int argc, char* argv[])
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * helper functions
- */
-
-namespace
-{
-    using ::xtests::cpp::util::temp_file;
-
-
-    int setup(void*)
-    {
-        return 0;
-    }
-
-    int teardown(void* arg)
-    {
-        char const* path = static_cast<char const*>(arg);
-
-        if (NULL != path &&
-            '\0' != path[0])
-        {
-            ::remove(path);
-        }
-
-        return 0;
-    }
-} // anonymous namespace
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
 
 namespace
 {
+
+    using ::xtests::cpp::util::temp_file;
+
 
 static void TEST_cstring_writeline_CALLABILITY()
 {

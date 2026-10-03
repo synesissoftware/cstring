@@ -10,23 +10,26 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
  * test component header file include(s)
  */
 
 #include <cstring/cstring.h>
-#include <cstring/internal/safestr.h>
 
-/* /////////////////////////////////////////////////////////////////////////
- * includes
+/* /////////////////////////////////////
+ * general includes
  */
+
+#include "component_fixture.hpp"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
 /* STLSoft header files */
-#include <platformstl/exception/platformstl_exception.hpp>
-#include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C++ header files */
@@ -64,9 +67,6 @@ namespace
     static void TEST_cstring_readline_MANY_SHORT_LINES();
     static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE();
     static void TEST_cstring_readline_READONLY_RETAINS_PAYLOAD();
-
-    int setup(void*);
-    int teardown(void*);
 } // anonymous namespace
 
 
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
-    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_readline", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
+    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_readline", verbosity, cstring_component::setup, cstring_component::teardown, (void*)TEST_FILE_NAME))
     {
         XTESTS_RUN_CASE(TEST_cstring_readline_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_readline_INVALID_STREAM);
@@ -142,78 +142,13 @@ int main(int argc, char* argv[])
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * helper functions
- */
-
-namespace
-{
-
-    static FILE* fopen_or_throw(char const* fileName, char const* mode)
-    {
-#ifdef CSTRING_USING_SAFE_STR_FUNCTIONS
-        FILE*   f;
-
-        if (0 != ::fopen_s(&f, fileName, mode))
-#else /* ? CSTRING_USING_SAFE_STR_FUNCTIONS */
-        FILE*   f = ::fopen(fileName, mode);
-
-        if (NULL == f)
-#endif /* CSTRING_USING_SAFE_STR_FUNCTIONS */
-        {
-            throw platformstl::platform_exception((std::string("Could not open file '") + fileName + "'").c_str(), platformstl::system_traits<char>::get_last_error());
-        }
-
-        return f;
-    }
-
-    static void write_bytes(char const* fileName, void const* bytes, size_t cb)
-    {
-        FILE* f = fopen_or_throw(fileName, "wb");
-
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
-
-        if (cb != ::fwrite(bytes, 1, cb, f))
-        {
-            throw platformstl::platform_exception("Could not write test file", platformstl::system_traits<char>::get_last_error());
-        }
-    }
-
-    static void write_string_bytes(char const* fileName, std::string const& bytes)
-    {
-        write_bytes(fileName, bytes.data(), bytes.size());
-    }
-
-    static std::string make_filled(size_t n, char ch)
-    {
-        return std::string(n, ch);
-    }
-
-    int setup(void*)
-    {
-        return 0;
-    }
-
-    int teardown(void* arg)
-    {
-        char const* path = static_cast<char const*>(arg);
-
-        if (NULL != path &&
-            '\0' != path[0])
-        {
-            ::remove(path);
-        }
-
-        return 0;
-    }
-} // anonymous namespace
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
 
 namespace
 {
+
+    using namespace cstring_component;
     using ::xtests::cpp::util::temp_file;
 
 

@@ -48,12 +48,7 @@ char const* const IMPL_RAW      = "raw_fgetc";
 
 char const TEST_FILE_NAME[] = "test.performance.cstring_readline.lines.txt";
 
-enum line_ending_t
-{
-    LINE_ENDING_LF = 0,
-    LINE_ENDING_CRLF,
-    LINE_ENDING_NONE,
-};
+using namespace cstring_perf;
 
 enum instance_mode_t
 {
@@ -95,52 +90,6 @@ namespace {
 
 using namespace cstring_perf;
 
-struct run_result
-{
-    interval_t      tm_ns;
-    std::uint64_t   anchor;
-    p99::histogram  hist;
-};
-
-template <typename F>
-run_result
-time_iterations(
-    size_t  num_iterations
-,   size_t  num_warm_loops
-,   F       fn
-)
-{
-    run_result result = {};
-    stopwatch_t sw;
-
-    for (size_t w = num_warm_loops; 0 != w; --w)
-    {
-        result.anchor = 0;
-        result.hist.clear();
-
-        interval_t tm_ns = 0;
-
-        for (size_t i = 0; num_iterations != i; ++i)
-        {
-            sw.start();
-            result.anchor += fn();
-            sw.stop();
-
-            interval_t const sample = sw.get_nanoseconds();
-
-            tm_ns += sample;
-            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
-        }
-
-        if (1 == w)
-        {
-            result.tm_ns = tm_ns;
-        }
-    }
-
-    return result;
-}
-
 void
 emit_row(
     char const*         scenario
@@ -152,22 +101,21 @@ emit_row(
 ,   interval_t          cstring_tm_ns
 )
 {
-    double const ratio =
-        (0 == ::strcmp(impl, IMPL_READLINE))
-            ? 1.0
-            : ratio_or_dash(r.tm_ns, cstring_tm_ns)
-            ;
+    char const* const baselines[] =
+    {
+        IMPL_READLINE,
+    };
 
-    display_results(
+    cstring_perf::emit_row(
         scenario
     ,   size
     ,   impl
     ,   num_iterations
     ,   num_actions
-    ,   r.tm_ns
-    ,   ratio
-    ,   r.anchor
-    ,   &r.hist
+    ,   r
+    ,   cstring_tm_ns
+    ,   baselines
+    ,   STLSOFT_NUM_ELEMENTS(baselines)
     );
 }
 
@@ -192,40 +140,6 @@ content_head(
     }
 
     return static_cast<unsigned char>(p[0]);
-}
-
-bool
-write_lines_file(
-    char const*     path
-,   size_t          num_lines
-,   size_t          line_len
-,   line_ending_t   ending
-)
-{
-    std::ofstream out(path, std::ios::binary | std::ios::trunc);
-
-    if (!out)
-    {
-        return false;
-    }
-
-    std::string const line = make_payload(line_len);
-
-    for (size_t i = 0; num_lines != i; ++i)
-    {
-        out.write(line.data(), static_cast<std::streamsize>(line.size()));
-
-        if (LINE_ENDING_CRLF == ending)
-        {
-            out.write("\r\n", 2);
-        }
-        else if (LINE_ENDING_LF == ending)
-        {
-            out.put('\n');
-        }
-    }
-
-    return static_cast<bool>(out);
 }
 
 std::uint64_t

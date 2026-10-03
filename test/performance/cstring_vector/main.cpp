@@ -62,68 +62,6 @@ namespace {
 
 using namespace cstring_perf;
 
-struct run_result
-{
-    interval_t      tm_ns;
-    std::uint64_t   anchor;
-#ifdef HAS_P99
-
-    p99::histogram  hist;
-#endif /* HAS_P99 */
-};
-
-template <typename F>
-run_result
-time_iterations(
-    size_t  num_iterations
-,   size_t  num_warm_loops
-,   F       fn
-)
-{
-    run_result result = {};
-    stopwatch_t sw;
-
-    for (size_t w = num_warm_loops; 0 != w; --w)
-    {
-        result.anchor = 0;
-#ifdef HAS_P99
-
-        result.hist.clear();
-#endif /* HAS_P99 */
-        interval_t tm_ns = 0;
-#ifdef HAS_P99
-
-        for (size_t i = 0; num_iterations != i; ++i)
-        {
-            sw.start();
-            result.anchor += fn();
-            sw.stop();
-
-            interval_t const sample = sw.get_nanoseconds();
-
-            tm_ns += sample;
-            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
-        }
-#else /* ? HAS_P99 */
-
-        sw.start();
-        for (size_t i = 0; num_iterations != i; ++i)
-        {
-            result.anchor += fn();
-        }
-        sw.stop();
-        tm_ns = sw.get_nanoseconds();
-#endif /* HAS_P99 */
-
-        if (1 == w)
-        {
-            result.tm_ns = tm_ns;
-        }
-    }
-
-    return result;
-}
-
 void
 emit_row(
     char const*         scenario
@@ -135,25 +73,22 @@ emit_row(
 ,   interval_t          cstring_tm_ns
 )
 {
-    double const ratio =
-        (0 == ::strcmp(impl, IMPL_CSTRING_VECTOR) ||
-         0 == ::strcmp(impl, IMPL_READLINES))
-            ? 1.0
-            : ratio_or_dash(r.tm_ns, cstring_tm_ns)
-            ;
+    char const* const baselines[] =
+    {
+        IMPL_CSTRING_VECTOR,
+        IMPL_READLINES,
+    };
 
-    display_results(
+    cstring_perf::emit_row(
         scenario
     ,   size
     ,   impl
     ,   num_iterations
     ,   num_actions
-    ,   r.tm_ns
-    ,   ratio
-    ,   r.anchor
-#ifdef HAS_P99
-    ,   &r.hist
-#endif /* HAS_P99 */
+    ,   r
+    ,   cstring_tm_ns
+    ,   baselines
+    ,   STLSOFT_NUM_ELEMENTS(baselines)
     );
 }
 
@@ -377,30 +312,6 @@ scenario_prepend_one_by_one(
 }
 #ifdef HAS_P99
 
-bool
-write_lines_file(
-    char const* path
-,   size_t      num_lines
-,   size_t      line_len
-)
-{
-    std::ofstream out(path, std::ios::binary | std::ios::trunc);
-
-    if (!out)
-    {
-        return false;
-    }
-
-    std::string const line = make_payload(line_len);
-
-    for (size_t i = 0; num_lines != i; ++i)
-    {
-        out << line << '\n';
-    }
-
-    return static_cast<bool>(out);
-}
-
 void
 scenario_file_lines_vs_readlines(
     size_t num_lines
@@ -409,7 +320,7 @@ scenario_file_lines_vs_readlines(
 ,   size_t num_warm_loops
 )
 {
-    if (!write_lines_file(TEST_FILE_NAME, num_lines, line_len))
+    if (!write_lines_file(TEST_FILE_NAME, num_lines, line_len, LINE_ENDING_LF))
     {
         std::cerr
             << "failed to write " << TEST_FILE_NAME << "; skipping file_lines suite"
