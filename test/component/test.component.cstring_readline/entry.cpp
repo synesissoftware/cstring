@@ -64,6 +64,7 @@ namespace
     static void TEST_cstring_readline_LONG_LINES();
     static void TEST_cstring_readline_MANY_SHORT_LINES();
     static void TEST_cstring_readline_REUSE_AFTER_LONG_LINE();
+    static void TEST_cstring_readline_READONLY_RETAINS_PAYLOAD();
 
     int setup(void*);
     int teardown(void*);
