@@ -186,7 +186,7 @@ display_banner(
         << ", CSTRING_PERF_FILE_TRIALS"
         << ", SIS_PERFTESTS_GROUPGAPS."
 #else /* ? HAS_P99 */
-        << "  p99: not linked — mean ns/op only; file_lines suite skipped."
+        << "  p99: not linked — mean ns/op only; filesystem suites skipped."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", SIS_PERFTESTS_GROUPGAPS."
@@ -277,7 +277,7 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static size_t  prev_size = 0;
+    static size_t       prev_size = 0;
 
     if (have_prev &&
         (   prev_scenario != scenario ||

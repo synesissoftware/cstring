@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 3rd October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -59,11 +59,9 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #ifdef CSTRING_USE_WIDE_STRINGS
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
@@ -76,13 +74,6 @@
 #define CSTRING_ALLOC_GRANULARITY                           (8)
 
 #define CSTRING_OFFSET_SIZE                                 (16)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_ASSERT(expr)                                assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -178,12 +169,10 @@ convert_negative_index_(
  * \param src Source. May be \c NULL;
  * \param lim Maximum number of elements in \c dst;
  *
- * \return The actual length of src if not \c NULL; 0 otherwise
- *
  * \pre NULL != dst
  */
 static
-size_t
+void
 cstring_strlcpy_safe_(
     cstring_char_t          dst[]
 ,   cstring_char_t const*   src
@@ -195,30 +184,10 @@ cstring_strlcpy_safe_(
     if (NULL == src)
     {
         memset(dst, 0, sizeof(cstring_char_t) * lim);
-
-        return 0;
     }
     else
     {
-        size_t i;
-
-        for (i = 0; i != lim; ++i, ++dst, ++src)
-        {
-            *dst = *src;
-
-            if ('\0' == src[0])
-            {
-                break;
-            }
-        }
-
-        memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
-
-        for (; '\0' != src[0]; ++i, ++src)
-        {
-        }
-
-        return i;
+        memcpy(dst, src, sizeof(cstring_char_t) * lim);
     }
 }
 
@@ -291,17 +260,22 @@ alloc_retry:
     {
         case    CSTRING_F_USE_REALLOC:
 
-#if defined(_MSC_VER) && \
-    defined(_DEBUG)
+            /* realloc(pv, 0) allocates on some platforms; free the block,
+             * and do nothing when pv is NULL.
+             */
             if (0 == cb)
             {
-                free(pv);
+                if (NULL != pv)
+                {
+                    free(pv);
+                }
+
                 return NULL;
             }
-#endif /* _DEBUG */
+
             pvNew = realloc(pv, cb);
             break;
-#ifdef CSTRING_USE_WINAPI_
+#ifdef _WIN32
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -314,7 +288,7 @@ alloc_retry:
 
             pvNew = win32_comtask_realloc(pv, cb);
             break;
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 #if defined(CSTRING_USE_SYNESIS_APIS)
         case    CSTRING_F_USE_SYNESIS_HATOR:
 #endif /* CSTRING_USE_SYNESIS_APIS */
@@ -365,6 +339,31 @@ cstring_realloc_(
 )
 {
     return cstring_realloc_2_(pv, cch, flags, prc, NULL, NULL);
+}
+
+/** Releases owned storage and leaves \c pcs empty with a NULL pointer. */
+static
+CSTRING_RC
+cstring_release_to_empty_(
+    struct cstring_t*   pcs
+)
+{
+    CSTRING_RC rc = CSTRING_RC_SUCCESS;
+
+    CSTRING_ASSERT(NULL != pcs);
+
+    if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags) &&
+        NULL != pcs->ptr)
+    {
+        (void)cstring_realloc_(pcs->ptr, 0, pcs->flags, &rc);
+    }
+
+    pcs->len        =   0;
+    pcs->ptr        =   NULL;
+    pcs->capacity   =   0;
+    pcs->flags      =   0;
+
+    return rc;
 }
 
 
@@ -477,7 +476,17 @@ cstring_create(
 
     CSTRING_ASSERT(NULL != pcs);
 
-    cch =   (0 == len) ? 1u : len;
+    if (0 == len)
+    {
+        pcs->len        =   0;
+        pcs->ptr        =   NULL;
+        pcs->capacity   =   0;
+        pcs->flags      =   0;
+
+        return CSTRING_RC_SUCCESS;
+    }
+
+    cch =   len;
     cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
     pcs->ptr = (cstring_char_t*)cstring_realloc_(NULL, cch + 1, 0, &rc);
@@ -511,7 +520,17 @@ cstring_createLen(
 
     CSTRING_ASSERT(NULL != pcs);
 
-    cch =   sizeof(cstring_char_t) * ((0 == len) ? 1u : len);
+    if (0 == len)
+    {
+        pcs->len        =   0;
+        pcs->ptr        =   NULL;
+        pcs->capacity   =   0;
+        pcs->flags      =   0;
+
+        return CSTRING_RC_SUCCESS;
+    }
+
+    cch =   len;
     cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
     pcs->ptr = (cstring_char_t*)cstring_realloc_(NULL, cch + 1, 0, &rc);
@@ -652,6 +671,16 @@ cstring_createLenFn(
             pcs->ptr        =   (cstring_char_t*)arena;
             pcs->capacity   =   capacity - 1;
         }
+        else if (0 == len &&
+                0 == capacity)
+        {
+            pcs->len        =   0;
+            pcs->ptr        =   NULL;
+            pcs->capacity   =   0;
+            pcs->flags      =   0;
+
+            return CSTRING_RC_SUCCESS;
+        }
         else
         {
             size_t      cch;
@@ -689,21 +718,9 @@ cstring_destroy(
     struct cstring_t* pcs
 )
 {
-    CSTRING_RC  rc  =   CSTRING_RC_SUCCESS;
-
     CSTRING_ASSERT(NULL != pcs);
 
-    if (!(CSTRING_F_MEMORY_IS_BORROWED & pcs->flags))
-    {
-        (void)cstring_realloc_(pcs->ptr, 0, pcs->flags, &rc);
-    }
-
-    pcs->len        =   0;
-    pcs->ptr        =   NULL;
-    pcs->capacity   =   0;
-    pcs->flags      =   0;
-
-    return rc;
+    return cstring_release_to_empty_(pcs);
 }
 
 #ifndef CSTRING_OBSOLETE
@@ -904,12 +921,30 @@ cstring_assignFn(
     {
         const size_t len = cstring_strlen_safe_(s);
 
+        if (0 == len)
+        {
+            if (NULL != pcs->ptr)
+            {
+                pcs->len = 0;
+                pcs->ptr[0] = '\0';
+
+                return CSTRING_RC_SUCCESS;
+            }
+
+            pcs->len        =   0;
+            pcs->ptr        =   NULL;
+            pcs->capacity   =   0;
+            pcs->flags      =   0;
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         if (0 == pcs->capacity ||
             pcs->capacity < len)
         {
             size_t cch;
 
-            cch =   (0 == len) ? 1u : len;
+            cch =   len;
             cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
             if (cch < pcs->capacity * 2)
@@ -1004,12 +1039,30 @@ cstring_assignLenFn(
     }
     else
     {
+        if (0 == len)
+        {
+            if (NULL != pcs->ptr)
+            {
+                pcs->len = 0;
+                pcs->ptr[0] = '\0';
+
+                return CSTRING_RC_SUCCESS;
+            }
+
+            pcs->len        =   0;
+            pcs->ptr        =   NULL;
+            pcs->capacity   =   0;
+            pcs->flags      =   0;
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         if (0 == pcs->capacity ||
             pcs->capacity < len)
         {
             size_t cch;
 
-            cch =   (0 == len) ? 1u : len;
+            cch =   len;
             cch =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
             if (cch < pcs->capacity * 2)
@@ -1116,7 +1169,23 @@ cstring_appendFn(
         size_t const    len     =   cstring_strlen_safe_(s);
         size_t const    newLen  =   pcs->len + len;
 
-        if (pcs->capacity < newLen)
+        if (0 == len)
+        {
+            return CSTRING_RC_SUCCESS;
+        }
+
+        /* Capacity already covers the write: copy in place. */
+        if (pcs->capacity >= newLen)
+        {
+            CSTRING_ASSERT(NULL != pcs->ptr);
+
+            cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+            pcs->len            =   newLen;
+            pcs->ptr[pcs->len]  =   '\0';
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         {
             size_t cch;
 
@@ -1222,13 +1291,29 @@ cstring_appendLenFn(
     }
     else
     {
-        size_t newLen = pcs->len + len;
+        size_t const newLen = pcs->len + len;
 
-        if (pcs->capacity < newLen)
+        if (0 == len)
+        {
+            return CSTRING_RC_SUCCESS;
+        }
+
+        /* Capacity already covers the write: copy in place. */
+        if (pcs->capacity >= newLen)
+        {
+            CSTRING_ASSERT(NULL != pcs->ptr);
+
+            cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
+            pcs->len            =   newLen;
+            pcs->ptr[pcs->len]  =   '\0';
+
+            return CSTRING_RC_SUCCESS;
+        }
+
         {
             size_t cch;
 
-            cch  =   pcs->len + len;
+            cch  =   newLen;
             cch  =   (cch + (CSTRING_ALLOC_GRANULARITY - 1)) & ~(CSTRING_ALLOC_GRANULARITY - 1);
 
             if (cch < pcs->capacity * 2)
@@ -1293,7 +1378,7 @@ cstring_appendLenFn(
             }
         }
 
-        cstring_strlcpy_safe_(pcs->ptr + pcs->len, s, len);
+        cstring_memcpy_safe_(pcs->ptr + pcs->len, s, len * sizeof(cstring_char_t));
         pcs->len            +=  len;
         pcs->ptr[pcs->len]  =   '\0';
 
@@ -1370,15 +1455,18 @@ cstring_readline(
 ,   size_t*             numRead /* = NULL */
 )
 {
-    int     previous = '\0';
-    size_t  numRead_;
+    int         previous = '\0';
+    size_t      dummy;
+    CSTRING_RC  rc0;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numRead)
     {
-        numRead = &numRead_;
+        numRead = &dummy;
     }
+
+    *numRead = 0u;
 
     if (NULL == stm ||
         0 != ferror(stm))
@@ -1388,7 +1476,17 @@ cstring_readline(
 
     *numRead = 0u;
 
-    cstring_truncate(pcs, 0);
+    rc0 = cstring_truncate(pcs, 0);
+
+    if (CSTRING_RC_SUCCESS != rc0)
+    {
+        /* NOTE: have to check for failure here, because a non-empty
+         * readonly string could be left if the stream is empty or its first
+         * character is LF.
+         */
+
+        return rc0;
+    }
 
     for (;;)
     {
@@ -1396,10 +1494,19 @@ cstring_readline(
 
         if (EOF == ch)
         {
+            if ('\r' == previous)
+            {
+                cstring_truncate(pcs, pcs->len - 1u);
+
+                return CSTRING_RC_SUCCESS;
+            }
+
             return CSTRING_RC_EOF;
         }
         else
         {
+            ++*numRead;
+
             if ('\n' == ch)
             {
                 if ('\r' == previous)
@@ -1411,19 +1518,29 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1 = (char)ch;
-                CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
-
-                if (CSTRING_RC_SUCCESS != rc)
+                if ('\r' == previous)
                 {
-                    return rc;
+                    ungetc(ch, stm);
+
+                    --*numRead;
+
+                    cstring_truncate(pcs, pcs->len - 1u);
+
+                    return CSTRING_RC_SUCCESS;
                 }
+                else
+                {
+                    cstring_char_t  c1  =   (char)ch;
+                    CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
 
-                ++*numRead;
-
-                previous = ch;
+                    if (CSTRING_RC_SUCCESS != rc)
+                    {
+                        return rc;
+                    }
+                }
             }
 
+            previous = ch;
         }
     }
 }
@@ -1438,13 +1555,13 @@ cstring_write_(
 )
 {
     int     r;
-    size_t  numWritten_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numWritten)
     {
-        numWritten = &numWritten_;
+        numWritten = &dummy;
     }
 
     if (NULL == stm ||
@@ -1455,7 +1572,12 @@ cstring_write_(
 
     *numWritten = 0u;
 
-    r = fprintf(stm, fmt, (int)pcs->len, pcs->ptr);
+    r = fprintf(
+            stm
+        ,   fmt
+        ,   (int)pcs->len
+        ,   (NULL != pcs->ptr) ? pcs->ptr : ""
+        );
 
     if (r < 0)
     {
@@ -1657,13 +1779,13 @@ cstring_replaceAll(
 ,   size_t*                 numReplaced /* = NULL */
 )
 {
-    size_t  numReplaced_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numReplaced)
     {
-        numReplaced = &numReplaced_;
+        numReplaced = &dummy;
     }
 
     *numReplaced = 0u;

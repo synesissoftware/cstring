@@ -8,7 +8,7 @@
  *          getline, platformstl::file_lines).
  *
  * Created: 23rd September 2026
- * Updated: 23rd September 2026
+ * Updated: 2nd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -169,7 +169,6 @@ make_cstring_payload(
 
     return cs;
 }
-
 } // anonymous namespace
 
 

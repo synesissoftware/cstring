@@ -137,8 +137,8 @@ option(NO_SHWILD "Do not recognise shwild for xTests pattern-match assertions" O
 #
 # optional:
 # - p99 - optional for performance tests: per-iteration percentiles
-#         throughout when found; also gates the filesystem file_lines vs
-#         cstring_vector_readLines suite (unless NO_P99);
+#         throughout when found; also gates the filesystem suites
+#         (file_lines, cstring_readline) unless NO_P99;
 # - shwild - for enhanced match constructs in xTests (unless NO_SHWILD);
 #
 # note: NO_CSTRING_CPP_API skips C++ examples and remaining C++ tests; C
@@ -214,7 +214,7 @@ endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
 
-	set(xTests_REQUIRED_VERSION_ 0.26)
+	set(xTests_REQUIRED_VERSION_ 0.26.5)
 
 	find_package(xTests ${xTests_REQUIRED_VERSION_} REQUIRED)
 
@@ -236,11 +236,11 @@ if(BUILD_TESTING)
 			message("-- CMake package p99 found (version ${p99_VERSION})")
 		else()
 
-			message("-- CMake package p99 not found; performance percentiles and file_lines suite disabled")
+			message("-- CMake package p99 not found; performance percentiles and filesystem suites disabled")
 		endif()
 	else()
 
-		message("-- p99 recognition disabled (NO_P99); performance percentiles and file_lines suite disabled")
+		message("-- p99 recognition disabled (NO_P99); performance percentiles and filesystem suites disabled")
 	endif()
 endif(BUILD_TESTING)
 

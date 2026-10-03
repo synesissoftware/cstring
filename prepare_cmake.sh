@@ -237,7 +237,7 @@ Flags/options:
 
     --no-p99
         prevents recognising p99 library (NO_P99=ON); performance tests
-        then omit percentiles and the file_lines suite
+        then omit percentiles and the filesystem suites
 
     --no-shwild
         prevents recognising shwild library (NO_SHWILD=ON); xTests
