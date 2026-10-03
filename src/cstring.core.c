@@ -62,7 +62,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #ifdef CSTRING_USE_WIDE_STRINGS
 # include <wchar.h>
 #endif /* CSTRING_USE_WIDE_STRINGS */
@@ -1400,10 +1399,19 @@ cstring_readline(
 
         if (EOF == ch)
         {
+            if ('\r' == previous)
+            {
+                cstring_truncate(pcs, pcs->len - 1u);
+
+                return CSTRING_RC_SUCCESS;
+            }
+
             return CSTRING_RC_EOF;
         }
         else
         {
+            ++*numRead;
+
             if ('\n' == ch)
             {
                 if ('\r' == previous)
@@ -1415,19 +1423,29 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1 = (char)ch;
-                CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
-
-                if (CSTRING_RC_SUCCESS != rc)
+                if ('\r' == previous)
                 {
-                    return rc;
+                    ungetc(ch, stm);
+
+                    --*numRead;
+
+                    cstring_truncate(pcs, pcs->len - 1u);
+
+                    return CSTRING_RC_SUCCESS;
                 }
+                else
+                {
+                    cstring_char_t  c1  =   (char)ch;
+                    CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
 
-                ++*numRead;
-
-                previous = ch;
+                    if (CSTRING_RC_SUCCESS != rc)
+                    {
+                        return rc;
+                    }
+                }
             }
 
+            previous = ch;
         }
     }
 }

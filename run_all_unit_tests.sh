@@ -173,7 +173,7 @@ Flags/options:
         accepted for compatibility; this script always runs unit tests only
 
     --verbosity <verbosity>
-        specifies an explicit verbosity (forwarded when supported)
+        specifies an explicit verbosity, forwarded to each program
 
 
     standard flags:
@@ -273,10 +273,7 @@ if [ $status -eq 0 ]; then
       echo "executing ${fClr}:"
     fi
 
-    if "$f" --verbosity="$Verbosity" 2>/dev/null; then
-
-      :
-    elif "$f"; then
+    if "$f" --verbosity="$Verbosity"; then
 
       :
     else
