@@ -1,6 +1,25 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.0.19 - 4th October 2026
+
+* Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
+* Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
+* Added single-line LF, CRLF, and CR cases to **test.component.cstring_readline**; **test.component.cstring_vector_readLines** splits an embedded CR into its own line;
+* Passed `temp_file::CloseOnOpen` in **test.component.cstring_readline** so the creating handle is closed before `fopen`, which Windows otherwise rejects as a sharing violation;
+* `cstring_readline()` returns the result of its opening `cstring_truncate()`, so a readonly destination yields `CSTRING_RC_READONLY` for an empty line or immediate end of file, and the payload and stream position are left unchanged;
+* Added **test.component.cstring_readline** case `TEST_cstring_readline_READONLY_RETAINS_PAYLOAD`;
+* Freed a zero-size realloc-arena block on every platform (`realloc(pv, 0)` allocates on some), and left a NULL pointer unchanged;
+* Added **test.performance.cstring_readline** (filesystem timings gated on **p99**);
+* Added borrowed-fixed construct and assign scenarios to **test.performance.cstring**, using `stlsoft::auto_buffer` for the borrowed anchor;
+* Suppressed the GCC 15 `-Wfree-nonheap-object` false positive on inlined `stlsoft::auto_buffer` destruction in **test.performance.cstring**;
+* Shortened test directories under **test/** to the subject, and renamed the unit suites to **test.unit.cstring.instance**, **test.unit.cstring.insert-replace**, and **test.unit.cstring.borrowed** (formerly **test.unit.cstring.1**, **test.unit.cstring.2**, and **test.unit.cstring.auto_buffer**);
+* Named unit cases `TEST_` in shouting snake case, keeping each API or type in its real spelling, and switched assertions to the terse xTests API;
+* Removed empty unit cases and unused temporary-file names;
+* Used `size_t` in the performance programs;
+* Shared component file fixtures in **test/component/component_fixture.hpp**, and shared `time_iterations`, `emit_row`, and `write_lines_file` in **test/performance/perf_harness.hpp**;
+
+
 ## 4.0.18 - 29th September 2026
 
 * Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;

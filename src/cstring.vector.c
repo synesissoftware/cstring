@@ -51,6 +51,7 @@
 /* cstring header files */
 
 #include <cstring/cstring.vector.h>
+#include "internal.h"
 
 #ifndef CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
 # include <cstring/internal/safestr.h>
@@ -58,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -114,7 +114,7 @@ cstring_vector_init(
 ,   size_t              minCapacity
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == minCapacity)
     {
@@ -158,7 +158,7 @@ cstring_vector_destroy(
     CSTRING_RC  rc = CSTRING_RC_SUCCESS;
     size_t      i;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     for (i = 0; i != pcsv->len; ++i)
     {
@@ -190,8 +190,8 @@ cstring_vector_truncate(
     CSTRING_RC  rc = CSTRING_RC_SUCCESS;
     size_t      i;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(len <= pcsv->len);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(len <= pcsv->len);
 
     for (i = len; i != pcsv->len; ++i)
     {
@@ -215,7 +215,7 @@ cstring_vector_create(
 ,   size_t              initialSize
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == initialSize)
     {
@@ -229,7 +229,7 @@ cstring_vector_create(
         {
             size_t i;
 
-            CSTRING_VECTOR_ASSERT(pcsv->capacity >= initialSize);
+            CSTRING_ASSERT(pcsv->capacity >= initialSize);
 
             for (i = 0; i != initialSize; ++i)
             {
@@ -272,8 +272,8 @@ cstring_vector_insertAt(
 ,   size_t              numStrings
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(NULL != strings || 0 == numStrings);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != strings || 0 == numStrings);
 
     if (0 == numStrings)
     {
@@ -373,7 +373,7 @@ cstring_vector_readLines(
     size_t      numLinesRead_;
     size_t      initialLen;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     initialLen = pcsv->len;
 

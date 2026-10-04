@@ -4,35 +4,38 @@
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 27th September 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
  * test component header file include(s)
  */
 
 #include <cstring/cstring.h>
-#include <cstring/internal/safestr.h>
 
-/* /////////////////////////////////////////////////////////////////////////
- * includes
+/* /////////////////////////////////////
+ * general includes
  */
 
+#include "component_fixture.hpp"
+
 /* xTests header files */
-#include <xtests/xtests.h>
 #include <xtests/terse-api.h>
 #include <xtests/util/temp_file.hpp>
 
 /* STLSoft header files */
-#include <platformstl/exception/platformstl_exception.hpp>
 #include <platformstl/filesystem/file_lines.hpp>
-#include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C header files */
 #include <stdlib.h>
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * forward declarations
@@ -41,21 +44,19 @@
 namespace
 {
 
-    static void TEST_cstring_writeline_CALLABILITY(void);
-    static void TEST_cstring_writeline_INVALID_STREAM(void);
-    static void TEST_cstring_writeline_MULTIPLE_LINES(void);
-    static void TEST_cstring_write_CONCATENATED(void);
-
-    int setup(void*);
-    int teardown(void*);
-
+    static void TEST_cstring_writeline_CALLABILITY();
+    static void TEST_cstring_writeline_INVALID_STREAM();
+    static void TEST_cstring_writeline_MULTIPLE_LINES();
+    static void TEST_cstring_write_CONCATENATED();
 } // anonymous namespace
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
 const char TEST_FILE_NAME[] = "test.component.cstring_writeline.txt";
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -68,6 +69,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_writeline.txt";
 # pragma warning(disable : 4702)
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * main
  */
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
-    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_writeline", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
+    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_writeline", verbosity, cstring_component::setup, cstring_component::teardown, (void*)TEST_FILE_NAME))
     {
         XTESTS_RUN_CASE(TEST_cstring_writeline_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_writeline_INVALID_STREAM);
@@ -94,6 +96,7 @@ int main(int argc, char* argv[])
     return retCode;
 }
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
@@ -104,29 +107,15 @@ int main(int argc, char* argv[])
 # endif /* compiler */
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * test function implementations
  */
 
 namespace
 {
+
     using ::xtests::cpp::util::temp_file;
-
-
-    int setup(void*)
-    {
-        return 0;
-    }
-
-    int teardown(void* arg)
-    {
-        char const* filename = static_cast<char const*>(arg);
-
-        ::remove(filename);
-
-        return 0;
-    }
-
 
 
 static void TEST_cstring_writeline_CALLABILITY()
@@ -259,10 +248,8 @@ static void TEST_cstring_write_CONCATENATED()
         TEST_MS_EQ(expected, out_lines[0]);
     }
 }
-
-
-
 } // anonymous namespace
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

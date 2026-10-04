@@ -4,7 +4,7 @@
  * Purpose: Shared helpers for cstring performance programs.
  *
  * Created: 23rd September 2026
- * Updated: 29th September 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -27,6 +27,7 @@
 # include <p99/p99.hpp>
 #endif
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -149,6 +150,120 @@ make_payload(
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * filesystem fixtures
+ */
+
+enum line_ending_t
+{
+    LINE_ENDING_LF = 0,
+    LINE_ENDING_CRLF,
+    LINE_ENDING_NONE,
+};
+
+inline
+bool
+write_lines_file(
+    char const*     path
+,   size_t          num_lines
+,   size_t          line_len
+,   line_ending_t   ending
+)
+{
+    std::ofstream out(path, std::ios::binary | std::ios::trunc);
+
+    if (!out)
+    {
+        return false;
+    }
+
+    std::string const line = make_payload(line_len);
+
+    for (size_t i = 0; num_lines != i; ++i)
+    {
+        out.write(line.data(), static_cast<std::streamsize>(line.size()));
+
+        if (LINE_ENDING_CRLF == ending)
+        {
+            out.write("\r\n", 2);
+        }
+        else if (LINE_ENDING_LF == ending)
+        {
+            out.put('\n');
+        }
+    }
+
+    return static_cast<bool>(out);
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * timing
+ */
+
+struct run_result
+{
+    interval_t      tm_ns;
+    std::uint64_t   anchor;
+#ifdef HAS_P99
+
+    p99::histogram  hist;
+#endif /* HAS_P99 */
+};
+
+template <typename F>
+run_result
+time_iterations(
+    size_t  num_iterations
+,   size_t  num_warm_loops
+,   F       fn
+)
+{
+    run_result result = {};
+    stopwatch_t sw;
+
+    for (size_t w = num_warm_loops; 0 != w; --w)
+    {
+        result.anchor = 0;
+#ifdef HAS_P99
+
+        result.hist.clear();
+#endif /* HAS_P99 */
+        interval_t tm_ns = 0;
+#ifdef HAS_P99
+
+        for (size_t i = 0; num_iterations != i; ++i)
+        {
+            sw.start();
+            result.anchor += fn();
+            sw.stop();
+
+            interval_t const sample = sw.get_nanoseconds();
+
+            tm_ns += sample;
+            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
+        }
+#else /* ? HAS_P99 */
+
+        sw.start();
+        for (size_t i = 0; num_iterations != i; ++i)
+        {
+            result.anchor += fn();
+        }
+        sw.stop();
+        tm_ns = sw.get_nanoseconds();
+#endif /* HAS_P99 */
+
+        if (1 == w)
+        {
+            result.tm_ns = tm_ns;
+        }
+    }
+
+    return result;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * display
  */
 
@@ -186,7 +301,7 @@ display_banner(
         << ", CSTRING_PERF_FILE_TRIALS"
         << ", SIS_PERFTESTS_GROUPGAPS."
 #else /* ? HAS_P99 */
-        << "  p99: not linked — mean ns/op only; file_lines suite skipped."
+        << "  p99: not linked — mean ns/op only; filesystem suites skipped."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", SIS_PERFTESTS_GROUPGAPS."
@@ -277,7 +392,7 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static size_t  prev_size = 0;
+    static size_t       prev_size = 0;
 
     if (have_prev &&
         (   prev_scenario != scenario ||
@@ -415,6 +530,63 @@ ratio_or_dash(
     }
 
     return static_cast<double>(subject_ns) / static_cast<double>(baseline_ns);
+}
+
+inline
+bool
+impl_is_baseline(
+    char const*         impl
+,   char const* const*  baseline_impls
+,   size_t              num_baselines
+)
+{
+    for (size_t i = 0; num_baselines != i; ++i)
+    {
+        if (0 == ::strcmp(impl, baseline_impls[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* Baseline impl names are ratio 1.0. Every other impl is timed against
+ * baseline_ns.
+ */
+inline
+void
+emit_row(
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+,   interval_t          baseline_ns
+,   char const* const*  baseline_impls
+,   size_t              num_baselines
+)
+{
+    double const ratio =
+        impl_is_baseline(impl, baseline_impls, num_baselines)
+            ? 1.0
+            : ratio_or_dash(r.tm_ns, baseline_ns)
+            ;
+
+    display_results(
+        scenario
+    ,   size
+    ,   impl
+    ,   num_iterations
+    ,   num_actions
+    ,   r.tm_ns
+    ,   ratio
+    ,   r.anchor
+#ifdef HAS_P99
+    ,   &r.hist
+#endif /* HAS_P99 */
+    );
 }
 
 

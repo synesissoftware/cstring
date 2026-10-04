@@ -4,8 +4,8 @@
  * Purpose: Example reading lines into a `cstring_vector_t` and sorting
  *          them.
  *
- * Created: ...
- * Updated: 23rd September 2026
+ * Created: 12th January 2024
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

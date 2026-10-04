@@ -1,12 +1,12 @@
 
+add_subdirectory(cstring_getStatusCodeString)
+add_subdirectory(cstring_vector)
+add_subdirectory(cstring.borrowed)
 if(NOT NO_CSTRING_CPP_API)
 
-	add_subdirectory(test.unit.cstring.1)
+	add_subdirectory(cstring.instance)
 endif()
-add_subdirectory(test.unit.cstring.2)
-add_subdirectory(test.unit.cstring.auto_buffer)
-add_subdirectory(test.unit.cstring.cstring_getStatusCodeString)
-add_subdirectory(test.unit.cstring.cstring_vector)
+add_subdirectory(cstring.insert-replace)
 
 
 # ############################## end of file ############################# #

@@ -4,29 +4,31 @@
  * Purpose: Component-tests `cstring_vector_readLines()`.
  *
  * Created: 27th September 2026
- * Updated: 27th September 2026
+ * Updated: 3rd October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
  * test component header file include(s)
  */
 
 #include <cstring/cstring.vector.h>
-#include <cstring/internal/safestr.h>
 
-/* /////////////////////////////////////////////////////////////////////////
- * includes
+/* /////////////////////////////////////
+ * general includes
  */
 
+#include "component_fixture.hpp"
+
 /* xTests header files */
-#include <xtests/xtests.h>
 #include <xtests/terse-api.h>
 
 /* STLSoft header files */
-#include <platformstl/exception/platformstl_exception.hpp>
-#include <platformstl/system/system_traits.hpp>
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
 /* Standard C++ header files */
@@ -46,19 +48,16 @@
 namespace
 {
 
-    static void TEST_cstring_vector_readLines_CALLABILITY(void);
-    static void TEST_cstring_vector_readLines_EMPTY_FILE(void);
-    static void TEST_cstring_vector_readLines_SHORT_MULTILINE(void);
-    static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL(void);
-    static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF(void);
-    static void TEST_cstring_vector_readLines_CONSECUTIVE_EMPTY_LINES(void);
-    static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING(void);
-    static void TEST_cstring_vector_readLines_LONG_LINES(void);
-    static void TEST_cstring_vector_readLines_MANY_SHORT_LINES(void);
-    static void TEST_cstring_vector_readLines_EMPTY_LINE_IN_MIDDLE(void);
-
-    int setup(void*);
-    int teardown(void*);
+    static void TEST_cstring_vector_readLines_CALLABILITY();
+    static void TEST_cstring_vector_readLines_EMPTY_FILE();
+    static void TEST_cstring_vector_readLines_SHORT_MULTILINE();
+    static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL();
+    static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF();
+    static void TEST_cstring_vector_readLines_CONSECUTIVE_EMPTY_LINES();
+    static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING();
+    static void TEST_cstring_vector_readLines_LONG_LINES();
+    static void TEST_cstring_vector_readLines_MANY_SHORT_LINES();
+    static void TEST_cstring_vector_readLines_EMPTY_LINE_IN_MIDDLE();
 } // anonymous namespace
 
 
@@ -67,6 +66,7 @@ namespace
  */
 
 const char TEST_FILE_NAME[] = "test.component.cstring_vector_readLines.txt";
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
@@ -79,6 +79,7 @@ const char TEST_FILE_NAME[] = "test.component.cstring_vector_readLines.txt";
 # pragma warning(disable : 4702)
 #endif /* compiler */
 
+
 /* /////////////////////////////////////////////////////////////////////////
  * main
  */
@@ -90,7 +91,7 @@ int main(int argc, char* argv[])
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
-    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_vector_readLines", verbosity, setup, teardown, (void*)TEST_FILE_NAME))
+    if (XTESTS_START_RUNNER_WITH_SETUP_FNS("test.component.cstring_vector_readLines", verbosity, cstring_component::setup, cstring_component::teardown, (void*)TEST_FILE_NAME))
     {
         XTESTS_RUN_CASE(TEST_cstring_vector_readLines_CALLABILITY);
         XTESTS_RUN_CASE(TEST_cstring_vector_readLines_EMPTY_FILE);
@@ -121,68 +122,6 @@ int main(int argc, char* argv[])
 # endif /* compiler */
 #endif /* compiler */
 
-/* /////////////////////////////////////////////////////////////////////////
- * helper functions
- */
-
-namespace
-{
-
-    static FILE* fopen_or_throw(char const* fileName, char const* mode)
-    {
-#ifdef CSTRING_USING_SAFE_STR_FUNCTIONS
-        FILE*   f;
-
-        if (0 != ::fopen_s(&f, fileName, mode))
-#else /* ? CSTRING_USING_SAFE_STR_FUNCTIONS */
-        FILE*   f = ::fopen(fileName, mode);
-
-        if (NULL == f)
-#endif /* CSTRING_USING_SAFE_STR_FUNCTIONS */
-        {
-            throw platformstl::platform_exception((std::string("Could not open file '") + fileName + "'").c_str(), platformstl::system_traits<char>::get_last_error());
-        }
-
-        return f;
-    }
-
-    static void write_bytes(char const* fileName, void const* bytes, size_t cb)
-    {
-        FILE* f = fopen_or_throw(fileName, "wb");
-
-        stlsoft::scoped_handle<FILE*> scoper(f, ::fclose);
-
-        if (cb != ::fwrite(bytes, 1, cb, f))
-        {
-            throw platformstl::platform_exception("Could not write test file", platformstl::system_traits<char>::get_last_error());
-        }
-    }
-
-    static void write_string_bytes(char const* fileName, std::string const& bytes)
-    {
-        write_bytes(fileName, bytes.data(), bytes.size());
-    }
-
-    static std::string make_filled(size_t n, char ch)
-    {
-        return std::string(n, ch);
-    }
-
-    int setup(void*)
-    {
-        return 0;
-    }
-
-    int teardown(void* arg)
-    {
-        char const* filename = static_cast<char const*>(arg);
-
-        ::remove(filename);
-
-        return 0;
-    }
-} // anonymous namespace
-
 
 /* /////////////////////////////////////////////////////////////////////////
  * test function implementations
@@ -190,6 +129,9 @@ namespace
 
 namespace
 {
+
+    using namespace cstring_component;
+
 
 static void TEST_cstring_vector_readLines_CALLABILITY()
 {
@@ -281,13 +223,14 @@ static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL()
     CSTRING_RC          rc = cstring_vector_readLines(f, &csv, &numLinesRead);
 
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
-    TEST_INT_EQ(5u, numLinesRead);
-    REQUIRE(TEST_INT_EQ(5u, csv.len));
+    TEST_INT_EQ(6u, numLinesRead);
+    REQUIRE(TEST_INT_EQ(6u, csv.len));
     TEST_MS_EQ("one", csv.ptr[0]);
     TEST_MS_EQ("two", csv.ptr[1]);
     TEST_MS_EQ("three", csv.ptr[2]);
-    TEST_MS_EQ("has\rembed", csv.ptr[3]);
-    TEST_MS_EQ("end", csv.ptr[4]);
+    TEST_MS_EQ("has", csv.ptr[3]);
+    TEST_MS_EQ("embed", csv.ptr[4]);
+    TEST_MS_EQ("end", csv.ptr[5]);
 
     cstring_vector_destroy(&csv);
 }

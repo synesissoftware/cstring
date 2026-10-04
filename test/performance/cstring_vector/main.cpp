@@ -8,7 +8,7 @@
  *          getline, platformstl::file_lines).
  *
  * Created: 23rd September 2026
- * Updated: 23rd September 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -62,104 +62,39 @@ namespace {
 
 using namespace cstring_perf;
 
-struct run_result
-{
-    interval_t      tm_ns;
-    std::uint64_t   anchor;
-#ifdef HAS_P99
-
-    p99::histogram  hist;
-#endif /* HAS_P99 */
-};
-
-template <typename F>
-run_result
-time_iterations(
-    std::size_t num_iterations
-,   std::size_t num_warm_loops
-,   F           fn
-)
-{
-    run_result result = {};
-    stopwatch_t sw;
-
-    for (std::size_t w = num_warm_loops; 0 != w; --w)
-    {
-        result.anchor = 0;
-#ifdef HAS_P99
-
-        result.hist.clear();
-#endif /* HAS_P99 */
-        interval_t tm_ns = 0;
-#ifdef HAS_P99
-
-        for (std::size_t i = 0; num_iterations != i; ++i)
-        {
-            sw.start();
-            result.anchor += fn();
-            sw.stop();
-
-            interval_t const sample = sw.get_nanoseconds();
-
-            tm_ns += sample;
-            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
-        }
-#else /* ? HAS_P99 */
-
-        sw.start();
-        for (std::size_t i = 0; num_iterations != i; ++i)
-        {
-            result.anchor += fn();
-        }
-        sw.stop();
-        tm_ns = sw.get_nanoseconds();
-#endif /* HAS_P99 */
-
-        if (1 == w)
-        {
-            result.tm_ns = tm_ns;
-        }
-    }
-
-    return result;
-}
-
 void
 emit_row(
     char const*         scenario
-,   std::size_t         size
+,   size_t              size
 ,   char const*         impl
-,   std::size_t         num_iterations
-,   std::size_t         num_actions
+,   size_t              num_iterations
+,   size_t              num_actions
 ,   run_result const&   r
 ,   interval_t          cstring_tm_ns
 )
 {
-    double const ratio =
-        (0 == ::strcmp(impl, IMPL_CSTRING_VECTOR) ||
-         0 == ::strcmp(impl, IMPL_READLINES))
-            ? 1.0
-            : ratio_or_dash(r.tm_ns, cstring_tm_ns)
-            ;
+    char const* const baselines[] =
+    {
+        IMPL_CSTRING_VECTOR,
+        IMPL_READLINES,
+    };
 
-    display_results(
+    cstring_perf::emit_row(
         scenario
     ,   size
     ,   impl
     ,   num_iterations
     ,   num_actions
-    ,   r.tm_ns
-    ,   ratio
-    ,   r.anchor
-#ifdef HAS_P99
-    ,   &r.hist
-#endif /* HAS_P99 */
+    ,   r
+    ,   cstring_tm_ns
+    ,   baselines
+    ,   STLSOFT_NUM_ELEMENTS(baselines)
     );
 }
 
 cstring_t
 make_cstring_payload(
-    std::size_t n
+    size_t n
 )
 {
     std::string const s = make_payload(n);
@@ -169,7 +104,6 @@ make_cstring_payload(
 
     return cs;
 }
-
 } // anonymous namespace
 
 
@@ -181,9 +115,9 @@ namespace {
 
 void
 scenario_create_destroy(
-    std::size_t n
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t n
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [n]() -> std::uint64_t {
@@ -204,7 +138,7 @@ scenario_create_destroy(
         raw_vec_init(&v);
         raw_vec_reserve(&v, n);
         v.len = n;
-        for (std::size_t i = 0; n != i; ++i)
+        for (size_t i = 0; n != i; ++i)
         {
             v.ptr[i] = static_cast<char*>(std::calloc(1, 1));
         }
@@ -220,10 +154,10 @@ scenario_create_destroy(
 
 void
 scenario_append_one_by_one(
-    std::size_t payload_len
-,   std::size_t k
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t payload_len
+,   size_t k
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     cstring_t payload = make_cstring_payload(payload_len);
@@ -232,7 +166,7 @@ scenario_append_one_by_one(
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> std::uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             cstring_vector_append(&v, &payload, 1);
         }
@@ -243,7 +177,7 @@ scenario_append_one_by_one(
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> std::uint64_t {
         std::vector<std::string> v;
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             v.push_back(payload_s);
         }
@@ -253,7 +187,7 @@ scenario_append_one_by_one(
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> std::uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             raw_vec_append_cstr(&v, payload_s.data(), payload_len);
         }
@@ -271,17 +205,17 @@ scenario_append_one_by_one(
 
 void
 scenario_append_batch(
-    std::size_t payload_len
-,   std::size_t k
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t payload_len
+,   size_t k
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     std::vector<cstring_t> payloads(k);
     std::vector<std::string> payloads_s(k);
     std::string const proto = make_payload(payload_len);
 
-    for (std::size_t i = 0; k != i; ++i)
+    for (size_t i = 0; k != i; ++i)
     {
         payloads[i] = cstring_t_DEFAULT;
         cstring_createLen(&payloads[i], proto.data(), payload_len);
@@ -307,7 +241,7 @@ scenario_append_batch(
         raw_string_vector v;
         raw_vec_init(&v);
         raw_vec_reserve(&v, k);
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             raw_vec_append_cstr(&v, payloads_s[i].data(), payload_len);
         }
@@ -316,7 +250,7 @@ scenario_append_batch(
         return a;
     });
 
-    for (std::size_t i = 0; k != i; ++i)
+    for (size_t i = 0; k != i; ++i)
     {
         cstring_destroy(&payloads[i]);
     }
@@ -328,10 +262,10 @@ scenario_append_batch(
 
 void
 scenario_prepend_one_by_one(
-    std::size_t payload_len
-,   std::size_t k
-,   std::size_t num_iterations
-,   std::size_t num_warm_loops
+    size_t payload_len
+,   size_t k
+,   size_t num_iterations
+,   size_t num_warm_loops
 )
 {
     cstring_t payload = make_cstring_payload(payload_len);
@@ -340,7 +274,7 @@ scenario_prepend_one_by_one(
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> std::uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             cstring_vector_prepend(&v, &payload, 1);
         }
@@ -351,7 +285,7 @@ scenario_prepend_one_by_one(
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> std::uint64_t {
         std::vector<std::string> v;
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             v.insert(v.begin(), payload_s);
         }
@@ -361,7 +295,7 @@ scenario_prepend_one_by_one(
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> std::uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
-        for (std::size_t i = 0; k != i; ++i)
+        for (size_t i = 0; k != i; ++i)
         {
             raw_vec_prepend_cstr(&v, payload_s.data(), payload_len);
         }
@@ -378,39 +312,15 @@ scenario_prepend_one_by_one(
 }
 #ifdef HAS_P99
 
-bool
-write_lines_file(
-    char const* path
-,   std::size_t num_lines
-,   std::size_t line_len
-)
-{
-    std::ofstream out(path, std::ios::binary | std::ios::trunc);
-
-    if (!out)
-    {
-        return false;
-    }
-
-    std::string const line = make_payload(line_len);
-
-    for (std::size_t i = 0; num_lines != i; ++i)
-    {
-        out << line << '\n';
-    }
-
-    return static_cast<bool>(out);
-}
-
 void
 scenario_file_lines_vs_readlines(
-    std::size_t num_lines
-,   std::size_t line_len
-,   std::size_t num_trials
-,   std::size_t num_warm_loops
+    size_t num_lines
+,   size_t line_len
+,   size_t num_trials
+,   size_t num_warm_loops
 )
 {
-    if (!write_lines_file(TEST_FILE_NAME, num_lines, line_len))
+    if (!write_lines_file(TEST_FILE_NAME, num_lines, line_len, LINE_ENDING_LF))
     {
         std::cerr
             << "failed to write " << TEST_FILE_NAME << "; skipping file_lines suite"
@@ -483,9 +393,9 @@ scenario_file_lines_vs_readlines(
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-    std::size_t const num_iterations = cstring_perf::default_iterations();
-    std::size_t const num_warm_loops = cstring_perf::default_warmups();
-    std::size_t const heavy_iters =
+    size_t const num_iterations = cstring_perf::default_iterations();
+    size_t const num_warm_loops = cstring_perf::default_warmups();
+    size_t const heavy_iters =
         (num_iterations > 10000u) ? (num_iterations / 10u) : num_iterations
         ;
 
@@ -504,7 +414,7 @@ int main(int /*argc*/, char* /*argv*/[])
     scenario_prepend_one_by_one(16u, 32u, heavy_iters, num_warm_loops);
 #ifdef HAS_P99
 
-    std::size_t const file_trials = cstring_perf::default_file_trials();
+    size_t const file_trials = cstring_perf::default_file_trials();
 
     scenario_file_lines_vs_readlines(1000u, 64u, file_trials, num_warm_loops);
     scenario_file_lines_vs_readlines(5000u, 80u, file_trials, num_warm_loops);

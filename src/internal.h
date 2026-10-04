@@ -49,28 +49,49 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * checks
+ */
+
+#ifndef CSTRING_INCL_CSTRING_H_CSTRING
+# error cstring/cstring.h must be included before this file
+#endif /* !CSTRING_INCL_CSTRING_H_CSTRING */
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * includes
  */
 
-#include <cstring/cstring.h>
+#include <assert.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * constants & definitions
  */
 
-#if defined(WIN32) || \
-    defined(WIN64)
 
-# define CSTRING_USE_WINAPI_
-#endif /* WIN32 || WIN64 */
+/* /////////////////////////////////////////////////////////////////////////
+ * macros
+ */
+
+
+/* /////////////////////////////////////////////////////////
+ * constract enforcements
+ */
+
+#define CSTRING_ASSERT(expr)                                assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * internal functions
+ */
+
+
+
+/* /////////////////////////////////////////////////////////
  * Windows arena allocators
  */
 
-#if defined(CSTRING_USE_WINAPI_)
+#ifdef _WIN32
 
 CSTRING_EXTERN_C
 void*
@@ -92,7 +113,7 @@ win32_comtask_realloc(
     void*   pv
 ,   size_t  cb
 );
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 
 
 /* ////////////////////////////////////////////////////////////////////// */
