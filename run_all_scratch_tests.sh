@@ -32,7 +32,6 @@ AlwaysUseColours=${SIS_CMAKE_ALWAYS_USE_COLOURS:-${SIS_ALWAYS_USE_COLOURS:-0}}
 ListOnly=0
 RunMake=1
 SisUseColours=0
-Verbosity=${XTESTS_VERBOSITY:-${TEST_VERBOSITY:-3}}
 
 
 # ##########################################################
@@ -135,11 +134,6 @@ while [[ $# -gt 0 ]]; do
 
       RunMake=0
       ;;
-    --verbosity)
-
-      shift
-      Verbosity=$1
-      ;;
     --help)
 
       [ -f "$Dir/.sis/script_info_lines.txt" ] && cat "$Dir/.sis/script_info_lines.txt"
@@ -164,9 +158,6 @@ Flags/options:
     -M
     --no-make
         does not execute a build before running programs
-
-    --verbosity <verbosity>
-        specifies an explicit verbosity (forwarded when supported)
 
 
     standard flags:
@@ -257,19 +248,10 @@ if [ $status -eq 0 ]; then
       continue
     fi
 
-    if [ $Verbosity -ge 3 ]; then
+    echo
+    echo "executing ${fClr}:"
 
-      echo
-    fi
-    if [ $Verbosity -ge 2 ]; then
-
-      echo "executing ${fClr}:"
-    fi
-
-    if "$f" --verbosity="$Verbosity" 2>/dev/null; then
-
-      :
-    elif "$f"; then
+    if "$f"; then
 
       :
     else

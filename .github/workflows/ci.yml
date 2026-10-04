@@ -10,7 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
-      - perf-tests-win
+      - directories
   pull_request:
 
 concurrency:

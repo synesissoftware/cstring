@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 3rd October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -59,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,13 +74,6 @@
 #define CSTRING_ALLOC_GRANULARITY                           (8)
 
 #define CSTRING_OFFSET_SIZE                                 (16)
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * debugging
- */
-
-#define CSTRING_ASSERT(expr)                                assert(expr)
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -290,17 +282,18 @@ alloc_retry:
     {
         case    CSTRING_F_USE_REALLOC:
 
-#if defined(_MSC_VER) && \
-    defined(_DEBUG)
+            /* realloc(pv, 0) allocates on some platforms; free the block,
+             * and do nothing when pv is NULL.
+             */
             if (0 == cb)
             {
                 free(pv);
                 return NULL;
             }
-#endif /* _DEBUG */
+
             pvNew = realloc(pv, cb);
             break;
-#ifdef CSTRING_USE_WINAPI_
+#ifdef _WIN32
         case    CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY:
 
             pvNew = win32_global_realloc(pv, cb);
@@ -313,7 +306,7 @@ alloc_retry:
 
             pvNew = win32_comtask_realloc(pv, cb);
             break;
-#endif /* CSTRING_USE_WINAPI_ */
+#endif /* _WIN32 */
 #if defined(CSTRING_USE_SYNESIS_APIS)
         case    CSTRING_F_USE_SYNESIS_HATOR:
 #endif /* CSTRING_USE_SYNESIS_APIS */
@@ -1369,14 +1362,15 @@ cstring_readline(
 ,   size_t*             numRead /* = NULL */
 )
 {
-    int     previous = '\0';
-    size_t  numRead_;
+    int         previous = '\0';
+    size_t      dummy;
+    CSTRING_RC  rc0;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numRead)
     {
-        numRead = &numRead_;
+        numRead = &dummy;
     }
 
     if (NULL == stm ||
@@ -1387,7 +1381,17 @@ cstring_readline(
 
     *numRead = 0u;
 
-    cstring_truncate(pcs, 0);
+    rc0 = cstring_truncate(pcs, 0);
+
+    if (CSTRING_RC_SUCCESS != rc0)
+    {
+        /* NOTE: have to check for failure here, because a non-empty
+         * readonly string could be left if the stream is empty or its first
+         * character is LF.
+         */
+
+        return rc0;
+    }
 
     for (;;)
     {
@@ -1395,10 +1399,19 @@ cstring_readline(
 
         if (EOF == ch)
         {
+            if ('\r' == previous)
+            {
+                cstring_truncate(pcs, pcs->len - 1u);
+
+                return CSTRING_RC_SUCCESS;
+            }
+
             return CSTRING_RC_EOF;
         }
         else
         {
+            ++*numRead;
+
             if ('\n' == ch)
             {
                 if ('\r' == previous)
@@ -1410,19 +1423,29 @@ cstring_readline(
             }
             else
             {
-                cstring_char_t  c1 = (char)ch;
-                CSTRING_RC      rc = cstring_appendLen(pcs, &c1, 1u);
-
-                if (CSTRING_RC_SUCCESS != rc)
+                if ('\r' == previous)
                 {
-                    return rc;
+                    ungetc(ch, stm);
+
+                    --*numRead;
+
+                    cstring_truncate(pcs, pcs->len - 1u);
+
+                    return CSTRING_RC_SUCCESS;
                 }
+                else
+                {
+                    cstring_char_t  c1  =   (char)ch;
+                    CSTRING_RC      rc  =   cstring_appendLen(pcs, &c1, 1u);
 
-                ++*numRead;
-
-                previous = ch;
+                    if (CSTRING_RC_SUCCESS != rc)
+                    {
+                        return rc;
+                    }
+                }
             }
 
+            previous = ch;
         }
     }
 }
@@ -1437,13 +1460,13 @@ cstring_write_(
 )
 {
     int     r;
-    size_t  numWritten_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numWritten)
     {
-        numWritten = &numWritten_;
+        numWritten = &dummy;
     }
 
     if (NULL == stm ||
@@ -1656,13 +1679,13 @@ cstring_replaceAll(
 ,   size_t*                 numReplaced /* = NULL */
 )
 {
-    size_t  numReplaced_;
+    size_t  dummy;
 
     CSTRING_ASSERT(NULL != pcs);
 
     if (NULL == numReplaced)
     {
-        numReplaced = &numReplaced_;
+        numReplaced = &dummy;
     }
 
     *numReplaced = 0u;

@@ -48,6 +48,7 @@
  * includes
  */
 
+#include <cstring/cstring.h>
 #include "internal.h"
 
 

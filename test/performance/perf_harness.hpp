@@ -4,7 +4,7 @@
  * Purpose: Shared helpers for cstring performance programs.
  *
  * Created: 23rd September 2026
- * Updated: 29th September 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -27,6 +27,7 @@
 # include <p99/p99.hpp>
 #endif
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -149,6 +150,132 @@ make_payload(
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * filesystem fixtures
+ */
+
+enum line_ending_t
+{
+    LINE_ENDING_LF = 0,
+    LINE_ENDING_CRLF,
+    LINE_ENDING_NONE,
+};
+
+inline
+bool
+write_lines_file(
+    char const*     path
+,   size_t          num_lines
+,   size_t          line_len
+,   line_ending_t   ending
+)
+{
+    std::ofstream out(path, std::ios::binary | std::ios::trunc);
+
+    if (!out)
+    {
+        return false;
+    }
+
+    std::string const line = make_payload(line_len);
+
+    for (size_t i = 0; num_lines != i; ++i)
+    {
+        out.write(line.data(), static_cast<std::streamsize>(line.size()));
+
+        if (LINE_ENDING_CRLF == ending)
+        {
+            out.write("\r\n", 2);
+        }
+        else if (LINE_ENDING_LF == ending)
+        {
+            out.put('\n');
+        }
+    }
+
+    return static_cast<bool>(out);
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * timing
+ */
+
+struct run_result
+{
+    interval_t      tm_ns;
+    std::uint64_t   anchor;
+#ifdef HAS_P99
+
+    p99::histogram  hist;
+#endif /* HAS_P99 */
+};
+
+/* tm_ns is one start/stop around the iteration loop. That total is ns/op
+ * and vs cstr. When p99 is linked, the recorded warmup also times each call
+ * into the histogram. Those samples are the percentiles only.
+ */
+template <typename F>
+run_result
+time_iterations(
+    size_t  num_iterations
+,   size_t  num_warm_loops
+,   F       fn
+)
+{
+    run_result result = {};
+    stopwatch_t sw;
+
+    for (size_t w = num_warm_loops; 0 != w; --w)
+    {
+        result.anchor = 0;
+#ifdef HAS_P99
+
+        result.hist.clear();
+#endif /* HAS_P99 */
+
+        sw.start();
+
+        for (size_t i = 0; num_iterations != i; ++i)
+        {
+            result.anchor += fn();
+        }
+
+        sw.stop();
+
+        interval_t const tm_ns = sw.get_nanoseconds();
+
+#ifdef HAS_P99
+
+        if (1 == w)
+        {
+            std::uint64_t volatile hist_anchor = 0;
+
+            for (size_t i = 0; num_iterations != i; ++i)
+            {
+                sw.start();
+                hist_anchor += fn();
+                sw.stop();
+
+                interval_t const sample = sw.get_nanoseconds();
+
+                (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
+            }
+
+            (void)hist_anchor;
+        }
+#endif /* HAS_P99 */
+
+        if (1 == w)
+        {
+            result.tm_ns = tm_ns;
+        }
+    }
+
+    return result;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * display
  */
 
@@ -180,13 +307,17 @@ display_banner(
         << "  small sizes favour std::string. Prefer Release builds."
         << std::endl
 #ifdef HAS_P99
-        << "  p99: available — per-op percentiles reported where timed."
+        << "  p99: p50/p90/p99/max are one iteration, not divided by #acts."
+        << std::endl
+        << "  ns/op is one start/stop around the loop, then divided by #acts."
+        << std::endl
+        << "  vs cstr is \"-\" when p50 is 0 and ns/op does not grow with size."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", CSTRING_PERF_FILE_TRIALS"
         << ", SIS_PERFTESTS_GROUPGAPS."
 #else /* ? HAS_P99 */
-        << "  p99: not linked — mean ns/op only; file_lines suite skipped."
+        << "  p99: not linked — mean ns/op only; filesystem suites skipped."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", SIS_PERFTESTS_GROUPGAPS."
@@ -277,7 +408,7 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static size_t  prev_size = 0;
+    static size_t       prev_size = 0;
 
     if (have_prev &&
         (   prev_scenario != scenario ||
@@ -323,13 +454,13 @@ display_results_title()
         << std::setw(10) << std::right << "vs cstr"
 #ifdef HAS_P99
         << '\t'
-        << std::setw(10) << std::right << "p50"
+        << std::setw(10) << std::right << "p50/iter"
         << '\t'
-        << std::setw(10) << std::right << "p90"
+        << std::setw(10) << std::right << "p90/iter"
         << '\t'
-        << std::setw(10) << std::right << "p99"
+        << std::setw(10) << std::right << "p99/iter"
         << '\t'
-        << std::setw(10) << std::right << "max"
+        << std::setw(10) << std::right << "max/iter"
 #endif /* HAS_P99 */
         << '\t'
         << std::setw(14) << std::right << "anchor"
@@ -415,6 +546,182 @@ ratio_or_dash(
     }
 
     return static_cast<double>(subject_ns) / static_cast<double>(baseline_ns);
+}
+
+inline
+bool
+impl_is_baseline(
+    char const*         impl
+,   char const* const*  baseline_impls
+,   size_t              num_baselines
+)
+{
+    for (size_t i = 0; num_baselines != i; ++i)
+    {
+        if (0 == ::strcmp(impl, baseline_impls[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+#ifdef HAS_P99
+
+struct prior_ns_op
+{
+    std::string scenario;
+    std::string impl;
+    size_t      size;
+    interval_t  ns_per_op;
+};
+
+inline
+bool
+median_sample_is_zero(
+    p99::histogram const& h
+)
+{
+    if (h.empty())
+    {
+        return false;
+    }
+
+    uint64_t p50 = 0;
+
+    if (!h.try_get_value_at_p50(&p50))
+    {
+        return false;
+    }
+
+    return 0 == p50;
+}
+
+inline
+interval_t
+ns_per_op(
+    interval_t  tm_ns
+,   size_t      num_iterations
+,   size_t      num_actions
+)
+{
+    size_t const denom =
+        (0 == num_iterations || 0 == num_actions)
+            ? 1u
+            : (num_iterations * num_actions)
+            ;
+
+    return tm_ns / denom;
+}
+
+/* p50 of 0 means the median sample did no timed work. The ratio is then
+ * suppressed when ns/op has not increased against the previous smaller size
+ * of the same scenario and implementation. The first such size is
+ * suppressed as well, because there is no growth to report.
+ */
+inline
+bool
+ratio_elided(
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+)
+{
+    interval_t const ns_op = ns_per_op(r.tm_ns, num_iterations, num_actions);
+
+    static std::vector<prior_ns_op> seen;
+    bool        have_prev   =   false;
+    interval_t  prev_ns     =   0;
+    size_t      prev_size   =   0;
+
+    for (size_t i = 0; seen.size() != i; ++i)
+    {
+        if (seen[i].scenario == scenario &&
+            seen[i].impl == impl &&
+            seen[i].size < size &&
+            (   !have_prev ||
+                seen[i].size > prev_size))
+        {
+            have_prev   =   true;
+            prev_size   =   seen[i].size;
+            prev_ns     =   seen[i].ns_per_op;
+        }
+    }
+
+    prior_ns_op row;
+
+    row.scenario    =   scenario;
+    row.impl        =   impl;
+    row.size        =   size;
+    row.ns_per_op   =   ns_op;
+    seen.push_back(row);
+
+    if (!median_sample_is_zero(r.hist))
+    {
+        return false;
+    }
+
+    return !have_prev || ns_op <= prev_ns;
+}
+#endif /* HAS_P99 */
+
+/* Baseline impl names are ratio 1.0. Every other impl is timed against
+ * baseline_ns. An elided ratio is reported as "-".
+ */
+inline
+void
+emit_row(
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+,   interval_t          baseline_ns
+,   char const* const*  baseline_impls
+,   size_t              num_baselines
+)
+{
+#ifdef HAS_P99
+
+    bool const elided = ratio_elided(
+        scenario
+    ,   size
+    ,   impl
+    ,   num_iterations
+    ,   num_actions
+    ,   r
+    );
+#else /* ? HAS_P99 */
+
+    bool const elided = false;
+#endif /* HAS_P99 */
+
+    double const ratio =
+        elided
+            ? -1.0
+            : impl_is_baseline(impl, baseline_impls, num_baselines)
+                ? 1.0
+                : ratio_or_dash(r.tm_ns, baseline_ns)
+                ;
+
+    display_results(
+        scenario
+    ,   size
+    ,   impl
+    ,   num_iterations
+    ,   num_actions
+    ,   r.tm_ns
+    ,   ratio
+    ,   r.anchor
+#ifdef HAS_P99
+    ,   &r.hist
+#endif /* HAS_P99 */
+    );
 }
 
 
