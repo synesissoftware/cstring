@@ -661,9 +661,9 @@ scenario_copy(
     raw_destroy(&src_raw);
 
     emit_row("copy", n, IMPL_CSTRING, num_iterations, 1, cs, cs.tm_ns);
-    /* cstring_copy allocates with the destination's existing flags, so a
-     * default instance stays on realloc. createLenEx is the supported way
-     * to duplicate a payload in a selected arena.
+    /* cstring_copy allocates with the destination's flags. createEx("")
+     * selects the arena; the printed cstring row does not, so the arena
+     * ratios use cstring_win_realloc.
      */
     emit_windows_cstring_arenas(
         "copy"
@@ -672,11 +672,12 @@ scenario_copy(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [&src_cs, n](cstring_flags_t flags) -> std::uint64_t
+    ,   [&src_cs](cstring_flags_t flags) -> std::uint64_t
         {
             cstring_t d = cstring_t_DEFAULT;
 
-            cstring_createLenEx(&d, src_cs.ptr, n, flags, NULL, 0);
+            cstring_createEx(&d, "", flags, NULL, 0);
+            cstring_copy(&d, &src_cs);
 
             std::uint64_t const a =
                 d.len + (NULL != d.ptr ? static_cast<unsigned char>(d.ptr[0]) : 0u)
@@ -686,6 +687,7 @@ scenario_copy(
 
             return a;
         }
+    ,   true
     );
     cstring_destroy(&src_cs);
     emit_row("copy", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
@@ -816,7 +818,7 @@ int main(int /*argc*/, char* /*argv*/[])
         << std::endl
         << "  cstring_win_processheap, cstring_win_comtask."
         << std::endl
-        << "  assign/append ratios use cstring_win_realloc: the same"
+        << "  assign/append/copy ratios use cstring_win_realloc: the same"
         << std::endl
         << "  createEx(\"\") body on the realloc arena."
         << std::endl
