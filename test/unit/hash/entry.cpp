@@ -214,13 +214,13 @@ static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void)
 static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void)
 {
     /* Buffer checks */
-    uint64_t djb2_ci_base = cstring_hash_djb2_len_ci(CSTRING_T_("Test"), 4);
+    cstring_hash_t djb2_ci_base = cstring_hash_djb2_len_ci(CSTRING_T_("Test"), 4);
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("tEst"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("TEST"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("test"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("teSt"), 4));
 
-    uint64_t fnv1a_ci_base = cstring_hash_fnv1a_len_ci(CSTRING_T_("Test"), 4);
+    cstring_hash_t fnv1a_ci_base = cstring_hash_fnv1a_len_ci(CSTRING_T_("Test"), 4);
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("tEst"), 4));
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("TEST"), 4));
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("test"), 4));
@@ -346,12 +346,12 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
 
     /* Slices without constructing cstring_t */
     /* "quick" starts at index 4, length 5 */
-    uint64_t djb2_quick_slice = cstring_hash_djb2_len(text + 4, 5);
-    uint64_t djb2_quick_direct = cstring_hash_djb2_len(CSTRING_T_("quick"), 5);
+    cstring_hash_t djb2_quick_slice = cstring_hash_djb2_len(text + 4, 5);
+    cstring_hash_t djb2_quick_direct = cstring_hash_djb2_len(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(djb2_quick_direct, djb2_quick_slice);
 
-    uint64_t fnv1a_quick_slice = cstring_hash_fnv1a_len(text + 4, 5);
-    uint64_t fnv1a_quick_direct = cstring_hash_fnv1a_len(CSTRING_T_("quick"), 5);
+    cstring_hash_t fnv1a_quick_slice = cstring_hash_fnv1a_len(text + 4, 5);
+    cstring_hash_t fnv1a_quick_direct = cstring_hash_fnv1a_len(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(fnv1a_quick_direct, fnv1a_quick_slice);
 
     /* "Fox" starts at index 16, length 3 */

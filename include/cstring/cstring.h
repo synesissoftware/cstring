@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     95
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     96
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -142,14 +142,46 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * includes
+ * includes - 1
  */
 
 #include <stddef.h>
-#if defined(_MSC_VER) && \
-    _MSC_VER < 1600
-typedef unsigned __int64                                    uint64_t;
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * compatibility
+ */
+
+#if 0
+#elif defined(__STDC_VERSION__) &&\
+      __STDC_VERSION__ >= 199901L
+
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      defined(__has_include) &&\
+      __has_include(<stdint.h>)
+
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      __cplusplus >= 201103L
+
+# define CSTRING_HAS_h_stdint_
+#elif 0 ||\
+      (   defined(_MSC_VER) &&\
+          _MSC_VER >= 1310) ||\
+      0
+
+# define CSTRING_HAS_h_stdint_
 #else
+
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * includes - 2
+ */
+
+#ifdef CSTRING_HAS_h_stdint_
 # include <stdint.h>
 #endif
 #include <stdio.h>
@@ -260,7 +292,18 @@ typedef int                                                 cstring_flags_t;
 /** \brief Hash value type
  * \ingroup group__cstring_api
  */
+#if 0
+#elif defined(CSTRING_HAS_h_stdint_) ||\
+      defined(CSTRING_DOCUMENTATION_SKIP_SECTION)
+
 typedef uint64_t                                            cstring_hash_t;
+#elif defined(_MSC_VER)
+
+typedef unsigned __int64_t                                  cstring_hash_t;
+#else
+
+# error 64-bit unsigned integer type not discriminated
+#endif
 
 /** \brief The cstring structure
  * \ingroup group__cstring_api
@@ -1108,7 +1151,7 @@ cstring_appendLenFn(
  * \return A 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_djb2(
     struct cstring_t const* pcs
 );
@@ -1122,7 +1165,7 @@ cstring_hash_djb2(
  * \return A case-insensitive 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_ci(
     struct cstring_t const* pcs
 );
@@ -1137,7 +1180,7 @@ cstring_hash_djb2_ci(
  * \return A 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_len(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1153,7 +1196,7 @@ cstring_hash_djb2_len(
  * \return A case-insensitive 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_len_ci(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1167,7 +1210,7 @@ cstring_hash_djb2_len_ci(
  * \return A 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a(
     struct cstring_t const* pcs
 );
@@ -1181,7 +1224,7 @@ cstring_hash_fnv1a(
  * \return A case-insensitive 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_ci(
     struct cstring_t const* pcs
 );
@@ -1196,7 +1239,7 @@ cstring_hash_fnv1a_ci(
  * \return A 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_len(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1212,7 +1255,7 @@ cstring_hash_fnv1a_len(
  * \return A case-insensitive 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_len_ci(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1434,7 +1477,7 @@ c_str_ptr(
  */
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     struct cstring_t const* pcs
 )
@@ -1443,7 +1486,7 @@ hash_djb2(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     struct cstring_t const& cs
 )
@@ -1452,7 +1495,7 @@ hash_djb2(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1462,7 +1505,7 @@ hash_djb2(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2_ci(
     struct cstring_t const* pcs
 )
@@ -1471,7 +1514,7 @@ hash_djb2_ci(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2_ci(
     struct cstring_t const& cs
 )
@@ -1480,7 +1523,7 @@ hash_djb2_ci(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2_ci(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1490,7 +1533,7 @@ hash_djb2_ci(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     struct cstring_t const* pcs
 )
@@ -1499,7 +1542,7 @@ hash_fnv1a(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     struct cstring_t const& cs
 )
@@ -1508,7 +1551,7 @@ hash_fnv1a(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     cstring_char_t const*   s
 ,   size_t                  cch
@@ -1518,7 +1561,7 @@ hash_fnv1a(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a_ci(
     struct cstring_t const* pcs
 )
@@ -1527,7 +1570,7 @@ hash_fnv1a_ci(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a_ci(
     struct cstring_t const& cs
 )
@@ -1536,7 +1579,7 @@ hash_fnv1a_ci(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a_ci(
     cstring_char_t const*   s
 ,   size_t                  cch

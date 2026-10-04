@@ -77,7 +77,7 @@
  * hashing functions
  */
 
-uint64_t
+cstring_hash_t
 cstring_hash_djb2(
     struct cstring_t const* pcs
 )
@@ -90,7 +90,7 @@ cstring_hash_djb2(
     return cstring_hash_djb2_len(pcs->ptr, pcs->len);
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_ci(
     struct cstring_t const* pcs
 )
@@ -103,13 +103,13 @@ cstring_hash_djb2_ci(
     return cstring_hash_djb2_len_ci(pcs->ptr, pcs->len);
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_len(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t hash = 5381;
+    cstring_hash_t hash = 5381;
 
     if (NULL != s)
     {
@@ -126,13 +126,13 @@ cstring_hash_djb2_len(
     return hash;
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_djb2_len_ci(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t hash = 5381;
+    cstring_hash_t hash = 5381;
 
     if (NULL != s)
     {
@@ -153,7 +153,7 @@ cstring_hash_djb2_len_ci(
     return hash;
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a(
     struct cstring_t const* pcs
 )
@@ -166,7 +166,7 @@ cstring_hash_fnv1a(
     return cstring_hash_fnv1a_len(pcs->ptr, pcs->len);
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_ci(
     struct cstring_t const* pcs
 )
@@ -179,14 +179,14 @@ cstring_hash_fnv1a_ci(
     return cstring_hash_fnv1a_len_ci(pcs->ptr, pcs->len);
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_len(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t const fnv_prime = 0x100000001b3ULL;
-    uint64_t hash = 0xcbf29ce484222325ULL;
+    cstring_hash_t const    fnv_prime   =   0x100000001b3ULL;
+    cstring_hash_t          hash        =   0xcbf29ce484222325ULL;
 
     if (NULL != s)
     {
@@ -204,14 +204,14 @@ cstring_hash_fnv1a_len(
     return hash;
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a_len_ci(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t const fnv_prime = 0x100000001b3ULL;
-    uint64_t hash = 0xcbf29ce484222325ULL;
+    cstring_hash_t const    fnv_prime   =   0x100000001b3ULL;
+    cstring_hash_t          hash        =   0xcbf29ce484222325ULL;
 
     if (NULL != s)
     {
