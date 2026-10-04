@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.component.cstring_readline/entry.cpp
+ * File:    test/component/cstring_readline/entry.cpp
  *
  * Purpose: Component-tests `cstring_readline()`.
  *
  * Created: 23rd May 2009
- * Updated: 3rd October 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

@@ -1,2 +1,2 @@
 # SIS:AUTO_GENERATED: Remove this line if you edit the file, otherwise it will be overwritten
-define_automated_test_program(test.unit.cstring_vector entry.c)
+define_automated_test_program(test.unit.insert-replace entry.c)

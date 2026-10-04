@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.component.cstring_writeline/entry.cpp
+ * File:    test/component/cstring_writeline/entry.cpp
  *
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 3rd October 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
