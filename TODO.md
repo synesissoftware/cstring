@@ -19,6 +19,8 @@
 * [ ] custom arena(s);
 * [ ] `cstring_vector_readlineEx()` that takes a flag to prevent truncate, thereby allowing client code to add to an existing string;
 * [ ] when go to 5.x, change the name of `cstring_vector_readLines()` to `cstring_vector_readlines()`;
+* [ ] when go to 5.x, consider use of SSO;
+* [ ] when go to 5.x, consider expanding `cstring_vector_t` to allow it to own the memory of the strings it manages, such that can do a single file read and then break up into strings without allocating payload memory;
 
 
 ## Performance improvements
@@ -40,6 +42,7 @@
   * [x] ~~~`CMAKE_INSTALL_LIBDIR` (replaces legacy `LIB_INSTALL_DIR`)~~~ - ✅;
   * [x] ~~~**CTest**~~~ - ✅;
   * [ ] build DLL on Windows;
+  * [ ] build dylib on macOS;
   * [x] ~~~`/MT` build option for Visual C++ (`--msvc-mt` / `MSVC_USE_MT`)~~~ - ✅;
   * [x] ~~~**shwild** dependency (testing only; `--no-shwild` / `NO_SHWILD`)~~~ - ✅;
 * [x] ~~~Doxygen (**Doxyfile**, **doc/mainpage.md**, **generate_doxygen.sh**)~~~ - ✅;
