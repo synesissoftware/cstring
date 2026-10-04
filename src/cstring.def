@@ -28,6 +28,15 @@ EXPORTS
 	cstring_appendFn                                @35
 	cstring_appendLenFn                             @36
 
+	cstring_hash_djb2                               @41
+	cstring_hash_djb2_ci                            @42
+	cstring_hash_djb2_len                           @43
+	cstring_hash_djb2_len_ci                        @44
+	cstring_hash_fnv1a                              @45
+	cstring_hash_fnv1a_ci                           @46
+	cstring_hash_fnv1a_len                          @47
+	cstring_hash_fnv1a_len_ci                       @48
+
 ; deprecated items by name
 	cstring_error=cstring_getStatusCodeStringLength @399
 

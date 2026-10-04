@@ -1,6 +1,15 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0 - 5th October 2026
+
+* Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_ci()`, `cstring_hash_djb2_len()`, and `cstring_hash_djb2_len_ci()`;
+* Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_ci()`, `cstring_hash_fnv1a_len()`, and `cstring_hash_fnv1a_len_ci()`;
+* Added `cstring_hash_t` typedef (`uint64_t`);
+* Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
+* Added unit test suite **test.unit.hash**;
+
+
 ## 4.0.19 - 4th October 2026
 
 * Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
