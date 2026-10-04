@@ -355,7 +355,6 @@ scenario_append_len_growth(
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
-        cstring_create(&s, "");
         for (size_t i = 0; num_appends != i; ++i)
         {
             cstring_appendLen(&s, p, chunk);
