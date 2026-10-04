@@ -187,7 +187,7 @@ scenario_create_destroy_empty(
     });
 
     run_result const st = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
-        std::string s;
+        std::string s("");
         return s.size();
     });
 
