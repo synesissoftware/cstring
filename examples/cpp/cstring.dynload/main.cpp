@@ -164,7 +164,7 @@ int main(int argc, char** argv)
 
     try
     {
-#if defined(_DEBUG) || \
+#if defined(_DEBUG) ||\
     defined(__SYNSOFT_DBS_DEBUG)
         puts("example.cpp.cstring.dynload: " STLSOFT_COMPILER_LABEL_STRING);
 #endif /* debug */

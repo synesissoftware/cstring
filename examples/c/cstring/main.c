@@ -24,7 +24,7 @@
  * compiler warnings
  */
 
-#if defined(_MSC_VER) && \
+#if defined(_MSC_VER) &&\
     _MSC_VER >= 1310
 # pragma warning(disable : 4054)
 #endif /* compiler */
