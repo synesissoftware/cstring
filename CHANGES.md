@@ -1,7 +1,7 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.0.19 - 3rd October 2026
+## 4.0.19 - 4th October 2026
 
 * Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
 * Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;

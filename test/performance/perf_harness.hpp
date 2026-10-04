@@ -4,7 +4,7 @@
  * Purpose: Shared helpers for cstring performance programs.
  *
  * Created: 23rd September 2026
- * Updated: 3rd October 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -392,7 +392,7 @@ maybe_emit_group_gap(
 
     static bool         have_prev = false;
     static std::string  prev_scenario;
-    static size_t  prev_size = 0;
+    static size_t       prev_size = 0;
 
     if (have_prev &&
         (   prev_scenario != scenario ||
