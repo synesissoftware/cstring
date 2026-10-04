@@ -364,7 +364,9 @@ scenario_append_len_growth(
         {
             cstring_appendLen(&s, p, chunk);
         }
-        std::uint64_t const a = s.len;
+        std::uint64_t const a =
+            s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+            ;
         cstring_destroy(&s);
         return a;
     });
@@ -375,7 +377,7 @@ scenario_append_len_growth(
         {
             s.append(p, chunk);
         }
-        return s.size();
+        return s.size() + static_cast<unsigned char>(s[0]);
     });
 
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
@@ -385,7 +387,7 @@ scenario_append_len_growth(
         {
             raw_append_len(&s, p, chunk);
         }
-        std::uint64_t const a = s.len;
+        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -412,7 +414,9 @@ scenario_append_len_growth(
                 cstring_appendLen(&s, p, chunk);
             }
 
-            std::uint64_t const a = s.len;
+            std::uint64_t const a =
+                s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+                ;
 
             cstring_destroy(&s);
 
@@ -442,7 +446,9 @@ scenario_append_len_reserved(
         {
             cstring_appendLen(&s, p, chunk);
         }
-        std::uint64_t const a = s.len;
+        std::uint64_t const a =
+            s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+            ;
         cstring_destroy(&s);
         return a;
     });
@@ -454,7 +460,7 @@ scenario_append_len_reserved(
         {
             s.append(p, chunk);
         }
-        return s.size();
+        return s.size() + static_cast<unsigned char>(s[0]);
     });
 
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
@@ -465,7 +471,7 @@ scenario_append_len_reserved(
         {
             raw_append_len(&s, p, chunk);
         }
-        std::uint64_t const a = s.len;
+        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -490,7 +496,9 @@ scenario_append_len_reserved(
                 cstring_appendLen(&s, p, chunk);
             }
 
-            std::uint64_t const a = s.len;
+            std::uint64_t const a =
+                s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+                ;
 
             cstring_destroy(&s);
 
@@ -519,7 +527,9 @@ scenario_insert_len_mid(
         cstring_t s = cstring_t_DEFAULT;
         cstring_createLen(&s, bp, n);
         cstring_insertLen(&s, pos, ip, in);
-        std::uint64_t const a = s.len;
+        std::uint64_t const a =
+            s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+            ;
         cstring_destroy(&s);
         return a;
     });
@@ -527,7 +537,7 @@ scenario_insert_len_mid(
     run_result const st = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
         std::string s(bp, n);
         s.insert(pos, ip, in);
-        return s.size();
+        return s.size() + static_cast<unsigned char>(s[0]);
     });
 
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
@@ -535,7 +545,7 @@ scenario_insert_len_mid(
         raw_init(&s);
         raw_assign_len(&s, bp, n);
         raw_insert_len(&s, pos, ip, in);
-        std::uint64_t const a = s.len;
+        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -555,7 +565,9 @@ scenario_insert_len_mid(
             cstring_createLenEx(&s, bp, n, flags, NULL, 0);
             cstring_insertLen(&s, pos, ip, in);
 
-            std::uint64_t const a = s.len;
+            std::uint64_t const a =
+                s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
+                ;
 
             cstring_destroy(&s);
 
