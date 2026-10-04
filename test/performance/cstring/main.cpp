@@ -90,6 +90,7 @@ emit_row(
 ,   size_t              num_actions
 ,   run_result const&   r
 ,   interval_t          cstring_tm_ns
+,   bool                comparable = true
 )
 {
     char const* const baselines[] =
@@ -105,7 +106,7 @@ emit_row(
     ,   num_iterations
     ,   num_actions
     ,   r
-    ,   cstring_tm_ns
+    ,   comparable ? cstring_tm_ns : interval_t(0)
     ,   baselines
     ,   STLSOFT_NUM_ELEMENTS(baselines)
     );
@@ -700,9 +701,9 @@ scenario_borrowed_fixed_construct(
 {
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
+    stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createLenEx(
             &s
@@ -725,8 +726,7 @@ scenario_borrowed_fixed_construct(
         return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
-    run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
 
@@ -734,7 +734,7 @@ scenario_borrowed_fixed_construct(
     });
 
     emit_row("borrowed_fixed_construct", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
-    emit_row("borrowed_fixed_construct", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
+    emit_row("borrowed_fixed_construct", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns, false);
     emit_row("borrowed_fixed_construct", n, IMPL_FIXEDBUF, num_iterations, 1, fx, cs.tm_ns);
 }
 
@@ -747,9 +747,9 @@ scenario_borrowed_fixed_assign(
 {
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
+    stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createEx(
             &s
@@ -772,8 +772,7 @@ scenario_borrowed_fixed_assign(
         return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
-    run_result const fx = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
-        stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
 
@@ -781,7 +780,7 @@ scenario_borrowed_fixed_assign(
     });
 
     emit_row("borrowed_fixed_assign", n, IMPL_BORROWED, num_iterations, 1, cs, cs.tm_ns);
-    emit_row("borrowed_fixed_assign", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
+    emit_row("borrowed_fixed_assign", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns, false);
     emit_row("borrowed_fixed_assign", n, IMPL_FIXEDBUF, num_iterations, 1, fx, cs.tm_ns);
 }
 } // anonymous namespace
@@ -802,6 +801,14 @@ int main(int /*argc*/, char* /*argv*/[])
         ;
 
     cstring_perf::display_banner("test.performance.cstring");
+    std::cout
+        << "  borrowed_fixed_* vs cstr is vs cstring_borrowed;"
+        << std::endl
+        << "  std::string on those rows is owning (vs cstr is \"-\")."
+        << std::endl
+        << "  The borrowed buffer is built once, outside the timed loop."
+        << std::endl
+        ;
 #ifdef _WIN32
 
     std::cout
