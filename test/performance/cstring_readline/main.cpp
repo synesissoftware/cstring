@@ -584,6 +584,8 @@ int main(int /*argc*/, char* /*argv*/[])
     std::cout
         << "readline suite (#acts = lines, so ns/op is per line;"
         << std::endl
+        << "  percentiles are per iteration, the whole file;"
+        << std::endl
         << "  cstring_readline is fgetc + one-character append;"
         << std::endl
         << "  fgets: fresh allocates line_len+4 per line, pre-reserved"

@@ -307,9 +307,9 @@ display_banner(
         << "  small sizes favour std::string. Prefer Release builds."
         << std::endl
 #ifdef HAS_P99
-        << "  p99: percentiles are per call; ns/op is one start/stop"
+        << "  p99: p50/p90/p99/max are one iteration, not divided by #acts."
         << std::endl
-        << "  around the iteration loop."
+        << "  ns/op is one start/stop around the loop, then divided by #acts."
         << std::endl
         << "  vs cstr is \"-\" when p50 is 0 and ns/op does not grow with size."
         << std::endl
@@ -454,13 +454,13 @@ display_results_title()
         << std::setw(10) << std::right << "vs cstr"
 #ifdef HAS_P99
         << '\t'
-        << std::setw(10) << std::right << "p50"
+        << std::setw(10) << std::right << "p50/iter"
         << '\t'
-        << std::setw(10) << std::right << "p90"
+        << std::setw(10) << std::right << "p90/iter"
         << '\t'
-        << std::setw(10) << std::right << "p99"
+        << std::setw(10) << std::right << "p99/iter"
         << '\t'
-        << std::setw(10) << std::right << "max"
+        << std::setw(10) << std::right << "max/iter"
 #endif /* HAS_P99 */
         << '\t'
         << std::setw(14) << std::right << "anchor"
