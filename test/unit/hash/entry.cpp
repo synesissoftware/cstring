@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.unit.cstring.hash/entry.cpp
+ * File:    test/unit/hash/entry.cpp
  *
  * Purpose: Unit-tests for cstring hashing extensions.
  *
@@ -49,14 +49,14 @@
 namespace
 {
 
-    static void test_null_and_empty(void);
-    static void test_fnv1a_known_vectors(void);
-    static void test_djb2_known_vectors(void);
-    static void test_case_insensitivity(void);
-    static void test_single_character(void);
-    static void test_long_string(void);
-    static void test_slices(void);
-    static void test_cpp_shims(void);
+    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void);
+    static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void);
+    static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void);
+    static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void);
+    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void);
+    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void);
+    static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
+    static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void);
 } // anonymous namespace
 
 
@@ -73,14 +73,14 @@ int main(int argc, char* argv[])
 
     if (XTESTS_START_RUNNER("test.unit.cstring.hash", verbosity))
     {
-        XTESTS_RUN_CASE(test_null_and_empty);
-        XTESTS_RUN_CASE(test_fnv1a_known_vectors);
-        XTESTS_RUN_CASE(test_djb2_known_vectors);
-        XTESTS_RUN_CASE(test_case_insensitivity);
-        XTESTS_RUN_CASE(test_single_character);
-        XTESTS_RUN_CASE(test_long_string);
-        XTESTS_RUN_CASE(test_slices);
-        XTESTS_RUN_CASE(test_cpp_shims);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY);
+        XTESTS_RUN_CASE(TEST_cstring_hash_fnv1a_KNOWN_VECTORS);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_KNOWN_VECTORS);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES);
+        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci);
 
         XTESTS_PRINT_RESULTS();
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 namespace
 {
 
-static void test_null_and_empty(void)
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
 {
     struct cstring_t const* pcs_null = NULL;
     cstring_t               null_cs = { 0, NULL, 0, 0 };
@@ -159,7 +159,7 @@ static void test_null_and_empty(void)
     cstring_destroy(&created_empty);
 }
 
-static void test_fnv1a_known_vectors(void)
+static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void)
 {
     /* Known FNV-1a 64-bit test vectors:
      *   ""       -> 0xcbf29ce484222325ULL
@@ -185,7 +185,7 @@ static void test_fnv1a_known_vectors(void)
     cstring_destroy(&cs_foobar);
 }
 
-static void test_djb2_known_vectors(void)
+static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void)
 {
     /* Known djb2 test vectors:
      *   ""       -> 5381ULL
@@ -211,7 +211,7 @@ static void test_djb2_known_vectors(void)
     cstring_destroy(&cs_foobar);
 }
 
-static void test_case_insensitivity(void)
+static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void)
 {
     /* Buffer checks */
     uint64_t djb2_ci_base = cstring_hash_djb2_len_ci(CSTRING_T_("Test"), 4);
@@ -263,7 +263,7 @@ static void test_case_insensitivity(void)
     cstring_destroy(&cs4);
 }
 
-static void test_single_character(void)
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void)
 {
     /* Letters */
     TEST_INT_EQ(cstring_hash_djb2_len_ci(CSTRING_T_("a"), 1), cstring_hash_djb2_len_ci(CSTRING_T_("A"), 1));
@@ -287,7 +287,7 @@ static void test_single_character(void)
     TEST_INT_EQ(cstring_hash_fnv1a_len(CSTRING_T_(" "), 1), cstring_hash_fnv1a_len_ci(CSTRING_T_(" "), 1));
 }
 
-static void test_long_string(void)
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
 {
     cstring_char_t long_pattern_mixed[1025];
     cstring_char_t long_pattern_lower[1025];
@@ -339,7 +339,7 @@ static void test_long_string(void)
     cstring_destroy(&cs_lower);
 }
 
-static void test_slices(void)
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
 {
     cstring_char_t const text[] = CSTRING_T_("The quick brown Fox jumps over the lazy Dog.");
     size_t const         total_len = sizeof(text) / sizeof(text[0]) - 1;
@@ -369,7 +369,7 @@ static void test_slices(void)
     cstring_destroy(&cs);
 }
 
-static void test_cpp_shims(void)
+static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void)
 {
     cstring_t cs;
     CSTRING_RC rc = cstring_create(&cs, CSTRING_T_("Hello World"));
