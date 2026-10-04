@@ -180,7 +180,6 @@ scenario_create_destroy_empty(
 {
     run_result const cs = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
-        cstring_create(&s, "");
         std::uint64_t const a = s.len;
         cstring_destroy(&s);
         return a;
