@@ -245,10 +245,18 @@ read_all_getline(
     return anchor;
 }
 
+/* Pre-reserved keeps one buffer of line_len + 4 (content, CR, LF, NUL).
+ * Fresh allocates that size again for each line. Reuse keeps one 4096-byte
+ * buffer and stitches a read that does not end in a newline, holding a CR
+ * that falls on a chunk boundary until the next read.
+ */
+size_t const FGETS_REUSE_BUF = 4096u;
+
 std::uint64_t
 read_all_fgets(
-    char const* path
-,   size_t      line_len
+    char const*     path
+,   size_t          line_len
+,   instance_mode_t mode
 )
 {
     FILE* const f = std::fopen(path, "rb");
@@ -258,25 +266,113 @@ read_all_fgets(
         return 0;
     }
 
-    /* line_len + 4 covers content, optional CR, LF, and the NUL. */
-    std::vector<char> buf(line_len + 4u);
-    std::uint64_t anchor = 0;
+    size_t const buf_n =
+        (INSTANCE_REUSE == mode) ? FGETS_REUSE_BUF : (line_len + 4u)
+        ;
 
-    while (NULL != std::fgets(&buf[0], static_cast<int>(buf.size()), f))
+    std::vector<char>   buf;
+    std::uint64_t       anchor      =   0;
+    size_t              content_len =   0;
+    unsigned char       head        =   0;
+    bool                pending_cr  =   false;
+
+    if (INSTANCE_FRESH != mode)
     {
-        size_t n = std::strlen(&buf[0]);
+        buf.resize(buf_n);
+    }
 
-        if (0 != n && '\n' == buf[n - 1u])
+    for (;;)
+    {
+        if (INSTANCE_FRESH == mode)
         {
-            --n;
-
-            if (0 != n && '\r' == buf[n - 1u])
-            {
-                --n;
-            }
+            buf.resize(buf_n);
         }
 
-        anchor += line_anchor(n, content_head(&buf[0], n));
+        if (NULL == std::fgets(&buf[0], static_cast<int>(buf.size()), f))
+        {
+            if (pending_cr)
+            {
+                if (0 == content_len)
+                {
+                    head = static_cast<unsigned char>('\r');
+                }
+
+                ++content_len;
+                pending_cr = false;
+            }
+
+            if (0 != content_len)
+            {
+                anchor += line_anchor(content_len, head);
+            }
+
+            break;
+        }
+
+        size_t const    n           =   std::strlen(&buf[0]);
+        bool            line_done   =   false;
+
+        for (size_t i = 0; n != i; ++i)
+        {
+            unsigned char const ch = static_cast<unsigned char>(buf[i]);
+
+            if (pending_cr)
+            {
+                pending_cr = false;
+
+                if ('\n' == ch)
+                {
+                    line_done = true;
+
+                    break;
+                }
+
+                if (0 == content_len)
+                {
+                    head = static_cast<unsigned char>('\r');
+                }
+
+                ++content_len;
+            }
+
+            if ('\n' == ch)
+            {
+                line_done = true;
+
+                break;
+            }
+
+            if ('\r' == ch)
+            {
+                pending_cr = true;
+
+                continue;
+            }
+
+            if (0 == content_len)
+            {
+                head = ch;
+            }
+
+            ++content_len;
+        }
+
+        if (!line_done)
+        {
+            continue;
+        }
+
+        anchor += line_anchor(content_len, (0 == content_len) ? 0u : head);
+        content_len = 0;
+        head = 0;
+        pending_cr = false;
+
+        if (INSTANCE_FRESH == mode)
+        {
+            std::vector<char> empty;
+
+            buf.swap(empty);
+        }
     }
 
     std::fclose(f);
@@ -446,8 +542,8 @@ scenario_readline(
         return read_all_getline(path, line_len, mode);
     });
 
-    run_result const fg = time_iterations(num_trials, num_warm_loops, [path, line_len]() -> std::uint64_t {
-        return read_all_fgets(path, line_len);
+    run_result const fg = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
+        return read_all_fgets(path, line_len, mode);
     });
 
     run_result const raw = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
@@ -490,7 +586,9 @@ int main(int /*argc*/, char* /*argv*/[])
         << std::endl
         << "  cstring_readline is fgetc + one-character append;"
         << std::endl
-        << "  fgets uses a buffer sized to the known line):"
+        << "  fgets: fresh allocates line_len+4 per line, pre-reserved"
+        << std::endl
+        << "  keeps that buffer, reuse keeps a 4 KB buffer and stitches):"
         << std::endl
         ;
 
