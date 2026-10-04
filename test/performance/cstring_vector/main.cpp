@@ -71,6 +71,7 @@ emit_row(
 ,   size_t              num_actions
 ,   run_result const&   r
 ,   interval_t          cstring_tm_ns
+,   bool                comparable = true
 )
 {
     char const* const baselines[] =
@@ -86,7 +87,7 @@ emit_row(
     ,   num_iterations
     ,   num_actions
     ,   r
-    ,   cstring_tm_ns
+    ,   comparable ? cstring_tm_ns : interval_t(0)
     ,   baselines
     ,   STLSOFT_NUM_ELEMENTS(baselines)
     );
@@ -399,7 +400,51 @@ scenario_prepend_one_by_one(
 }
 #ifdef HAS_P99
 
-void
+template <typename F>
+std::uint64_t
+sum_line_lengths(
+    size_t  count
+,   F       length_at
+)
+{
+    std::uint64_t a = count;
+
+    for (size_t i = 0; count != i; ++i)
+    {
+        a += length_at(i);
+    }
+
+    return a;
+}
+
+bool
+file_anchors_agree(
+    size_t              num_lines
+,   run_result const&   cs
+,   run_result const&   gl
+,   run_result const&   fl
+)
+{
+    if (0 != cs.anchor &&
+        cs.anchor == gl.anchor &&
+        cs.anchor == fl.anchor)
+    {
+        return true;
+    }
+
+    std::cerr
+        << "anchor mismatch in file_read_all_lines"
+        << " lines " << num_lines
+        << ": cstring_vector_readLines=" << cs.anchor
+        << " ifstream+getline=" << gl.anchor
+        << " platformstl::file_lines=" << fl.anchor
+        << std::endl
+        ;
+
+    return false;
+}
+
+bool
 scenario_file_lines_vs_readlines(
     size_t num_lines
 ,   size_t line_len
@@ -413,13 +458,19 @@ scenario_file_lines_vs_readlines(
             << "failed to write " << TEST_FILE_NAME << "; skipping file_lines suite"
             << std::endl
             ;
-        return;
+        return true;
     }
 
     std::cout
         << "\nfile_lines suite (" << num_lines << " lines x " << line_len
         << " chars; " << num_trials
         << " trials; filesystem-sensitive — use p99 percentiles):"
+        << std::endl
+        << "  Owning peer is ifstream+getline. platformstl::file_lines is"
+        << std::endl
+        << "  timed, and its vs cstr column is \"-\"."
+        << std::endl
+        << "  Anchor is line count plus the sum of line lengths."
         << std::endl
         ;
 
@@ -432,16 +483,21 @@ scenario_file_lines_vs_readlines(
 
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
-        size_t num_read = 0;
-        cstring_vector_readLines(f, &v, &num_read);
-        std::uint64_t const a = v.len + num_read;
+        cstring_vector_readLines(f, &v, NULL);
+        std::uint64_t const a = sum_line_lengths(
+            v.len
+        ,   [&v](size_t i) -> size_t
+            {
+                return (NULL != v.ptr) ? v.ptr[i].len : 0u;
+            }
+        );
         cstring_vector_destroy(&v);
         std::fclose(f);
         return a;
     });
 
     run_result const gl = time_iterations(num_trials, num_warm_loops, []() -> std::uint64_t {
-        std::ifstream in(TEST_FILE_NAME);
+        std::ifstream in(TEST_FILE_NAME, std::ios::in | std::ios::binary);
 
         if (!in)
         {
@@ -453,22 +509,42 @@ scenario_file_lines_vs_readlines(
 
         while (std::getline(in, line))
         {
-            lines.push_back(std::move(line));
+            lines.push_back(line);
+            line.clear();
         }
 
-        return lines.size() + (lines.empty() ? 0u : lines[0].size());
+        return sum_line_lengths(
+            lines.size()
+        ,   [&lines](size_t i) -> size_t
+            {
+                return lines[i].size();
+            }
+        );
     });
 
     run_result const fl = time_iterations(num_trials, num_warm_loops, []() -> std::uint64_t {
         platformstl::file_lines_a lines(TEST_FILE_NAME);
-        return lines.size() + (lines.empty() ? 0u : lines[0].size());
+        return sum_line_lengths(
+            lines.size()
+        ,   [&lines](size_t i) -> size_t
+            {
+                return lines[i].size();
+            }
+        );
     });
 
-    emit_row("file_read_all_lines", num_lines, IMPL_READLINES, num_trials, 1, cs, cs.tm_ns);
-    emit_row("file_read_all_lines", num_lines, IMPL_GETLINE, num_trials, 1, gl, cs.tm_ns);
-    emit_row("file_read_all_lines", num_lines, IMPL_FILE_LINES, num_trials, 1, fl, cs.tm_ns);
+    bool const ok = file_anchors_agree(num_lines, cs, gl, fl);
+
+    if (ok)
+    {
+        emit_row("file_read_all_lines", num_lines, IMPL_READLINES, num_trials, 1, cs, cs.tm_ns);
+        emit_row("file_read_all_lines", num_lines, IMPL_GETLINE, num_trials, 1, gl, cs.tm_ns);
+        emit_row("file_read_all_lines", num_lines, IMPL_FILE_LINES, num_trials, 1, fl, cs.tm_ns, false);
+    }
 
     std::remove(TEST_FILE_NAME);
+
+    return ok;
 }
 #endif /* HAS_P99 */
 } // anonymous namespace
@@ -503,8 +579,11 @@ int main(int /*argc*/, char* /*argv*/[])
 
     size_t const file_trials = cstring_perf::default_file_trials();
 
-    scenario_file_lines_vs_readlines(1000u, 64u, file_trials, num_warm_loops);
-    scenario_file_lines_vs_readlines(5000u, 80u, file_trials, num_warm_loops);
+    if (!scenario_file_lines_vs_readlines(1000u, 64u, file_trials, num_warm_loops) ||
+        !scenario_file_lines_vs_readlines(5000u, 80u, file_trials, num_warm_loops))
+    {
+        return EXIT_FAILURE;
+    }
 #else /* ? HAS_P99 */
 
     std::cout
