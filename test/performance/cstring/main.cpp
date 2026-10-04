@@ -111,9 +111,14 @@ emit_row(
     );
 }
 
-/* Windows rows share the scenario's realloc cstring total as the ratio
- * baseline. createEx / createLenEx selects the arena. Flags on a live
- * instance must not be written by the caller.
+/* Windows arena rows are ratioed against realloc cstring. createEx /
+ * createLenEx selects the arena. Flags on a live instance must not be
+ * written by the caller.
+ *
+ * When baseline_matches_body is true, body() starts with createEx("") and
+ * the printed cstring row does not. Time body() on the realloc arena, emit
+ * that total as cstring_win_realloc, and ratio the other arenas against it.
+ * std::string and raw_realloc stay against the caller's cstring total.
  */
 template <typename F>
 void
@@ -125,9 +130,36 @@ emit_windows_cstring_arenas(
 ,   size_t      num_actions
 ,   interval_t  baseline_ns
 ,   F           body
+,   bool        baseline_matches_body = false
 )
 {
 #ifdef _WIN32
+
+    interval_t arena_baseline_ns = baseline_ns;
+
+    if (baseline_matches_body)
+    {
+        run_result const base = time_iterations(
+            num_iterations
+        ,   num_warm_loops
+        ,   [&body]() -> std::uint64_t
+            {
+                return body(CSTRING_F_USE_REALLOC);
+            }
+        );
+
+        arena_baseline_ns = base.tm_ns;
+
+        emit_row(
+            scenario
+        ,   size
+        ,   "cstring_win_realloc"
+        ,   num_iterations
+        ,   num_actions
+        ,   base
+        ,   arena_baseline_ns
+        );
+    }
 
     for (size_t i = 0; STLSOFT_NUM_ELEMENTS(WINDOWS_CSTRING_ARENAS) != i; ++i)
     {
@@ -149,7 +181,7 @@ emit_windows_cstring_arenas(
         ,   num_iterations
         ,   num_actions
         ,   r
-        ,   baseline_ns
+        ,   arena_baseline_ns
         );
     }
 #else /* ? _WIN32 */
@@ -161,6 +193,7 @@ emit_windows_cstring_arenas(
     ((void)num_actions);
     ((void)baseline_ns);
     ((void)body);
+    ((void)baseline_matches_body);
 #endif /* _WIN32 */
 }
 } // anonymous namespace
@@ -342,6 +375,7 @@ scenario_assign_len_grow(
 
             return a;
         }
+    ,   true
     );
     emit_row("assign_len_grow", n, IMPL_STD, num_iterations, 1, st, cs.tm_ns);
     emit_row("assign_len_grow", n, IMPL_RAW, num_iterations, 1, raw, cs.tm_ns);
@@ -422,6 +456,7 @@ scenario_append_len_growth(
 
             return a;
         }
+    ,   true
     );
     emit_row(scenario, chunk, IMPL_STD, num_iterations, num_appends, st, cs.tm_ns);
     emit_row(scenario, chunk, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
@@ -504,6 +539,7 @@ scenario_append_len_reserved(
 
             return a;
         }
+    ,   true
     );
     emit_row("append_len_reserved", n, IMPL_STD, num_iterations, num_appends, st, cs.tm_ns);
     emit_row("append_len_reserved", n, IMPL_RAW, num_iterations, num_appends, raw, cs.tm_ns);
@@ -772,6 +808,10 @@ int main(int /*argc*/, char* /*argv*/[])
         << "  Windows arenas (ratio vs realloc cstring): cstring_win_global,"
         << std::endl
         << "  cstring_win_processheap, cstring_win_comtask."
+        << std::endl
+        << "  assign/append ratios use cstring_win_realloc: the same"
+        << std::endl
+        << "  createEx(\"\") body on the realloc arena."
         << std::endl
         << "  cstring_win_comtask loads and unloads OLE32 when no COM-task"
         << std::endl
