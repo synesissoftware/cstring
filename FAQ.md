@@ -96,10 +96,10 @@ require **STLSoft** and **xTests** (and may optionally recognise **shwild**).
 ## Q5: "How do I build without the C++ examples and tests?"
 
 Pass `--no-cpp` (or `-C`) to **prepare_cmake.sh**, which sets CMake
-`NO_CSTRING_CPP_API=ON`. That omits C++ examples and remaining C++ tests.
+`NO_CSTRING_CPP_API=ON`. That omits C++ examples and **test.unit.cstring.cxx**.
 
-The **C** unit-tests still require **STLSoft** and **xTests** unless you also
-pass `--disable-testing` / `-T`.
+The **C** unit-tests, including **test.unit.cstring**, still require
+**STLSoft** and **xTests** unless you also pass `--disable-testing` / `-T`.
 
 
 ## Q6: "Where are the examples?"

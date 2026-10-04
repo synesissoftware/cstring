@@ -8,7 +8,7 @@
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2025, Matthew Wilson and Synesis Information Systems
+ * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
  * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
  * All rights reserved.
  *
@@ -51,6 +51,7 @@
 /* cstring header files */
 
 #include <cstring/cstring.vector.h>
+#include "internal.h"
 
 #ifndef CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
 # include <cstring/internal/safestr.h>
@@ -58,7 +59,6 @@
 
 /* Standard C header files */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,6 +76,92 @@
  */
 
 #define CSTRING_VECTOR_ASSERT(expr)                         assert(expr)
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * helper functions
+ */
+
+/** Zero-fills \c n slots to the empty \c cstring_t_DEFAULT form.
+ *
+ * Equivalent to calling \c cstring_init on each slot; that function always
+ * succeeds and only clears the four fields.
+ */
+static
+void
+cstring_vector_init_empty_slots_(
+    cstring_t*  slots
+,   size_t      n
+)
+{
+    if (0 != n)
+    {
+        CSTRING_VECTOR_ASSERT(NULL != slots);
+
+        memset(slots, 0, sizeof(cstring_t) * n);
+    }
+}
+
+/** Destroys live slots only; already-empty slots are left alone.
+ *
+ * An empty slot (as from \c cstring_init / \c cstring_t_DEFAULT) has a NULL
+ * pointer, zero length, zero capacity, and zero flags. Skipping those avoids
+ * a per-element call on \c cstring_vector_create / destroy of empty vectors.
+ */
+static
+CSTRING_RC
+cstring_vector_destroy_slots_(
+    cstring_t*  slots
+,   size_t      n
+)
+{
+    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
+    size_t      i;
+
+    if (0 == n)
+    {
+        return CSTRING_RC_SUCCESS;
+    }
+
+    CSTRING_VECTOR_ASSERT(NULL != slots);
+
+    for (i = 0; i != n; ++i)
+    {
+        cstring_t* const pcs = slots + i;
+
+        if (0 != pcs->len ||
+            NULL != pcs->ptr ||
+            0 != pcs->capacity ||
+            0 != pcs->flags)
+        {
+            CSTRING_RC const rc2 = cstring_destroy(pcs);
+
+            if (CSTRING_RC_SUCCESS != rc2 &&
+                CSTRING_RC_SUCCESS == rc)
+            {
+                rc = rc2;
+            }
+        }
+    }
+
+    return rc;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * compiler warnings
+ */
+
+#if defined(_MSC_VER)
+# if _MSC_VER >= 1200
+#  pragma warning(push)
+# endif /* _MSC_VER >= 1200 */
+# if _MSC_VER >= 1310
+#  if !defined(__COMO__)
+#   pragma warning(disable : 4055)
+#  endif /* !__COMO__ */
+# endif /* _MSC_VER >= 1310 */
+#endif /* compiler */
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -114,7 +200,7 @@ cstring_vector_init(
 ,   size_t              minCapacity
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == minCapacity)
     {
@@ -155,21 +241,11 @@ cstring_vector_destroy(
     cstring_vector_t*   pcsv
 )
 {
-    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
-    size_t      i;
+    CSTRING_RC rc;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
-    for (i = 0; i != pcsv->len; ++i)
-    {
-        CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
-
-        if (CSTRING_RC_SUCCESS != rc2 &&
-            CSTRING_RC_SUCCESS == rc)
-        {
-            rc = rc2;
-        }
-    }
+    rc = cstring_vector_destroy_slots_(pcsv->ptr, pcsv->len);
 
     free(pcsv->ptr);
 
@@ -187,22 +263,12 @@ cstring_vector_truncate(
 ,   size_t              len
 )
 {
-    CSTRING_RC  rc = CSTRING_RC_SUCCESS;
-    size_t      i;
+    CSTRING_RC rc;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(len <= pcsv->len);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(len <= pcsv->len);
 
-    for (i = len; i != pcsv->len; ++i)
-    {
-        CSTRING_RC rc2 = cstring_destroy(pcsv->ptr + i);
-
-        if (CSTRING_RC_SUCCESS != rc2 &&
-            CSTRING_RC_SUCCESS == rc)
-        {
-            rc = rc2;
-        }
-    }
+    rc = cstring_vector_destroy_slots_(pcsv->ptr + len, pcsv->len - len);
 
     pcsv->len = len;
 
@@ -215,7 +281,7 @@ cstring_vector_create(
 ,   size_t              initialSize
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     if (cstring_vector_DEFAULT_CAPACITY == initialSize)
     {
@@ -227,36 +293,10 @@ cstring_vector_create(
 
         if (CSTRING_RC_SUCCESS == rc)
         {
-            size_t i;
+            CSTRING_ASSERT(pcsv->capacity >= initialSize);
 
-            CSTRING_VECTOR_ASSERT(pcsv->capacity >= initialSize);
+            cstring_vector_init_empty_slots_(pcsv->ptr, initialSize);
 
-            for (i = 0; i != initialSize; ++i)
-            {
-                CSTRING_RC rc2 = cstring_init(pcsv->ptr + i);
-
-                if (CSTRING_RC_SUCCESS != rc2)
-                {
-                    while (0 != i)
-                    {
-                        cstring_destroy(pcsv->ptr + (i - 1));
-
-                        --i;
-                    }
-
-                    rc = rc2;
-
-                    pcsv->len = 0;
-
-                    cstring_vector_destroy(pcsv);
-
-                    break;
-                }
-            }
-        }
-
-        if (CSTRING_RC_SUCCESS == rc)
-        {
             pcsv->len = initialSize;
         }
 
@@ -272,8 +312,8 @@ cstring_vector_insertAt(
 ,   size_t              numStrings
 )
 {
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
-    CSTRING_VECTOR_ASSERT(NULL != strings || 0 == numStrings);
+    CSTRING_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != strings || 0 == numStrings);
 
     if (0 == numStrings)
     {
@@ -287,7 +327,8 @@ cstring_vector_insertAt(
 
         if (newSize > pcsv->capacity)
         {
-            cstring_t* newPtr = realloc(pcsv->ptr, sizeof(cstring_t) * newSize);
+            size_t const    newCapacity =   (newSize * 3) / 2;
+            cstring_t*      newPtr      =   realloc(pcsv->ptr, sizeof(cstring_t) * newCapacity);
 
             if (NULL == newPtr)
             {
@@ -296,7 +337,7 @@ cstring_vector_insertAt(
             else
             {
                 pcsv->ptr       =   newPtr;
-                pcsv->capacity  =   newSize;
+                pcsv->capacity  =   newCapacity;
             }
         }
 
@@ -327,11 +368,9 @@ cstring_vector_insertAt(
 
                 if (CSTRING_RC_SUCCESS != rc2)
                 {
-                    while (0 != i)
+                    for (; 0 != i; --i)
                     {
                         cstring_destroy(pcsv->ptr + position + (i - 1));
-
-                        --i;
                     }
 
                     rc = rc2;
@@ -373,7 +412,7 @@ cstring_vector_readLines(
     size_t      numLinesRead_;
     size_t      initialLen;
 
-    CSTRING_VECTOR_ASSERT(NULL != pcsv);
+    CSTRING_ASSERT(NULL != pcsv);
 
     initialLen = pcsv->len;
 

@@ -1,7 +1,7 @@
 if(_BUILD_AS_WIN32)
 
-	add_subdirectory(example.cpp.cstring.dynload)
-	add_subdirectory(example.cpp.HGLOBAL_on_x64)
+	add_subdirectory(cstring.dynload)
+	add_subdirectory(cstring.global_memory)
 endif(_BUILD_AS_WIN32)
 
 

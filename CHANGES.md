@@ -1,6 +1,32 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.2.0 - 6th October 2026
+
+* performance optimisations;
+
+
+## 4.0.19 - 4th October 2026
+
+* Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
+* Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
+* Freed a zero-size realloc-arena block on every platform (`realloc(pv, 0)` allocates on some), leaving a `NULL` pointer unchanged;
+* `cstring_readline()` returns the result of its opening `cstring_truncate()`, so a readonly destination yields `CSTRING_RC_READONLY` for an empty line or immediate end of file, and the payload and stream position are left unchanged;
+* Suppressed the GCC 15 `-Wfree-nonheap-object` false positive on inlined `stlsoft::auto_buffer` destruction in **test.performance.cstring**;
+* Documented memory contracts, allocators, and a default-use sketch in **README.md**, including `cstring_getStatusCodeStringLength()`, `CSTRING_VER`, and the default and index macros;
+* Added **test.performance.cstring_readline** (filesystem timings gated on **p99**);
+* Added **test.component.cstring_readline** case `TEST_cstring_readline_READONLY_RETAINS_PAYLOAD`;
+* Added single-line LF, CRLF, and CR cases to **test.component.cstring_readline**; **test.component.cstring_vector_readLines** splits an embedded CR into its own line;
+* Added borrowed-fixed construct and assign scenarios to **test.performance.cstring**, using `stlsoft::auto_buffer` for the borrowed anchor;
+* Split regular unit-test into **test.unit.cstring** (C) and **unit.cstring.cxx** (C++);
+* Shared component file fixtures in **test/component/component_fixture.hpp**, and shared `time_iterations`, `emit_row`, and `write_lines_file` in **test/performance/perf_harness.hpp**;
+* Named unit cases `TEST_` in shouting snake case, keeping each API or type in its real spelling, and switched assertions to the terse xTests API;
+* Passed `temp_file::CloseOnOpen` in **test.component.cstring_readline** so the creating handle is closed before `fopen`, which Windows otherwise rejects as a sharing violation;
+* Removed empty unit cases and unused temporary-file names;
+* Shortened unit-test directories under **test/unit/** to the subject: **auto-buffer** (**test.unit.auto-buffer**, formerly **test.unit.cstring.auto_buffer**), **cstring.cxx** (**test.unit.cstring.cxx**, formerly **test.unit.cstring.1**), **insert-replace** (**test.unit.insert-replace**, formerly **test.unit.cstring.2**), **status-codes** (**test.unit.status-codes**, formerly **test.unit.cstring_getStatusCodeString**), and **cstring_vector** (**test.unit.cstring_vector**);
+* Shortened example directories under **examples/** to the subject (**auto-buffer**, **cstring**, **cstring_create**, **cstring_vector**, **cstring.dynload**, **cstring.global_memory**), with CMake targets **example.c.cstring.auto_buffer**, **example.c.cstring**, **example.c.cstring_create**, **example.c.cstring_vector**, **example.cpp.cstring.dynload**, and **example.cpp.cstring.global_memory** (formerly **example.cpp.HGLOBAL_on_x64**);
+
+
 ## 4.0.18 - 29th September 2026
 
 * Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;

@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 4th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     90
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     94
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -103,6 +103,8 @@
 # define CSTRING_VER_4_0_16     0x040010ff
 # define CSTRING_VER_4_0_17     0x040011ff
 # define CSTRING_VER_4_0_18     0x040012ff
+# define CSTRING_VER_4_0_19     0x040013ff
+# define CSTRING_VER_4_2_0_A1   0x04020041
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -122,9 +124,9 @@
  */
 
 #define CSTRING_VER_MAJOR                                   4
-#define CSTRING_VER_MINOR                                   0
-#define CSTRING_VER_PATCH                                   18
-#define CSTRING_VER_ALPHABETA                               0xFF
+#define CSTRING_VER_MINOR                                   2
+#define CSTRING_VER_PATCH                                   0
+#define CSTRING_VER_ALPHABETA                               0x41
 
 #define CSTRING_VER \
     (0\
@@ -827,16 +829,20 @@ cstring_swap(
 
 /** Reads in a line of text from the given text stream
  *
+ * A line ends at LF, at CRLF, or at a lone CR, including a CR at end of
+ * stream. The terminator is not stored. A lone CR pushes the next character
+ * back onto the stream;
+ *
  * \param stm The stream from which the line will be read;
  * \param pcs The initialised string instance into which the line will be
  *   stored;
  * \param numRead An optional pointer to a variable to receive the number of
- *   characters appended to the string. May be NULL;
+ *   characters read from the stream, including any terminator. May be NULL;
  *
  * \retval CSTRING_RC_INVALIDSTREAM The stream was not valid (as tested by
  *   <code>ferror()</code>);
- * \retval CSTRING_RC_SUCCESS A line terminated by a carriage return was
- *   read in;
+ * \retval CSTRING_RC_SUCCESS A line terminated by CR, LF, or CRLF was read
+ *   in;
  * \retval CSTRING_RC_EOF A line terminated by the end-of-file was read in;
  * \retval -other- Any other value returned by cstring_appendLen();
  *

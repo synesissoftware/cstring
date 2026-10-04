@@ -1,10 +1,9 @@
 # cstring <!-- omit in toc -->
 
-**C**-style **string**s is a small, standalone library, that provides extensible C-style string instances and extensible arrays of such, for Unix and Windows.
+Small standalone C library that provides extensible C-style strings and extensible arrays of those strings, for Unix and Windows.
 
 
 ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B&logoColor=white)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub release](https://img.shields.io/github/v/release/synesissoftware/cstring.svg)](https://github.com/synesissoftware/cstring/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/synesissoftware/cstring)](https://github.com/synesissoftware/cstring/commits/master)
@@ -14,9 +13,14 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+- [Usage modes](#usage-modes)
+  - [Default use](#default-use)
+  - [Storage contract](#storage-contract)
+  - [Allocators](#allocators)
 - [Installation](#installation)
 - [Components](#components)
   - [Types](#types)
+  - [Constants](#constants)
   - [String API](#string-api)
     - [Status and capacity](#status-and-capacity)
     - [Creation/destruction functions](#creationdestruction-functions)
@@ -34,9 +38,79 @@
 
 ## Introduction
 
-**cstring** is a small, standalone library that provides extensible C-style string instances and extensible arrays of such, for Unix and Windows.
+**cstring** provides one resizeable string, `cstring_t`, and a vector of those strings, `cstring_vector_t`. A `cstring_t` is always a length, a pointer, a capacity, and flags. The flags select a memory contract. An owned growable string is the default. Fixed, borrowed, auto-buffer, and readonly are the other contracts. Which heap owns the memory is a separate choice: `realloc` by default, and the Windows heaps where those flags exist.
 
-The **C** API has no non-standard dependencies. Optional C++ examples and remaining C++ tests may be omitted with `--no-cpp` / `NO_CSTRING_CPP_API`. Building tests requires **STLSoft** and **xTests** (and may optionally recognise **shwild**).
+The **C** API has no non-standard dependencies. Building tests requires **STLSoft** and **xTests** (and may optionally recognise **shwild**).
+
+
+## Usage modes
+
+Ordinary code uses the default contract and never sets a flag. The other contracts exist so a caller can cap growth, write into a buffer they already have, or select a Windows heap, without a second string type.
+
+
+### Default use
+
+```c
+#include <cstring/cstring.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    cstring_t  cs;
+    CSTRING_RC rc = cstring_create(&cs, "Hello");
+
+    if (CSTRING_RC_SUCCESS != rc)
+    {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", cs.ptr);
+
+    cstring_destroy(&cs);
+
+    return EXIT_SUCCESS;
+}
+```
+
+
+### Storage contract
+
+Pass memory flags to `cstring_createEx()` or `cstring_createLenEx()`. For a borrowed buffer, `arena` is that buffer and `capacity` is its size. With no memory flags, those parameters are ignored and the string is an owned heap allocation.
+
+| Mode | Flags | Familiar form | If it cannot grow |
+| --- | --- | --- | --- |
+| Owned, growable | (none) | A heap `std::string`, or Rust `String` | `CSTRING_RC_OUTOFMEMORY` |
+| Owned, fixed | `CSTRING_F_MEMORY_IS_FIXED` | That same owned string, with a hard ceiling | `CSTRING_RC_EXCEEDFIXEDCAPACITY` |
+| Borrowed | `CSTRING_F_MEMORY_IS_BORROWED` (implies fixed) | A caller-owned `char buf[N]`, writable up to `N` | `CSTRING_RC_EXCEEDBORROWEDCAPACITY` |
+| Auto-buffer | `CSTRING_F_MEMORY_IS_BORROWED` \| `CSTRING_F_MEMORY_CAN_GROW_TO_HEAP` | **`stlsoft::auto_buffer`** / `llvm::SmallString` | Spills to the heap, then stays there |
+| Readonly | `CSTRING_F_MEMORY_IS_READONLY` | A frozen instance; with borrowed, `std::string_view` or Rust `&str` | `CSTRING_RC_READONLY` |
+
+`std::string` SSO keeps a small buffer inside the object; **cstring**'s auto-buffer uses a buffer you supply, of a size you choose, and `cstring_t` stays four fields; after a spill the instance stays on the heap (Rust's standard `String` has no SSO).
+
+* Owned, fixed, and borrowed (including Windows allocators, where the host has them): [**example.c.cstring**](./examples/c/cstring/);
+* Auto-buffer: [**example.c.cstring.auto_buffer**](./examples/c/auto-buffer/);
+* Win32 global memory: [**example.cpp.cstring.global_memory**](./examples/cpp/cstring.global_memory/).
+
+
+### Allocators
+
+The arena flags apply to memory the library owns: the default heap, a fixed owned buffer, and the heap side of an auto-buffer.
+
+| Arena | Flag | Where |
+| --- | --- | --- |
+| `realloc` | `CSTRING_F_USE_REALLOC` (the default) | Unix and Windows |
+| Win32 global memory | `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` | Windows |
+| Process heap | `CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY` | Windows |
+| COM task allocator | `CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY` | Windows |
+
+A few further rules:
+
+* `cstring_init()` stores `cstring_t_DEFAULT`. That instance does not need `cstring_destroy()`. Every `cstring_create*` does;
+* `cstring_yield2()` hands back an owned payload. Borrowed and readonly instances refuse it. A Windows DLL built on `realloc` returns `CSTRING_RC_CANNOTYIELDFROMSO`;
+* The character type is `char` unless `CSTRING_USE_WIDE_STRINGS` is set (normally both `UNICODE` and `_UNICODE` on Windows). `CSTRING_NO_USE_WIDE_STRINGS` forces `char`. That choice is made at compile time;
+* Custom arenas (`CSTRING_F_USE_CUSTOMARENAFUNCTIONS`) are declared and return `CSTRING_RC_CUSTOMARENANOTSUPPORTED`. `CSTRING_F_MEMORY_IS_OFFSET` is set by the implementation and is not a client mode.
 
 
 ## Installation
@@ -76,6 +150,15 @@ The C API is based around two structures:
   ```
 
 
+### Constants
+
+* `CSTRING_VER` — the composite library version;
+* `cstring_t_DEFAULT` — `{ 0, NULL, 0, 0 }`, an uninitialised `cstring_t`. `cstring_init()` assigns this;
+* `cstring_vector_t_DEFAULT` — the same shape for a `cstring_vector_t`;
+* `cstring_vector_DEFAULT_CAPACITY` — sentinel (`~(size_t)0`) passed to creators so the implementation chooses the capacity;
+* `CSTRING_FROM_END(x)` — reverse index for `cstring_insert()`, `cstring_insertLen()`, `cstring_replace()`, and `cstring_replaceLen()`;
+
+
 ### String API
 
 Defined in **cstring/cstring.h**:
@@ -84,6 +167,7 @@ Defined in **cstring/cstring.h**:
 #### Status and capacity
 
 * `cstring_getStatusCodeString()` — returns a nul-terminated description of a `CSTRING_RC` code;
+* `cstring_getStatusCodeStringLength()` — returns the length of that description, or 0 if the code is not recognised;
 * `cstring_setCapacity()` — adjusts capacity (subject to fixed / borrowed / readonly rules);
 * `cstring_yield2()` — yields ownership of the payload (and raw buffer) to the caller;
 
@@ -134,16 +218,16 @@ Defined in **cstring/cstring.vector.h**:
 
 ## Examples
 
-Examples live under **examples/** (`c/` and `cpp/`), each with a short **README.md**. Build them with `BUILD_EXAMPLES` (on by default); run via **run_all_examples.sh**.
+Examples live under **examples/** (`c/` and `cpp/`). The directory is the subject; the built program is `example.<lang>.<subject>`. Each has a short **README.md**. Build them with `BUILD_EXAMPLES` (on by default); run via **run_all_examples.sh**.
 
 | Example | Language | Notes |
 | ------- | -------- | ----- |
-| [**example.c.auto_buffer**](./examples/c/example.c.auto_buffer/) | C | Borrowed buffer that may grow to the heap |
-| [**example.c.cstring**](./examples/c/example.c.cstring/) | C | Core `cstring_t` create / assign / append / truncate / copy / swap |
-| [**example.c.cstring_create**](./examples/c/example.c.cstring_create/) | C | Minimal `cstring_create()` |
-| [**example.c.cstring_vector**](./examples/c/example.c.cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (input path or `--`; `SIS_EXAMPLE_SMOKE` enables no-arg demo) |
-| [**example.cpp.cstring.dynload**](./examples/cpp/example.cpp.cstring.dynload/) | C++ | Windows-only dynamic load of the cstring DLL |
-| [**example.cpp.HGLOBAL_on_x64**](./examples/cpp/example.cpp.HGLOBAL_on_x64/) | C++ | Windows-only `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` |
+| [**example.c.cstring**](./examples/c/cstring/) | C | Core `cstring_t` create / assign / append / truncate / copy / swap |
+| [**example.c.cstring.auto_buffer**](./examples/c/auto-buffer/) | C | Borrowed buffer that may grow to the heap |
+| [**example.c.cstring_create**](./examples/c/cstring_create/) | C | Minimal `cstring_create()` |
+| [**example.c.cstring_vector**](./examples/c/cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (input path or `--`; `SIS_EXAMPLE_SMOKE` enables no-arg demo) |
+| [**example.cpp.cstring.dynload**](./examples/cpp/cstring.dynload/) | C++ | Windows-only dynamic load of the cstring DLL |
+| [**example.cpp.cstring.global_memory**](./examples/cpp/cstring.global_memory/) | C++ | Windows-only `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` |
 
 
 ## Project Information
@@ -197,4 +281,3 @@ Projects in which **cstring** is used include:
 
 
 <!-- ########################### end of file ########################### -->
-
