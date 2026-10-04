@@ -1,15 +1,14 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    cstring.core.c
+ * File:    cstring.hash.c
  *
- * Purpose: The implementation of the cstring core API
+ * Purpose: The implementation of the cstring hash API
  *
- * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Created: 5th September 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
- * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
+ * Copyright (c) 2026, Matthew Wilson and Synesis Information Systems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +40,7 @@
  * ////////////////////////////////////////////////////////////////////// */
 
 
-/** \file cstring.core.c The implementation of the cstring core API
+/** \file cstring.hash.c The implementation of the cstring hash API
  */
 
 /* /////////////////////////////////////////////////////////////////////////

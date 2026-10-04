@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    cstring.vector.c
  *
- * Purpose: The implementation of the cstring.vector API
+ * Purpose: The implementation of the cstring vector API
  *
  * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
