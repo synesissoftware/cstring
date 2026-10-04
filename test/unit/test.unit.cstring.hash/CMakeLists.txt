@@ -1,1 +1,0 @@
-define_automated_test_program(test_unit_cstring_hash entry.cpp)
