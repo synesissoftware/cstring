@@ -121,20 +121,20 @@ scenario_create_destroy(
 ,   size_t num_warm_loops
 )
 {
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [n]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [n]() -> uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_create(&v, n);
-        std::uint64_t const a = v.len + v.capacity;
+        uint64_t const a = v.len + v.capacity;
         cstring_vector_destroy(&v);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [n]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [n]() -> uint64_t {
         std::vector<std::string> v(n);
         return v.size() + v.capacity();
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [n]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [n]() -> uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
         raw_vec_reserve(&v, n);
@@ -143,7 +143,7 @@ scenario_create_destroy(
         {
             v.ptr[i] = NULL;
         }
-        std::uint64_t const a = v.len + v.capacity;
+        uint64_t const a = v.len + v.capacity;
         raw_vec_destroy(&v);
         return a;
     });
@@ -164,7 +164,7 @@ scenario_append_one_by_one(
     cstring_t payload = make_cstring_payload(payload_len);
     std::string const payload_s = make_payload(payload_len);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
         for (size_t i = 0; k != i; ++i)
@@ -181,7 +181,7 @@ scenario_append_one_by_one(
                 ? v.ptr[v.len - 1u].ptr
                 : NULL
                 ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -190,7 +190,7 @@ scenario_append_one_by_one(
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> uint64_t {
         std::vector<std::string> v;
         for (size_t i = 0; k != i; ++i)
         {
@@ -204,7 +204,7 @@ scenario_append_one_by_one(
             ;
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
         for (size_t i = 0; k != i; ++i)
@@ -217,7 +217,7 @@ scenario_append_one_by_one(
         char const* volatile tail =
             (0 != v.len && NULL != v.ptr) ? v.ptr[v.len - 1u] : NULL
             ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -252,7 +252,7 @@ scenario_append_batch(
         payloads_s[i] = proto;
     }
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payloads, k]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payloads, k]() -> uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
         cstring_vector_append(&v, &payloads[0], k);
@@ -266,7 +266,7 @@ scenario_append_batch(
                 ? v.ptr[v.len - 1u].ptr
                 : NULL
                 ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -275,7 +275,7 @@ scenario_append_batch(
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payloads_s]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payloads_s]() -> uint64_t {
         std::vector<std::string> v;
         v.insert(v.end(), payloads_s.begin(), payloads_s.end());
         char const* volatile head = v.empty() ? NULL : v.front().data();
@@ -286,7 +286,7 @@ scenario_append_batch(
             ;
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payloads_s, payload_len, k]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payloads_s, payload_len, k]() -> uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
         raw_vec_reserve(&v, k);
@@ -300,7 +300,7 @@ scenario_append_batch(
         char const* volatile tail =
             (0 != v.len && NULL != v.ptr) ? v.ptr[v.len - 1u] : NULL
             ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -330,7 +330,7 @@ scenario_prepend_one_by_one(
     cstring_t payload = make_cstring_payload(payload_len);
     std::string const payload_s = make_payload(payload_len);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&payload, k]() -> uint64_t {
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
         for (size_t i = 0; k != i; ++i)
@@ -347,7 +347,7 @@ scenario_prepend_one_by_one(
                 ? v.ptr[v.len - 1u].ptr
                 : NULL
                 ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -356,7 +356,7 @@ scenario_prepend_one_by_one(
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [&payload_s, k]() -> uint64_t {
         std::vector<std::string> v;
         for (size_t i = 0; k != i; ++i)
         {
@@ -370,7 +370,7 @@ scenario_prepend_one_by_one(
             ;
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payload_s, payload_len, k]() -> uint64_t {
         raw_string_vector v;
         raw_vec_init(&v);
         for (size_t i = 0; k != i; ++i)
@@ -383,7 +383,7 @@ scenario_prepend_one_by_one(
         char const* volatile tail =
             (0 != v.len && NULL != v.ptr) ? v.ptr[v.len - 1u] : NULL
             ;
-        std::uint64_t const a =
+        uint64_t const a =
             v.len
             + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
             + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
@@ -401,13 +401,13 @@ scenario_prepend_one_by_one(
 #ifdef HAS_P99
 
 template <typename F>
-std::uint64_t
+uint64_t
 sum_line_lengths(
     size_t  count
 ,   F       length_at
 )
 {
-    std::uint64_t a = count;
+    uint64_t a = count;
 
     for (size_t i = 0; count != i; ++i)
     {
@@ -474,7 +474,7 @@ scenario_file_lines_vs_readlines(
         << std::endl
         ;
 
-    run_result const cs = time_iterations(num_trials, num_warm_loops, []() -> std::uint64_t {
+    run_result const cs = time_iterations(num_trials, num_warm_loops, []() -> uint64_t {
         FILE* f = std::fopen(TEST_FILE_NAME, "rb");
         if (NULL == f)
         {
@@ -484,7 +484,7 @@ scenario_file_lines_vs_readlines(
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
         cstring_vector_readLines(f, &v, NULL);
-        std::uint64_t const a = sum_line_lengths(
+        uint64_t const a = sum_line_lengths(
             v.len
         ,   [&v](size_t i) -> size_t
             {
@@ -496,7 +496,7 @@ scenario_file_lines_vs_readlines(
         return a;
     });
 
-    run_result const gl = time_iterations(num_trials, num_warm_loops, []() -> std::uint64_t {
+    run_result const gl = time_iterations(num_trials, num_warm_loops, []() -> uint64_t {
         std::ifstream in(TEST_FILE_NAME, std::ios::in | std::ios::binary);
 
         if (!in)
@@ -522,7 +522,7 @@ scenario_file_lines_vs_readlines(
         );
     });
 
-    run_result const fl = time_iterations(num_trials, num_warm_loops, []() -> std::uint64_t {
+    run_result const fl = time_iterations(num_trials, num_warm_loops, []() -> uint64_t {
         platformstl::file_lines_a lines(TEST_FILE_NAME);
         return sum_line_lengths(
             lines.size()

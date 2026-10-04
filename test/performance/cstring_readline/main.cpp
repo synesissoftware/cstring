@@ -119,13 +119,13 @@ emit_row(
     );
 }
 
-std::uint64_t
+uint64_t
 line_anchor(
     size_t          len
 ,   unsigned char   head
 )
 {
-    return static_cast<std::uint64_t>(len) + 1u + static_cast<std::uint64_t>(head);
+    return static_cast<uint64_t>(len) + 1u + static_cast<uint64_t>(head);
 }
 
 unsigned char
@@ -142,7 +142,7 @@ content_head(
     return static_cast<unsigned char>(p[0]);
 }
 
-std::uint64_t
+uint64_t
 read_all_cstring(
     char const*     path
 ,   size_t          line_len
@@ -156,8 +156,8 @@ read_all_cstring(
         return 0;
     }
 
-    cstring_t cs = cstring_t_DEFAULT;
-    std::uint64_t anchor = 0;
+    cstring_t   cs      =   cstring_t_DEFAULT;
+    uint64_t    anchor  =   0;
 
     if (INSTANCE_PRERESERVED == mode && 0 != line_len)
     {
@@ -203,7 +203,7 @@ read_all_cstring(
     return anchor;
 }
 
-std::uint64_t
+uint64_t
 read_all_getline(
     char const*     path
 ,   size_t          line_len
@@ -218,7 +218,7 @@ read_all_getline(
     }
 
     std::string line;
-    std::uint64_t anchor = 0;
+    uint64_t anchor = 0;
 
     if (INSTANCE_PRERESERVED == mode && 0 != line_len)
     {
@@ -252,7 +252,7 @@ read_all_getline(
  */
 size_t const FGETS_REUSE_BUF = 4096u;
 
-std::uint64_t
+uint64_t
 read_all_fgets(
     char const*     path
 ,   size_t          line_len
@@ -271,7 +271,7 @@ read_all_fgets(
         ;
 
     std::vector<char>   buf;
-    std::uint64_t       anchor      =   0;
+    uint64_t       anchor      =   0;
     size_t              content_len =   0;
     unsigned char       head        =   0;
     bool                pending_cr  =   false;
@@ -380,7 +380,7 @@ read_all_fgets(
     return anchor;
 }
 
-std::uint64_t
+uint64_t
 read_all_raw_fgetc(
     char const*     path
 ,   size_t          line_len
@@ -408,7 +408,7 @@ read_all_raw_fgetc(
         }
     }
 
-    std::uint64_t anchor = 0;
+    uint64_t anchor = 0;
     int previous = '\0';
 
     for (;;)
@@ -534,19 +534,19 @@ scenario_readline(
     size_t const            line_len    =   spec.line_len;
     instance_mode_t const   mode        =   spec.mode;
 
-    run_result const cs = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> uint64_t {
         return read_all_cstring(path, line_len, mode);
     });
 
-    run_result const gl = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
+    run_result const gl = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> uint64_t {
         return read_all_getline(path, line_len, mode);
     });
 
-    run_result const fg = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
+    run_result const fg = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> uint64_t {
         return read_all_fgets(path, line_len, mode);
     });
 
-    run_result const raw = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_trials, num_warm_loops, [path, line_len, mode]() -> uint64_t {
         return read_all_raw_fgetc(path, line_len, mode);
     });
 
