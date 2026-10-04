@@ -432,7 +432,6 @@ scenario_append_len_reserved(
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
-        cstring_create(&s, "");
         cstring_setCapacity(&s, n);
         for (size_t i = 0; num_appends != i; ++i)
         {
