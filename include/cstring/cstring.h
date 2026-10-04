@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     94
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     95
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -1234,10 +1234,15 @@ cstring_hash_fnv1a_len_ci(
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * string access shims
+ * language
  */
 
 #ifdef __cplusplus
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * string access shims
+ */
 
 inline
 cstring_char_t const*
@@ -1557,6 +1562,12 @@ namespace stlsoft
 
 } /* namespace stlsoft */
 # endif /* !_STLSOFT_NO_NAMESPACE */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * language
+ */
+
 #endif /* __cplusplus */
 
 
