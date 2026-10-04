@@ -297,6 +297,8 @@ display_banner(
 #ifdef HAS_P99
         << "  p99: available — per-op percentiles reported where timed."
         << std::endl
+        << "  vs cstr is \"-\" when p50 is 0 and ns/op does not grow with size."
+        << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", CSTRING_PERF_FILE_TRIALS"
         << ", SIS_PERFTESTS_GROUPGAPS."
@@ -551,8 +553,110 @@ impl_is_baseline(
     return false;
 }
 
+#ifdef HAS_P99
+
+struct prior_ns_op
+{
+    std::string scenario;
+    std::string impl;
+    size_t      size;
+    interval_t  ns_per_op;
+};
+
+inline
+bool
+median_sample_is_zero(
+    p99::histogram const& h
+)
+{
+    if (h.empty())
+    {
+        return false;
+    }
+
+    uint64_t p50 = 0;
+
+    if (!h.try_get_value_at_p50(&p50))
+    {
+        return false;
+    }
+
+    return 0 == p50;
+}
+
+inline
+interval_t
+ns_per_op(
+    interval_t  tm_ns
+,   size_t      num_iterations
+,   size_t      num_actions
+)
+{
+    size_t const denom =
+        (0 == num_iterations || 0 == num_actions)
+            ? 1u
+            : (num_iterations * num_actions)
+            ;
+
+    return tm_ns / denom;
+}
+
+/* p50 of 0 means the median sample did no timed work. The ratio is then
+ * suppressed when ns/op has not increased against the previous smaller size
+ * of the same scenario and implementation. The first such size is
+ * suppressed as well, because there is no growth to report.
+ */
+inline
+bool
+ratio_elided(
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+)
+{
+    interval_t const ns_op = ns_per_op(r.tm_ns, num_iterations, num_actions);
+
+    static std::vector<prior_ns_op> seen;
+    bool        have_prev   =   false;
+    interval_t  prev_ns     =   0;
+    size_t      prev_size   =   0;
+
+    for (size_t i = 0; seen.size() != i; ++i)
+    {
+        if (seen[i].scenario == scenario &&
+            seen[i].impl == impl &&
+            seen[i].size < size &&
+            (   !have_prev ||
+                seen[i].size > prev_size))
+        {
+            have_prev   =   true;
+            prev_size   =   seen[i].size;
+            prev_ns     =   seen[i].ns_per_op;
+        }
+    }
+
+    prior_ns_op row;
+
+    row.scenario    =   scenario;
+    row.impl        =   impl;
+    row.size        =   size;
+    row.ns_per_op   =   ns_op;
+    seen.push_back(row);
+
+    if (!median_sample_is_zero(r.hist))
+    {
+        return false;
+    }
+
+    return !have_prev || ns_op <= prev_ns;
+}
+#endif /* HAS_P99 */
+
 /* Baseline impl names are ratio 1.0. Every other impl is timed against
- * baseline_ns.
+ * baseline_ns. An elided ratio is reported as "-".
  */
 inline
 void
@@ -568,11 +672,28 @@ emit_row(
 ,   size_t              num_baselines
 )
 {
+#ifdef HAS_P99
+
+    bool const elided = ratio_elided(
+        scenario
+    ,   size
+    ,   impl
+    ,   num_iterations
+    ,   num_actions
+    ,   r
+    );
+#else /* ? HAS_P99 */
+
+    bool const elided = false;
+#endif /* HAS_P99 */
+
     double const ratio =
-        impl_is_baseline(impl, baseline_impls, num_baselines)
-            ? 1.0
-            : ratio_or_dash(r.tm_ns, baseline_ns)
-            ;
+        elided
+            ? -1.0
+            : impl_is_baseline(impl, baseline_impls, num_baselines)
+                ? 1.0
+                : ratio_or_dash(r.tm_ns, baseline_ns)
+                ;
 
     display_results(
         scenario
