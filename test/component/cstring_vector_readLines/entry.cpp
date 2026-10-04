@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test.component.cstring_vector_readLines/entry.cpp
+ * File:    test/component/cstring_vector_readLines/entry.cpp
  *
  * Purpose: Component-tests `cstring_vector_readLines()`.
  *
  * Created: 27th September 2026
- * Updated: 3rd October 2026
+ * Updated: 4th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
