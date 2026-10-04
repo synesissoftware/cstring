@@ -36,6 +36,7 @@
 /* STLSoft header files */
 #ifdef WIN32
 # include <comstl/memory/functions.h>
+# include <comstl/util/initialisers.hpp>
 #endif
 #include <stlsoft/smartptr/scoped_handle.hpp>
 
@@ -103,6 +104,12 @@ int main(int argc, char **argv)
 {
     int retCode = EXIT_SUCCESS;
     int verbosity = 2;
+
+#ifdef _WIN32
+
+    /* CoTaskMem* / CoGetMalloc require COM on this thread. */
+    comstl::com_init  init;
+#endif /* Windows */
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
