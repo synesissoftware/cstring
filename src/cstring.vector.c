@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring.vector API
  *
  * Created: 16th June 1994
- * Updated: 23rd February 2025
+ * Updated: 29th September 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -79,26 +79,11 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER)
-# if _MSC_VER >= 1200
-#  pragma warning(push)
-# endif /* _MSC_VER >= 1200 */
-# if _MSC_VER >= 1310
-#  if !defined(__COMO__)
-#   pragma warning(disable : 4055)
-#  endif /* !__COMO__ */
-# endif /* _MSC_VER >= 1310 */
-#endif /* compiler */
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * compiler compatibility
  */
 
 #if defined(__BORLANDC__)
+
 char* strncpy_safe(char* dest, char const* src, size_t len)
 {
     if (0 != len)
@@ -108,13 +93,14 @@ char* strncpy_safe(char* dest, char const* src, size_t len)
 
     return dest;
 }
-# define strncpy    strncpy_safe
+# define strncpy                                            strncpy_safe
 #endif /* compiler */
 
 #if defined(UNIX) || \
     defined(unix)
+
   /* This required, otherwise get name shadowing warning from Linux /usr/include/string.h */
-# define index index_disambiguated_1
+# define index                                              index_disambiguated_1
 #endif
 
 
@@ -317,12 +303,16 @@ cstring_vector_insertAt(
         /* Make space for new items */
         if (position < pcsv->len)
         {
-            memmove(pcsv->ptr + pcsv->len + numStrings, pcsv->ptr + pcsv->len, sizeof(cstring_t) * numStrings);
+            memmove(
+                pcsv->ptr + position + numStrings
+            ,   pcsv->ptr + position
+            ,   sizeof(cstring_t) * (pcsv->len - position)
+            );
         }
 
         for (i = 0; i != numStrings; ++i)
         {
-            cstring_t* dest = pcsv->ptr + pcsv->len + i;
+            cstring_t* dest = pcsv->ptr + position + i;
 
             if (NULL == strings)
             {
@@ -339,7 +329,7 @@ cstring_vector_insertAt(
                 {
                     while (0 != i)
                     {
-                        cstring_destroy(pcsv->ptr + pcsv->len + (i - 1));
+                        cstring_destroy(pcsv->ptr + position + (i - 1));
 
                         --i;
                     }
@@ -359,7 +349,11 @@ cstring_vector_insertAt(
             /* If it's failed, and we made space for new items, remove the gap (leaving it with increased capacity) */
             if (position < pcsv->len)
             {
-                memmove(pcsv->ptr + pcsv->len, pcsv->ptr + pcsv->len + numStrings, sizeof(cstring_t) * numStrings);
+                memmove(
+                    pcsv->ptr + position
+                ,   pcsv->ptr + position + numStrings
+                ,   sizeof(cstring_t) * (pcsv->len - position)
+                );
             }
         }
 
@@ -426,15 +420,6 @@ cstring_vector_readLines(
     return rc;
 }
 
-
-/* /////////////////////////////////////////////////////////////////////////
- * compiler warnings
- */
-
-#if defined(_MSC_VER) && \
-    _MSC_VER >= 1200
-# pragma warning(pop)
-#endif /* compiler */
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

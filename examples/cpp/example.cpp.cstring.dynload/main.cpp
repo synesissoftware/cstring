@@ -5,7 +5,7 @@
  *          `LoadLibrary` / `GetProcAddress`.
  *
  * Created: 19th August 2005
- * Updated: 2nd August 2026
+ * Updated: 27th September 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -122,7 +122,7 @@ static int main_(int /* argc */, char ** /*argv*/)
 #if 0
         CSTRING_RC  rc  =   _create(&cs, "Hello");
 #else /* ? 0 */
-        CSTRING_RC  rc  =   _createEx(&cs, "Hello", CSTRING_F_USE_WIN32_GLOBAL_MEMORY, NULL, 100);
+        CSTRING_RC  rc  =   _createEx(&cs, "Hello", CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY, NULL, 100);
 #endif /* 0 */
         char*       p;
 

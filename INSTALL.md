@@ -8,7 +8,8 @@ compile-in or link-in the implementation.
 
 The **C** API has no non-standard dependencies. Building the project's tests
 additionally requires **STLSoft** and **xTests** (and optionally recognises
-**shwild**). C++ examples and remaining C++ tests may be omitted with
+**p99** for performance percentiles and **shwild** for enhanced xTests
+match constructs). C++ examples and remaining C++ tests may be omitted with
 `--no-cpp` / `NO_CSTRING_CPP_API`; the **C** unit-tests still require
 **STLSoft** and **xTests** unless testing is disabled.
 
@@ -53,6 +54,7 @@ The primary choice for installation is by use of **CMake**.
 
    * `--no-cpp` / `-C` — omit C++ examples and remaining C++ tests
      (`NO_CSTRING_CPP_API`);
+   * `--no-p99` — do not recognise **p99** (`NO_P99`);
    * `--no-shwild` — do not recognise **shwild** (`NO_SHWILD`);
    * `--disable-examples` / `-E` — omit examples (`BUILD_EXAMPLES=OFF`);
    * `--disable-testing` / `-T` — omit tests (`BUILD_TESTING=OFF`);
@@ -78,7 +80,12 @@ The primary choice for installation is by use of **CMake**.
    $ ./run_all_unit_tests.sh
    ```
 
-   Examples (when enabled) may be exercised via **run_all_examples.sh**.
+   Component, scratch, and performance suites have matching runners
+   (**run_all_component_tests.sh**, **run_all_scratch_tests.sh**,
+   **run_all_performance_tests.sh**); **run_all_automated_tests.sh**
+   aggregates the automated categories. Examples (when enabled) may be
+   exercised via **run_all_examples.sh**. Windows hosts have native
+   **`.cmd`** counterparts.
 
 5. Install the library on the host, via `cmake`, as in:
 

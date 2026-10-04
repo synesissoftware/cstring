@@ -1,4 +1,4 @@
-# cstring - CHANGES <!-- omit in toc -->
+# cstring - Changes <!-- omit in toc -->
 
 
 ## 4.1.0 - 6th September 2026
@@ -8,6 +8,44 @@
 * Added `cstring_hash_t` typedef (`uint64_t`);
 * Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
 * Added unit test suite **test.unit.cstring.hash**;
+
+
+## 4.0.18 - 29th September 2026
+
+* Gated Windows arena flags and WinAPI allocators on `_WIN32` in **cstring.h** and **cstring.core.c**, so 32- and 64-bit Windows builds expose them without a `WIN32` or `WIN64` define;
+* Moved Windows Global / process-heap / COM task allocators from **cstring.core.c** into **src/win.c** (declared from **src/internal.h**);
+* Implemented `win32_comtask_realloc()` via statically linked `CoTaskMemAlloc` / `CoTaskMemFree` / `CoTaskMemRealloc` (**ole32**), replacing the former `LoadLibrary` / `GetProcAddress` path;
+* Timed Windows Global, process-heap, and COM task arenas in **test.performance.cstring** (`cstring_win_global`, `cstring_win_processheap`, `cstring_win_comtask`) against the realloc `cstring` baseline;
+
+
+## 4.0.17 - 29th September 2026
+
+* Added competitive performance tests for **cstring** and **cstring_vector** (`test.performance.cstring`, `test.performance.cstring_vector`);
+* Baselines: `std::string` / hand-rolled `realloc` for strings; `std::vector<std::string>` / hand-rolled for vectors;
+* Optional **p99** linkage for per-iteration percentiles throughout; filesystem suite (`cstring_vector_readLines`, `std::ifstream` + `std::getline`, `platformstl::file_lines`) gated on **p99**;
+* **`--no-p99`** / `NO_P99` to skip recognising **p99** (same pattern as **`--no-shwild`**);
+* **`--gap-groups`** on **run_all_performance_tests.sh** / **run_all_performance_tests.cmd** sets `SIS_PERFTESTS_GROUPGAPS`; TTY emits a blank line between scenario groups, non-TTY / CI emits `\t----------` via `platformstl::isatty`; CI sets `SIS_PERFTESTS_GROUPGAPS=1` on performance cells;
+* Declared **cstring.vector** API with `CSTRING_EXTERN_C` for C++ linkage;
+* Fixed `cstring_vector_insertAt()` mid-vector `memmove` / destination indexing;
+* Expanded component coverage: **test.component.cstring_readline**, **test.component.cstring_writeline**, new **test.component.cstring_vector_readLines**;
+* Renamed Windows arena flags `CSTRING_F_USE_WIN32_*` to `CSTRING_F_USE_WINDOWS_*` (compat aliases retained);
+* Capitalised Doxygen `\retval` prose in **cstring.h** / **cstring.vector.h**;
+* CI throttles performance suites on non-Windows (`CSTRING_PERF_ITERATIONS=1000` / `WARMUPS=1`) and on MinGW only (`500` / `1`, plus `FILE_TRIALS` when **p99**); **windows-cl** keeps Release defaults;
+* CI restores Unix execute bits on downloaded test/example binaries after **download-artifact** (helpers discover via `-perm -100`);
+
+
+## 4.0.16 - 27th September 2026
+
+* Applied **misc-dev-scripts** **0.6.0** editor/Git/`.sis` drop-in templates on **boilerplate**;
+* Restored historical **.gitignore** patterns as a sorted union with **misc-dev-scripts** gold section layout;
+* Use computed `CSTRING_VER` with documented `CSTRING_VER_PATCH` / `CSTRING_VER_ALPHABETA` in **cstring.h**;
+* Added **test.scratch.versions** (canonical scratch versions reporter; formerly **libver**);
+* Modernised CMake helpers to the Phase 4b dialect (`SisClr_*` / `-A`, `sis_cmake_build`, no MinGW-from-`MSYSTEM`);
+* Native Windows **`run_all_*.cmd`** runners (no Bash wrap); aggregate **`run_all_automated_tests.*`**;
+* **`SIS_EXAMPLE_SMOKE`** gates the interactive **example.c.cstring_vector** no-arg demo in CI;
+* CI dogfoods **`prepare_cmake.sh`** / **`build_cmake.sh`** / **`ctest_cmake.sh`** / helper smoke and Windows **`.cmd`**;
+* Collapsed cell suites into one post-build **Tests** job (sequential helpers);
+* **`ctest_cmake.sh`** passes **`ctest -C`** on multi-config generators;
 
 
 ## 4.0.15 - 6th September 2026

@@ -4,6 +4,7 @@ SETLOCAL
 
 SET SCRIPT_DIRECTORY=%~dp0
 SET SCRIPT_PATH_DOC=%~n0[%~x0]
+
 IF DEFINED SIS_CMAKE_BUILD_DIR (
 
     SET CMAKE_DIR=%SIS_CMAKE_BUILD_DIR%
@@ -13,14 +14,16 @@ IF DEFINED SIS_CMAKE_BUILD_DIR (
 )
 
 FOR %%a IN (%*) DO (
+
 	IF /I {--help}=={%%a} (
+
 		IF EXIST "%SCRIPT_DIRECTORY%.sis\script_info_lines.txt" (
 
 					type "%SCRIPT_DIRECTORY%.sis\script_info_lines.txt"
 		)
 		ECHO ^
 
-Runs all ^(matching^) component-test and unit-test programs ^
+Runs all ^(matching^) unit-test programs ^
 
 ^
 
@@ -34,6 +37,12 @@ Flags/options: ^
 
 ^
 
+    --unit-only ^
+
+        accepted for compatibility; this script always runs unit tests only ^
+
+^
+
     standard flags: ^
 
 ^
@@ -44,7 +53,11 @@ Flags/options: ^
 
 
 		EXIT /B 0
+	) ELSE IF /I {--unit-only}=={%%a} (
+
+		REM Benign: this script is already unit-only
 	) ELSE (
+
 		ECHO "%SCRIPT_DIRECTORY%: unrecognised argument '%%a'; use --help for usage" 1>&2
 
 		EXIT /B 1
@@ -58,11 +71,24 @@ if NOT EXIST "%CMAKE_DIR%" (
     EXIT /B 1
 )
 
-FOR /F "usebackq" %%f IN (`DIR /A:-D /B /S %CMAKE_DIR% ^| FINDSTR /I test.*unit.*\.exe$`) DO (
+SET "ProjectName="
+FOR /F "usebackq delims=" %%p IN ("%SCRIPT_DIRECTORY%.sis\project_name.txt") DO SET "ProjectName=%%p"
+
+IF NOT DEFINED ProjectName (
+
+    ECHO %SCRIPT_PATH_DOC%: could not read project name from .sis\project_name.txt 1>&2
+
+    EXIT /B 1
+)
+
+ECHO Running all %ProjectName% unit-test programs
+
+FOR /F "usebackq" %%f IN (`DIR /A:-D /B /S "%CMAKE_DIR%" ^| FINDSTR /I test.*unit.*\.exe$`) DO (
+
 	ECHO .
 	ECHO executing %%f
 	%%f
+	IF ERRORLEVEL 1 EXIT /B %ERRORLEVEL%
 )
 
 ENDLOCAL
-
