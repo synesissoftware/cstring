@@ -141,7 +141,7 @@ scenario_create_destroy(
         v.len = n;
         for (size_t i = 0; n != i; ++i)
         {
-            v.ptr[i] = static_cast<char*>(std::calloc(1, 1));
+            v.ptr[i] = NULL;
         }
         std::uint64_t const a = v.len + v.capacity;
         raw_vec_destroy(&v);
