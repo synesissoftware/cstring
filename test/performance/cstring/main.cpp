@@ -296,7 +296,6 @@ scenario_assign_len_grow(
 
     run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
         cstring_t s = cstring_t_DEFAULT;
-        cstring_create(&s, "");
         cstring_assignLen(&s, p, n);
         std::uint64_t const a = s.len;
         cstring_destroy(&s);
