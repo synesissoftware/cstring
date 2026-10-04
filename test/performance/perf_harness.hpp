@@ -210,6 +210,10 @@ struct run_result
 #endif /* HAS_P99 */
 };
 
+/* tm_ns is one start/stop around the iteration loop. That total is ns/op
+ * and vs cstr. When p99 is linked, the recorded warmup also times each call
+ * into the histogram. Those samples are the percentiles only.
+ */
 template <typename F>
 run_result
 time_iterations(
@@ -228,29 +232,37 @@ time_iterations(
 
         result.hist.clear();
 #endif /* HAS_P99 */
-        interval_t tm_ns = 0;
-#ifdef HAS_P99
-
-        for (size_t i = 0; num_iterations != i; ++i)
-        {
-            sw.start();
-            result.anchor += fn();
-            sw.stop();
-
-            interval_t const sample = sw.get_nanoseconds();
-
-            tm_ns += sample;
-            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
-        }
-#else /* ? HAS_P99 */
 
         sw.start();
+
         for (size_t i = 0; num_iterations != i; ++i)
         {
             result.anchor += fn();
         }
+
         sw.stop();
-        tm_ns = sw.get_nanoseconds();
+
+        interval_t const tm_ns = sw.get_nanoseconds();
+
+#ifdef HAS_P99
+
+        if (1 == w)
+        {
+            std::uint64_t volatile hist_anchor = 0;
+
+            for (size_t i = 0; num_iterations != i; ++i)
+            {
+                sw.start();
+                hist_anchor += fn();
+                sw.stop();
+
+                interval_t const sample = sw.get_nanoseconds();
+
+                (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
+            }
+
+            (void)hist_anchor;
+        }
 #endif /* HAS_P99 */
 
         if (1 == w)
@@ -295,7 +307,9 @@ display_banner(
         << "  small sizes favour std::string. Prefer Release builds."
         << std::endl
 #ifdef HAS_P99
-        << "  p99: available — per-op percentiles reported where timed."
+        << "  p99: percentiles are per call; ns/op is one start/stop"
+        << std::endl
+        << "  around the iteration loop."
         << std::endl
         << "  vs cstr is \"-\" when p50 is 0 and ns/op does not grow with size."
         << std::endl
