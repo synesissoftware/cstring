@@ -575,6 +575,7 @@ int main(int /*argc*/, char* /*argv*/[])
     scenario_append_batch(256u, 64u, heavy_iters, num_warm_loops);
 
     scenario_prepend_one_by_one(16u, 32u, heavy_iters, num_warm_loops);
+    scenario_prepend_one_by_one(256u, 32u, heavy_iters, num_warm_loops);
 #ifdef HAS_P99
 
     size_t const file_trials = cstring_perf::default_file_trials();
