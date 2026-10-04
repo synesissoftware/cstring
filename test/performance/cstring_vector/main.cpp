@@ -226,7 +226,21 @@ scenario_append_batch(
         cstring_vector_t v = cstring_vector_t_DEFAULT;
         cstring_vector_init(&v, 0);
         cstring_vector_append(&v, &payloads[0], k);
-        std::uint64_t const a = v.len;
+        char const* volatile head =
+            (0 != v.len && NULL != v.ptr && NULL != v.ptr[0].ptr)
+                ? v.ptr[0].ptr
+                : NULL
+                ;
+        char const* volatile tail =
+            (0 != v.len && NULL != v.ptr && NULL != v.ptr[v.len - 1u].ptr)
+                ? v.ptr[v.len - 1u].ptr
+                : NULL
+                ;
+        std::uint64_t const a =
+            v.len
+            + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
+            + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
+            ;
         cstring_vector_destroy(&v);
         return a;
     });
@@ -234,7 +248,12 @@ scenario_append_batch(
     run_result const st = time_iterations(num_iterations, num_warm_loops, [&payloads_s]() -> std::uint64_t {
         std::vector<std::string> v;
         v.insert(v.end(), payloads_s.begin(), payloads_s.end());
-        return v.size();
+        char const* volatile head = v.empty() ? NULL : v.front().data();
+        char const* volatile tail = v.empty() ? NULL : v.back().data();
+        return v.size()
+            + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
+            + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
+            ;
     });
 
     run_result const raw = time_iterations(num_iterations, num_warm_loops, [&payloads_s, payload_len, k]() -> std::uint64_t {
@@ -245,7 +264,17 @@ scenario_append_batch(
         {
             raw_vec_append_cstr(&v, payloads_s[i].data(), payload_len);
         }
-        std::uint64_t const a = v.len;
+        char const* volatile head =
+            (0 != v.len && NULL != v.ptr) ? v.ptr[0] : NULL
+            ;
+        char const* volatile tail =
+            (0 != v.len && NULL != v.ptr) ? v.ptr[v.len - 1u] : NULL
+            ;
+        std::uint64_t const a =
+            v.len
+            + (NULL != head ? static_cast<unsigned char>(head[0]) : 0u)
+            + (NULL != tail ? static_cast<unsigned char>(tail[0]) : 0u)
+            ;
         raw_vec_destroy(&v);
         return a;
     });
