@@ -1,22 +1,26 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test/unit/hash/entry.cpp
+ * File:    test/unit/hash/entry.c
  *
- * Purpose: Unit-tests for cstring hashing extensions.
+ * Purpose: Unit-tests for the cstring hashing API.
  *
  * Created: 5th September 2026
- * Updated: 5th September 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
  * test component header file include(s)
  */
 
 #include <cstring/cstring.h>
 
-/* /////////////////////////////////////////////////////////////////////////
- * includes
+/* /////////////////////////////////////
+ * general includes
  */
 
 /* xTests header files */
@@ -26,9 +30,20 @@
 #include <stlsoft/stlsoft.h>
 
 /* Standard C header files */
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * forward declarations
+ */
+
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void);
+static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void);
+static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void);
+static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void);
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void);
+static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void);
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -43,24 +58,6 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * forward declarations
- */
-
-namespace
-{
-
-    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void);
-    static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void);
-    static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void);
-    static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void);
-    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void);
-    static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void);
-    static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
-    static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void);
-} // anonymous namespace
-
-
-/* /////////////////////////////////////////////////////////////////////////
  * main
  */
 
@@ -71,7 +68,7 @@ int main(int argc, char* argv[])
 
     XTESTS_COMMANDLINE_PARSEVERBOSITY(argc, argv, &verbosity);
 
-    if (XTESTS_START_RUNNER("test.unit.cstring.hash", verbosity))
+    if (XTESTS_START_RUNNER("test.unit.hash", verbosity))
     {
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY);
         XTESTS_RUN_CASE(TEST_cstring_hash_fnv1a_KNOWN_VECTORS);
@@ -80,7 +77,6 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES);
-        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci);
 
         XTESTS_PRINT_RESULTS();
 
@@ -95,17 +91,15 @@ int main(int argc, char* argv[])
  * test function implementations
  */
 
-namespace
-{
-
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
 {
     struct cstring_t const* pcs_null = NULL;
     cstring_t               null_cs = { 0, NULL, 0, 0 };
     cstring_t               default_cs = cstring_t_DEFAULT;
     cstring_t               created_empty;
+    CSTRING_RC              rc;
 
-    CSTRING_RC rc = cstring_create(&created_empty, CSTRING_T_(""));
+    rc = cstring_create(&created_empty, CSTRING_T_(""));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
     /* djb2: initial seed is 5381 */
@@ -125,13 +119,6 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(CSTRING_T_(""), 0));
     TEST_INT_EQ(5381ULL, cstring_hash_djb2_len_ci(CSTRING_T_(""), 0));
 
-    TEST_INT_EQ(5381ULL, hash_djb2(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(5381ULL, hash_djb2(default_cs));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(default_cs));
-    TEST_INT_EQ(5381ULL, hash_djb2(NULL, 0));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(NULL, 0));
-
     /* FNV-1a: offset basis is 0xcbf29ce484222325ULL */
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a(pcs_null));
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_ci(pcs_null));
@@ -149,13 +136,6 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(CSTRING_T_(""), 0));
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_ci(CSTRING_T_(""), 0));
 
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(default_cs));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(default_cs));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(NULL, 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(NULL, 0));
-
     cstring_destroy(&created_empty);
 }
 
@@ -166,22 +146,22 @@ static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void)
      *   "a"      -> 0xaf63dc4c8601ec8cULL
      *   "foobar" -> 0x85944171f73967e8ULL
      */
+    cstring_t   cs_a;
+    cstring_t   cs_foobar;
+    CSTRING_RC  rc;
+
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(CSTRING_T_(""), 0));
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_len(CSTRING_T_("a"), 1));
     TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_len(CSTRING_T_("foobar"), 6));
 
-    cstring_t cs_a;
-    CSTRING_RC rc = cstring_create(&cs_a, CSTRING_T_("a"));
+    rc = cstring_create(&cs_a, CSTRING_T_("a"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a(&cs_a));
-    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(cs_a));
     cstring_destroy(&cs_a);
 
-    cstring_t cs_foobar;
     rc = cstring_create(&cs_foobar, CSTRING_T_("foobar"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a(&cs_foobar));
-    TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(cs_foobar));
     cstring_destroy(&cs_foobar);
 }
 
@@ -192,35 +172,43 @@ static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void)
      *   "a"      -> 5381 * 33 + 97 = 177670ULL (0x2b606ULL)
      *   "foobar" -> 6953516687550ULL (0x652fde460beULL)
      */
+    cstring_t   cs_a;
+    cstring_t   cs_foobar;
+    CSTRING_RC  rc;
+
     TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(CSTRING_T_(""), 0));
     TEST_INT_EQ(177670ULL, cstring_hash_djb2_len(CSTRING_T_("a"), 1));
     TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_len(CSTRING_T_("foobar"), 6));
 
-    cstring_t cs_a;
-    CSTRING_RC rc = cstring_create(&cs_a, CSTRING_T_("a"));
+    rc = cstring_create(&cs_a, CSTRING_T_("a"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(177670ULL, cstring_hash_djb2(&cs_a));
-    TEST_INT_EQ(177670ULL, hash_djb2(cs_a));
     cstring_destroy(&cs_a);
 
-    cstring_t cs_foobar;
     rc = cstring_create(&cs_foobar, CSTRING_T_("foobar"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2(&cs_foobar));
-    TEST_INT_EQ(6953516687550ULL, hash_djb2(cs_foobar));
     cstring_destroy(&cs_foobar);
 }
 
 static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void)
 {
+    cstring_hash_t  djb2_ci_base;
+    cstring_hash_t  fnv1a_ci_base;
+    cstring_t       cs1;
+    cstring_t       cs2;
+    cstring_t       cs3;
+    cstring_t       cs4;
+    CSTRING_RC      rc;
+
     /* Buffer checks */
-    cstring_hash_t djb2_ci_base = cstring_hash_djb2_len_ci(CSTRING_T_("Test"), 4);
+    djb2_ci_base = cstring_hash_djb2_len_ci(CSTRING_T_("Test"), 4);
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("tEst"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("TEST"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("test"), 4));
     TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_ci(CSTRING_T_("teSt"), 4));
 
-    cstring_hash_t fnv1a_ci_base = cstring_hash_fnv1a_len_ci(CSTRING_T_("Test"), 4);
+    fnv1a_ci_base = cstring_hash_fnv1a_len_ci(CSTRING_T_("Test"), 4);
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("tEst"), 4));
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("TEST"), 4));
     TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_ci(CSTRING_T_("test"), 4));
@@ -231,12 +219,6 @@ static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void)
     TEST_INT_NE(cstring_hash_fnv1a_len(CSTRING_T_("Test"), 4), cstring_hash_fnv1a_len(CSTRING_T_("tEst"), 4));
 
     /* Instance checks */
-    cstring_t cs1;
-    cstring_t cs2;
-    cstring_t cs3;
-    cstring_t cs4;
-
-    CSTRING_RC rc;
     rc = cstring_create(&cs1, CSTRING_T_("Test"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     rc = cstring_create(&cs2, CSTRING_T_("tEst"));
@@ -289,10 +271,13 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void)
 
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
 {
-    cstring_char_t long_pattern_mixed[1025];
-    cstring_char_t long_pattern_lower[1025];
-    size_t const   pattern_len = 1024;
-    size_t         i;
+    cstring_char_t  long_pattern_mixed[1025];
+    cstring_char_t  long_pattern_lower[1025];
+    size_t const    pattern_len = 1024;
+    size_t          i;
+    cstring_t       cs_mixed;
+    cstring_t       cs_lower;
+    CSTRING_RC      rc;
 
     for (i = 0; i < pattern_len; ++i)
     {
@@ -312,10 +297,6 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
     long_pattern_mixed[pattern_len] = 0;
     long_pattern_lower[pattern_len] = 0;
 
-    cstring_t cs_mixed;
-    cstring_t cs_lower;
-
-    CSTRING_RC rc;
     rc = cstring_createLen(&cs_mixed, long_pattern_mixed, pattern_len);
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     rc = cstring_createLen(&cs_lower, long_pattern_lower, pattern_len);
@@ -341,17 +322,23 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
 
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
 {
-    cstring_char_t const text[] = CSTRING_T_("The quick brown Fox jumps over the lazy Dog.");
-    size_t const         total_len = sizeof(text) / sizeof(text[0]) - 1;
+    cstring_char_t const    text[] = CSTRING_T_("The quick brown Fox jumps over the lazy Dog.");
+    size_t const            total_len = sizeof(text) / sizeof(text[0]) - 1;
+    cstring_hash_t          djb2_quick_slice;
+    cstring_hash_t          djb2_quick_direct;
+    cstring_hash_t          fnv1a_quick_slice;
+    cstring_hash_t          fnv1a_quick_direct;
+    cstring_t               cs;
+    CSTRING_RC              rc;
 
     /* Slices without constructing cstring_t */
     /* "quick" starts at index 4, length 5 */
-    cstring_hash_t djb2_quick_slice = cstring_hash_djb2_len(text + 4, 5);
-    cstring_hash_t djb2_quick_direct = cstring_hash_djb2_len(CSTRING_T_("quick"), 5);
+    djb2_quick_slice = cstring_hash_djb2_len(text + 4, 5);
+    djb2_quick_direct = cstring_hash_djb2_len(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(djb2_quick_direct, djb2_quick_slice);
 
-    cstring_hash_t fnv1a_quick_slice = cstring_hash_fnv1a_len(text + 4, 5);
-    cstring_hash_t fnv1a_quick_direct = cstring_hash_fnv1a_len(CSTRING_T_("quick"), 5);
+    fnv1a_quick_slice = cstring_hash_fnv1a_len(text + 4, 5);
+    fnv1a_quick_direct = cstring_hash_fnv1a_len(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(fnv1a_quick_direct, fnv1a_quick_slice);
 
     /* "Fox" starts at index 16, length 3 */
@@ -361,41 +348,12 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
     TEST_INT_NE(cstring_hash_fnv1a_len(text + 16, 3), cstring_hash_fnv1a_len(CSTRING_T_("fox"), 3));
 
     /* Hashing full text via buffer API */
-    cstring_t cs;
-    CSTRING_RC rc = cstring_createLen(&cs, text, total_len);
+    rc = cstring_createLen(&cs, text, total_len);
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(cstring_hash_djb2_len(text, total_len), cstring_hash_djb2(&cs));
     TEST_INT_EQ(cstring_hash_fnv1a_len(text, total_len), cstring_hash_fnv1a(&cs));
     cstring_destroy(&cs);
 }
-
-static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void)
-{
-    cstring_t cs;
-    CSTRING_RC rc = cstring_create(&cs, CSTRING_T_("Hello World"));
-    TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
-
-    /* Overload by reference */
-    TEST_INT_EQ(cstring_hash_djb2(&cs), hash_djb2(cs));
-    TEST_INT_EQ(cstring_hash_djb2_ci(&cs), hash_djb2_ci(cs));
-    TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(cs));
-    TEST_INT_EQ(cstring_hash_fnv1a_ci(&cs), hash_fnv1a_ci(cs));
-
-    /* Overload by pointer */
-    TEST_INT_EQ(cstring_hash_djb2(&cs), hash_djb2(&cs));
-    TEST_INT_EQ(cstring_hash_djb2_ci(&cs), hash_djb2_ci(&cs));
-    TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(&cs));
-    TEST_INT_EQ(cstring_hash_fnv1a_ci(&cs), hash_fnv1a_ci(&cs));
-
-    /* Overload by slice/buffer */
-    TEST_INT_EQ(cstring_hash_djb2_len(cs.ptr, cs.len), hash_djb2(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_djb2_len_ci(cs.ptr, cs.len), hash_djb2_ci(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(cs.ptr, cs.len), hash_fnv1a(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_ci(cs.ptr, cs.len), hash_fnv1a_ci(cs.ptr, cs.len));
-
-    cstring_destroy(&cs);
-}
-} // anonymous namespace
 
 
 /* ///////////////////////////// end of file //////////////////////////// */
