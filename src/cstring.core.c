@@ -390,7 +390,11 @@ cstring_write_span_(
     {
         int total = 0;
 
-        (void)wctomb(NULL, 0); /* reset the shared shift state */
+        /* reset the shared shift state */
+        if (wctomb(NULL, 0) < 0)
+        {
+            return -1;
+        }
 
         { int i; for (i = 0; i != cch; ++i)
         {
