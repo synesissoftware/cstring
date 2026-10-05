@@ -25,6 +25,7 @@
 #include <string>
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -143,7 +144,7 @@ emit_windows_cstring_arenas(
         run_result const base = time_iterations(
             num_iterations
         ,   num_warm_loops
-        ,   [&body]() -> std::uint64_t
+        ,   [&body]() -> uint64_t
             {
                 return body(CSTRING_F_USE_REALLOC);
             }
@@ -169,7 +170,7 @@ emit_windows_cstring_arenas(
         run_result const r = time_iterations(
             num_iterations
         ,   num_warm_loops
-        ,   [&body, flags]() -> std::uint64_t
+        ,   [&body, flags]() -> uint64_t
             {
                 return body(flags);
             }
@@ -212,24 +213,24 @@ scenario_create_destroy_empty(
 ,   size_t num_warm_loops
 )
 {
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, []() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_create(&s, "");
-        std::uint64_t const a = s.len;
+        uint64_t const a = s.len;
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, []() -> uint64_t {
         std::string s("");
         return s.size();
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, []() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, []() -> uint64_t {
         raw_string s;
         raw_init(&s);
         raw_assign_len(&s, "", 0);
-        std::uint64_t const a = s.len;
+        uint64_t const a = s.len;
         raw_destroy(&s);
         return a;
     });
@@ -242,13 +243,13 @@ scenario_create_destroy_empty(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [](cstring_flags_t flags) -> std::uint64_t
+    ,   [](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
             cstring_createEx(&s, "", flags, NULL, 0);
 
-            std::uint64_t const a = s.len;
+            uint64_t const a = s.len;
 
             cstring_destroy(&s);
 
@@ -269,24 +270,24 @@ scenario_create_destroy_len(
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createLen(&s, p, n);
-        std::uint64_t const a = s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u);
+        uint64_t const a = s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u);
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         std::string s(p, n);
         return s.size() + static_cast<unsigned char>(s[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         raw_string s;
         raw_init(&s);
         raw_assign_len(&s, p, n);
-        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
+        uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -299,13 +300,13 @@ scenario_create_destroy_len(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [p, n](cstring_flags_t flags) -> std::uint64_t
+    ,   [p, n](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
             cstring_createLenEx(&s, p, n, flags, NULL, 0);
 
-            std::uint64_t const a =
+            uint64_t const a =
                 s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
                 ;
 
@@ -328,27 +329,27 @@ scenario_assign_len_grow(
     std::string const payload = make_payload(n);
     char const* const p = payload.data();
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_assignLen(&s, p, n);
-        std::uint64_t const a =
+        uint64_t const a =
             s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
             ;
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         std::string s;
         s.assign(p, n);
         return s.size() + static_cast<unsigned char>(s[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         raw_string s;
         raw_init(&s);
         raw_assign_len(&s, p, n);
-        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
+        uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -361,14 +362,14 @@ scenario_assign_len_grow(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [p, n](cstring_flags_t flags) -> std::uint64_t
+    ,   [p, n](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
             cstring_createEx(&s, "", flags, NULL, 0);
             cstring_assignLen(&s, p, n);
 
-            std::uint64_t const a =
+            uint64_t const a =
                 s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
                 ;
 
@@ -393,20 +394,20 @@ scenario_append_len_growth(
     std::string const payload = make_payload(chunk);
     char const* const p = payload.data();
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         for (size_t i = 0; num_appends != i; ++i)
         {
             cstring_appendLen(&s, p, chunk);
         }
-        std::uint64_t const a =
+        uint64_t const a =
             s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
             ;
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> uint64_t {
         std::string s;
         for (size_t i = 0; num_appends != i; ++i)
         {
@@ -415,14 +416,14 @@ scenario_append_len_growth(
         return s.size() + static_cast<unsigned char>(s[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, num_appends]() -> uint64_t {
         raw_string s;
         raw_init(&s);
         for (size_t i = 0; num_appends != i; ++i)
         {
             raw_append_len(&s, p, chunk);
         }
-        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
+        uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -438,7 +439,7 @@ scenario_append_len_growth(
     ,   num_warm_loops
     ,   num_appends
     ,   cs.tm_ns
-    ,   [p, chunk, num_appends](cstring_flags_t flags) -> std::uint64_t
+    ,   [p, chunk, num_appends](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
@@ -449,7 +450,7 @@ scenario_append_len_growth(
                 cstring_appendLen(&s, p, chunk);
             }
 
-            std::uint64_t const a =
+            uint64_t const a =
                 s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
                 ;
 
@@ -470,26 +471,26 @@ scenario_append_len_reserved(
 ,   size_t num_warm_loops
 )
 {
-    std::string const payload = make_payload(n);
-    char const* const p = payload.data();
-    size_t const chunk = (n < 16u) ? n : 16u;
-    size_t const num_appends = (0 == chunk) ? 0u : (n / chunk);
+    std::string const   payload     =   make_payload(n);
+    char const* const   p           =   payload.data();
+    size_t const        chunk       =   (n < 16u) ? n : 16u;
+    size_t const        num_appends =   (0 == chunk) ? 0u : (n / chunk);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_setCapacity(&s, n);
         for (size_t i = 0; num_appends != i; ++i)
         {
             cstring_appendLen(&s, p, chunk);
         }
-        std::uint64_t const a =
+        uint64_t const a =
             s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
             ;
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> uint64_t {
         std::string s;
         s.reserve(n);
         for (size_t i = 0; num_appends != i; ++i)
@@ -499,7 +500,7 @@ scenario_append_len_reserved(
         return s.size() + static_cast<unsigned char>(s[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [p, chunk, n, num_appends]() -> uint64_t {
         raw_string s;
         raw_init(&s);
         raw_reserve(&s, n);
@@ -507,7 +508,7 @@ scenario_append_len_reserved(
         {
             raw_append_len(&s, p, chunk);
         }
-        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
+        uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -520,7 +521,7 @@ scenario_append_len_reserved(
     ,   num_warm_loops
     ,   num_appends
     ,   cs.tm_ns
-    ,   [p, chunk, n, num_appends](cstring_flags_t flags) -> std::uint64_t
+    ,   [p, chunk, n, num_appends](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
@@ -532,7 +533,7 @@ scenario_append_len_reserved(
                 cstring_appendLen(&s, p, chunk);
             }
 
-            std::uint64_t const a =
+            uint64_t const a =
                 s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
                 ;
 
@@ -553,36 +554,36 @@ scenario_insert_len_mid(
 ,   size_t num_warm_loops
 )
 {
-    std::string const base = make_payload(n);
-    std::string const ins = make_payload(n / 4u == 0 ? 1u : n / 4u);
-    char const* const bp = base.data();
-    char const* const ip = ins.data();
-    size_t const in = ins.size();
-    int const pos = static_cast<int>(n / 2u);
+    std::string const   base    =   make_payload(n);
+    std::string const   ins     =   make_payload(n / 4u == 0 ? 1u : n / 4u);
+    char const* const   bp      =   base.data();
+    char const* const   ip      =   ins.data();
+    size_t const        in      =   ins.size();
+    int const           pos     =   static_cast<int>(n / 2u);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createLen(&s, bp, n);
         cstring_insertLen(&s, pos, ip, in);
-        std::uint64_t const a =
+        uint64_t const a =
             s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
             ;
         cstring_destroy(&s);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> uint64_t {
         std::string s(bp, n);
         s.insert(pos, ip, in);
         return s.size() + static_cast<unsigned char>(s[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [bp, n, ip, in, pos]() -> uint64_t {
         raw_string s;
         raw_init(&s);
         raw_assign_len(&s, bp, n);
         raw_insert_len(&s, pos, ip, in);
-        std::uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
+        uint64_t const a = s.len + static_cast<unsigned char>(s.ptr[0]);
         raw_destroy(&s);
         return a;
     });
@@ -595,14 +596,14 @@ scenario_insert_len_mid(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [bp, n, ip, in, pos](cstring_flags_t flags) -> std::uint64_t
+    ,   [bp, n, ip, in, pos](cstring_flags_t flags) -> uint64_t
         {
             cstring_t s = cstring_t_DEFAULT;
 
             cstring_createLenEx(&s, bp, n, flags, NULL, 0);
             cstring_insertLen(&s, pos, ip, in);
 
-            std::uint64_t const a =
+            uint64_t const a =
                 s.len + (NULL != s.ptr ? static_cast<unsigned char>(s.ptr[0]) : 0u)
                 ;
 
@@ -622,38 +623,38 @@ scenario_copy(
 ,   size_t num_warm_loops
 )
 {
-    std::string const payload = make_payload(n);
-    char const* const p = payload.data();
+    std::string const   payload =   make_payload(n);
+    char const* const   p       =   payload.data();
 
-    cstring_t src_cs = cstring_t_DEFAULT;
+    cstring_t           src_cs  =   cstring_t_DEFAULT;
     cstring_createLen(&src_cs, p, n);
 
-    std::string const src_st(p, n);
+    std::string const   src_st(p, n);
 
-    raw_string src_raw;
+    raw_string          src_raw;
     raw_init(&src_raw);
     raw_assign_len(&src_raw, p, n);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&src_cs]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&src_cs]() -> uint64_t {
         cstring_t d = cstring_t_DEFAULT;
         cstring_copy(&d, &src_cs);
-        std::uint64_t const a =
+        uint64_t const a =
             d.len + (NULL != d.ptr ? static_cast<unsigned char>(d.ptr[0]) : 0u)
             ;
         cstring_destroy(&d);
         return a;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [&src_st]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [&src_st]() -> uint64_t {
         std::string d(src_st);
         return d.size() + static_cast<unsigned char>(d[0]);
     });
 
-    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&src_raw]() -> std::uint64_t {
+    run_result const raw = time_iterations(num_iterations, num_warm_loops, [&src_raw]() -> uint64_t {
         raw_string d;
         raw_init(&d);
         raw_copy(&d, &src_raw);
-        std::uint64_t const a = d.len + static_cast<unsigned char>(d.ptr[0]);
+        uint64_t const a = d.len + static_cast<unsigned char>(d.ptr[0]);
         raw_destroy(&d);
         return a;
     });
@@ -672,14 +673,14 @@ scenario_copy(
     ,   num_warm_loops
     ,   1
     ,   cs.tm_ns
-    ,   [&src_cs](cstring_flags_t flags) -> std::uint64_t
+    ,   [&src_cs](cstring_flags_t flags) -> uint64_t
         {
             cstring_t d = cstring_t_DEFAULT;
 
             cstring_createEx(&d, "", flags, NULL, 0);
             cstring_copy(&d, &src_cs);
 
-            std::uint64_t const a =
+            uint64_t const a =
                 d.len + (NULL != d.ptr ? static_cast<unsigned char>(d.ptr[0]) : 0u)
                 ;
 
@@ -705,7 +706,7 @@ scenario_borrowed_fixed_construct(
     char const* const p = payload.data();
     stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createLenEx(
             &s
@@ -716,19 +717,19 @@ scenario_borrowed_fixed_construct(
         ,   n + 1u
         );
 
-        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
+        uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
         cstring_destroy(&s);
 
         return r;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         std::string s(p, n);
 
         return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
-    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> uint64_t {
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
 
@@ -751,7 +752,7 @@ scenario_borrowed_fixed_assign(
     char const* const p = payload.data();
     stlsoft::auto_buffer<char, NUM_STACK_ELEMENTS> buf(n + 1);
 
-    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
+    run_result const cs = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> uint64_t {
         cstring_t s = cstring_t_DEFAULT;
         cstring_createEx(
             &s
@@ -761,20 +762,20 @@ scenario_borrowed_fixed_assign(
         ,   n + 1u
         );
         cstring_assignLen(&s, p, n);
-        std::uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
+        uint64_t const r = s.len + (s.len == 0 ? 0 : size_t(s.ptr[s.len - 1]));
         cstring_destroy(&s);
 
         return r;
     });
 
-    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> std::uint64_t {
+    run_result const st = time_iterations(num_iterations, num_warm_loops, [p, n]() -> uint64_t {
         std::string s;
         s.assign(p, n);
 
         return s.size() + (s.empty() ? 0 : size_t(s.back()));
     });
 
-    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> std::uint64_t {
+    run_result const fx = time_iterations(num_iterations, num_warm_loops, [&buf, p, n]() -> uint64_t {
         ::memcpy(&buf[0], p, n);
         buf[n] = '\0';
 

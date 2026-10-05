@@ -1,6 +1,15 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0 - 5th October 2026
+
+* Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_ci()`, `cstring_hash_djb2_len()`, and `cstring_hash_djb2_len_ci()`;
+* Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_ci()`, `cstring_hash_fnv1a_len()`, and `cstring_hash_fnv1a_len_ci()`;
+* Added `cstring_hash_t` typedef (`uint64_t`);
+* Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
+* Added unit test suite **test.unit.hash**;
+
+
 ## 4.0.19 - 4th October 2026
 
 * Wide-string build via **prepare_cmake.sh** `--wide-strings` (`CSTRING_USE_WIDE_STRINGS` on **cstring::core**): `cstring_char_t` is `wchar_t`; `cstring_write()` / `cstring_writeline()` emit the payload as multibyte bytes; examples and tests take literals and comparisons from **test/cstring.helpers.h** (`CSTRING_T_()`, `CSTRING_STRCMP_()`, `CSTRING_STRNCMP_()`), which is not part of the library contract; performance tests stay multibyte; CI job **wide-strings**;

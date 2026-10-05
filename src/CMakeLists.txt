@@ -47,6 +47,7 @@ endif()
 set(CORE_SRCS
 	cstring.vector.c
 	cstring.core.c
+	cstring.hash.c
 )
 
 if(_BUILD_AS_WIN32)

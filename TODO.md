@@ -17,6 +17,7 @@
 * [x] ~~~discriminate on `_WIN32` in implementation (and maybe also in API)~~~ - ✅;
 * [x] ~~~check `CSTRING_USE_WINAPI_`~~~;
 * [ ] custom arena(s);
+* [ ] wide-string CI;
 * [ ] `cstring_vector_readlineEx()` that takes a flag to prevent truncate, thereby allowing client code to add to an existing string;
 * [ ] when go to 5.x, change the name of `cstring_vector_readLines()` to `cstring_vector_readlines()`;
 * [ ] when go to 5.x, consider use of SSO;

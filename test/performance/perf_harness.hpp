@@ -742,9 +742,9 @@ raw_init(
     raw_string* s
 )
 {
-    s->ptr = NULL;
-    s->len = 0;
-    s->capacity = 0;
+    s->ptr      =   NULL;
+    s->len      =   0;
+    s->capacity =   0;
 }
 
 inline
@@ -754,6 +754,7 @@ raw_destroy(
 )
 {
     ::free(s->ptr);
+
     raw_init(s);
 }
 
@@ -894,9 +895,9 @@ raw_vec_init(
     raw_string_vector* v
 )
 {
-    v->ptr = NULL;
-    v->len = 0;
-    v->capacity = 0;
+    v->ptr      =   NULL;
+    v->len      =   0;
+    v->capacity =   0;
 }
 
 inline
