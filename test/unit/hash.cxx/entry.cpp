@@ -53,7 +53,7 @@ namespace
 
     static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void);
     static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void);
-    static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void);
+    static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void);
 } /* anonymous namespace */
 
 
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     {
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY);
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS);
-        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci);
+        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case);
 
         XTESTS_PRINT_RESULTS();
 
@@ -95,18 +95,18 @@ static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
     cstring_t const default_cs = cstring_t_DEFAULT;
 
     TEST_INT_EQ(5381ULL, hash_djb2(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(static_cast<struct cstring_t const*>(NULL)));
+    TEST_INT_EQ(5381ULL, hash_djb2_case(static_cast<struct cstring_t const*>(NULL)));
     TEST_INT_EQ(5381ULL, hash_djb2(default_cs));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(default_cs));
+    TEST_INT_EQ(5381ULL, hash_djb2_case(default_cs));
     TEST_INT_EQ(5381ULL, hash_djb2(NULL, 0));
-    TEST_INT_EQ(5381ULL, hash_djb2_ci(NULL, 0));
+    TEST_INT_EQ(5381ULL, hash_djb2_case(NULL, 0));
 
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<struct cstring_t const*>(NULL)));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(static_cast<struct cstring_t const*>(NULL)));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<struct cstring_t const*>(NULL)));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(default_cs));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(default_cs));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(default_cs));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(NULL, 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_ci(NULL, 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(NULL, 0));
 }
 
 static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
@@ -128,7 +128,7 @@ static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
     cstring_destroy(&cs_foobar);
 }
 
-static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(void)
+static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void)
 {
     cstring_t   cs;
     CSTRING_RC  rc = cstring_create(&cs, CSTRING_T_("Hello World"));
@@ -137,21 +137,21 @@ static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_ci(voi
 
     /* Overload by reference */
     TEST_INT_EQ(cstring_hash_djb2(&cs), hash_djb2(cs));
-    TEST_INT_EQ(cstring_hash_djb2_ci(&cs), hash_djb2_ci(cs));
+    TEST_INT_EQ(cstring_hash_djb2_case(&cs), hash_djb2_case(cs));
     TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(cs));
-    TEST_INT_EQ(cstring_hash_fnv1a_ci(&cs), hash_fnv1a_ci(cs));
+    TEST_INT_EQ(cstring_hash_fnv1a_case(&cs), hash_fnv1a_case(cs));
 
     /* Overload by pointer */
     TEST_INT_EQ(cstring_hash_djb2(&cs), hash_djb2(&cs));
-    TEST_INT_EQ(cstring_hash_djb2_ci(&cs), hash_djb2_ci(&cs));
+    TEST_INT_EQ(cstring_hash_djb2_case(&cs), hash_djb2_case(&cs));
     TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(&cs));
-    TEST_INT_EQ(cstring_hash_fnv1a_ci(&cs), hash_fnv1a_ci(&cs));
+    TEST_INT_EQ(cstring_hash_fnv1a_case(&cs), hash_fnv1a_case(&cs));
 
     /* Overload by slice/buffer */
     TEST_INT_EQ(cstring_hash_djb2_len(cs.ptr, cs.len), hash_djb2(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_djb2_len_ci(cs.ptr, cs.len), hash_djb2_ci(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_len_case(cs.ptr, cs.len), hash_djb2_case(cs.ptr, cs.len));
     TEST_INT_EQ(cstring_hash_fnv1a_len(cs.ptr, cs.len), hash_fnv1a(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_ci(cs.ptr, cs.len), hash_fnv1a_ci(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_len_case(cs.ptr, cs.len), hash_fnv1a_case(cs.ptr, cs.len));
 
     cstring_destroy(&cs);
 }

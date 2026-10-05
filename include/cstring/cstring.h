@@ -1200,7 +1200,7 @@ cstring_hash_djb2(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_djb2_ci(
+cstring_hash_djb2_case(
     struct cstring_t const* pcs
 );
 
@@ -1231,7 +1231,7 @@ cstring_hash_djb2_len(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_djb2_len_ci(
+cstring_hash_djb2_len_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1259,7 +1259,7 @@ cstring_hash_fnv1a(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_fnv1a_ci(
+cstring_hash_fnv1a_case(
     struct cstring_t const* pcs
 );
 
@@ -1290,7 +1290,7 @@ cstring_hash_fnv1a_len(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_fnv1a_len_ci(
+cstring_hash_fnv1a_len_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1540,30 +1540,30 @@ hash_djb2(
 
 inline
 cstring_hash_t
-hash_djb2_ci(
+hash_djb2_case(
     struct cstring_t const* pcs
 )
 {
-    return cstring_hash_djb2_ci(pcs);
+    return cstring_hash_djb2_case(pcs);
 }
 
 inline
 cstring_hash_t
-hash_djb2_ci(
+hash_djb2_case(
     struct cstring_t const& cs
 )
 {
-    return cstring_hash_djb2_ci(&cs);
+    return cstring_hash_djb2_case(&cs);
 }
 
 inline
 cstring_hash_t
-hash_djb2_ci(
+hash_djb2_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_djb2_len_ci(s, cch);
+    return cstring_hash_djb2_len_case(s, cch);
 }
 
 inline
@@ -1596,30 +1596,30 @@ hash_fnv1a(
 
 inline
 cstring_hash_t
-hash_fnv1a_ci(
+hash_fnv1a_case(
     struct cstring_t const* pcs
 )
 {
-    return cstring_hash_fnv1a_ci(pcs);
+    return cstring_hash_fnv1a_case(pcs);
 }
 
 inline
 cstring_hash_t
-hash_fnv1a_ci(
+hash_fnv1a_case(
     struct cstring_t const& cs
 )
 {
-    return cstring_hash_fnv1a_ci(&cs);
+    return cstring_hash_fnv1a_case(&cs);
 }
 
 inline
 cstring_hash_t
-hash_fnv1a_ci(
+hash_fnv1a_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_fnv1a_len_ci(s, cch);
+    return cstring_hash_fnv1a_len_case(s, cch);
 }
 
 # ifndef _STLSOFT_NO_NAMESPACE
