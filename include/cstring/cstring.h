@@ -1215,7 +1215,7 @@ cstring_hash_djb2_case(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_djb2_len(
+cstring_hash_djb2_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1231,7 +1231,7 @@ cstring_hash_djb2_len(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_djb2_len_case(
+cstring_hash_djb2_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1274,7 +1274,7 @@ cstring_hash_fnv1a_case(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_fnv1a_len(
+cstring_hash_fnv1a_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1290,7 +1290,7 @@ cstring_hash_fnv1a_len(
  */
 CSTRING_EXTERN_C
 cstring_hash_t
-cstring_hash_fnv1a_len_case(
+cstring_hash_fnv1a_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1535,7 +1535,7 @@ hash_djb2(
 ,   size_t                  cch
 )
 {
-    return cstring_hash_djb2_len(s, cch);
+    return cstring_hash_djb2_buf(s, cch);
 }
 
 inline
@@ -1563,7 +1563,7 @@ hash_djb2_case(
 ,   size_t                  cch
 )
 {
-    return cstring_hash_djb2_len_case(s, cch);
+    return cstring_hash_djb2_buf_case(s, cch);
 }
 
 inline
@@ -1591,7 +1591,7 @@ hash_fnv1a(
 ,   size_t                  cch
 )
 {
-    return cstring_hash_fnv1a_len(s, cch);
+    return cstring_hash_fnv1a_buf(s, cch);
 }
 
 inline
@@ -1619,7 +1619,7 @@ hash_fnv1a_case(
 ,   size_t                  cch
 )
 {
-    return cstring_hash_fnv1a_len_case(s, cch);
+    return cstring_hash_fnv1a_buf_case(s, cch);
 }
 
 # ifndef _STLSOFT_NO_NAMESPACE

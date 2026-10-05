@@ -120,12 +120,12 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(5381ULL, cstring_hash_djb2(&created_empty));
     TEST_INT_EQ(5381ULL, cstring_hash_djb2_case(&created_empty));
 
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(NULL, 0));
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len_case(NULL, 0));
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(NULL, 10));
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len_case(NULL, 10));
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(CSTRING_T_(""), 0));
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len_case(CSTRING_T_(""), 0));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf(NULL, 0));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf_case(NULL, 0));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf_case(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf(CSTRING_T_(""), 0));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf_case(CSTRING_T_(""), 0));
 
     /* FNV-1a: offset basis is 0xcbf29ce484222325ULL */
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a(pcs_null));
@@ -137,12 +137,12 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a(&created_empty));
     TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_case(&created_empty));
 
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(NULL, 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_case(NULL, 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(NULL, 10));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_case(NULL, 10));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(CSTRING_T_(""), 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_case(CSTRING_T_(""), 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(NULL, 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf_case(NULL, 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf_case(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(CSTRING_T_(""), 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf_case(CSTRING_T_(""), 0));
 
     cstring_destroy(&created_empty);
 }
@@ -158,9 +158,9 @@ static void TEST_cstring_hash_fnv1a_KNOWN_VECTORS(void)
     cstring_t   cs_foobar;
     CSTRING_RC  rc;
 
-    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(CSTRING_T_(""), 0));
-    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_len(CSTRING_T_("a"), 1));
-    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_len(CSTRING_T_("foobar"), 6));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(CSTRING_T_(""), 0));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_buf(CSTRING_T_("a"), 1));
+    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_buf(CSTRING_T_("foobar"), 6));
 
     rc = cstring_create(&cs_a, CSTRING_T_("a"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
@@ -184,9 +184,9 @@ static void TEST_cstring_hash_djb2_KNOWN_VECTORS(void)
     cstring_t   cs_foobar;
     CSTRING_RC  rc;
 
-    TEST_INT_EQ(5381ULL, cstring_hash_djb2_len(CSTRING_T_(""), 0));
-    TEST_INT_EQ(177670ULL, cstring_hash_djb2_len(CSTRING_T_("a"), 1));
-    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_len(CSTRING_T_("foobar"), 6));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_buf(CSTRING_T_(""), 0));
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_buf(CSTRING_T_("a"), 1));
+    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_buf(CSTRING_T_("foobar"), 6));
 
     rc = cstring_create(&cs_a, CSTRING_T_("a"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
@@ -210,21 +210,21 @@ static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_case(void)
     CSTRING_RC      rc;
 
     /* Buffer checks */
-    djb2_ci_base = cstring_hash_djb2_len_case(CSTRING_T_("Test"), 4);
-    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_case(CSTRING_T_("tEst"), 4));
-    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_case(CSTRING_T_("TEST"), 4));
-    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_case(CSTRING_T_("test"), 4));
-    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_len_case(CSTRING_T_("teSt"), 4));
+    djb2_ci_base = cstring_hash_djb2_buf_case(CSTRING_T_("Test"), 4);
+    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_buf_case(CSTRING_T_("tEst"), 4));
+    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_buf_case(CSTRING_T_("TEST"), 4));
+    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_buf_case(CSTRING_T_("test"), 4));
+    TEST_INT_EQ(djb2_ci_base, cstring_hash_djb2_buf_case(CSTRING_T_("teSt"), 4));
 
-    fnv1a_ci_base = cstring_hash_fnv1a_len_case(CSTRING_T_("Test"), 4);
-    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_case(CSTRING_T_("tEst"), 4));
-    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_case(CSTRING_T_("TEST"), 4));
-    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_case(CSTRING_T_("test"), 4));
-    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_len_case(CSTRING_T_("teSt"), 4));
+    fnv1a_ci_base = cstring_hash_fnv1a_buf_case(CSTRING_T_("Test"), 4);
+    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_buf_case(CSTRING_T_("tEst"), 4));
+    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_buf_case(CSTRING_T_("TEST"), 4));
+    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_buf_case(CSTRING_T_("test"), 4));
+    TEST_INT_EQ(fnv1a_ci_base, cstring_hash_fnv1a_buf_case(CSTRING_T_("teSt"), 4));
 
     /* Case-sensitive inequality */
-    TEST_INT_NE(cstring_hash_djb2_len(CSTRING_T_("Test"), 4), cstring_hash_djb2_len(CSTRING_T_("tEst"), 4));
-    TEST_INT_NE(cstring_hash_fnv1a_len(CSTRING_T_("Test"), 4), cstring_hash_fnv1a_len(CSTRING_T_("tEst"), 4));
+    TEST_INT_NE(cstring_hash_djb2_buf(CSTRING_T_("Test"), 4), cstring_hash_djb2_buf(CSTRING_T_("tEst"), 4));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(CSTRING_T_("Test"), 4), cstring_hash_fnv1a_buf(CSTRING_T_("tEst"), 4));
 
     /* Instance checks */
     rc = cstring_create(&cs1, CSTRING_T_("Test"));
@@ -256,25 +256,25 @@ static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_case(void)
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void)
 {
     /* Letters */
-    TEST_INT_EQ(cstring_hash_djb2_len_case(CSTRING_T_("a"), 1), cstring_hash_djb2_len_case(CSTRING_T_("A"), 1));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_case(CSTRING_T_("a"), 1), cstring_hash_fnv1a_len_case(CSTRING_T_("A"), 1));
-    TEST_INT_NE(cstring_hash_djb2_len(CSTRING_T_("a"), 1), cstring_hash_djb2_len(CSTRING_T_("A"), 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len(CSTRING_T_("a"), 1), cstring_hash_fnv1a_len(CSTRING_T_("A"), 1));
+    TEST_INT_EQ(cstring_hash_djb2_buf_case(CSTRING_T_("a"), 1), cstring_hash_djb2_buf_case(CSTRING_T_("A"), 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf_case(CSTRING_T_("a"), 1), cstring_hash_fnv1a_buf_case(CSTRING_T_("A"), 1));
+    TEST_INT_NE(cstring_hash_djb2_buf(CSTRING_T_("a"), 1), cstring_hash_djb2_buf(CSTRING_T_("A"), 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(CSTRING_T_("a"), 1), cstring_hash_fnv1a_buf(CSTRING_T_("A"), 1));
 
-    TEST_INT_EQ(cstring_hash_djb2_len_case(CSTRING_T_("z"), 1), cstring_hash_djb2_len_case(CSTRING_T_("Z"), 1));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_case(CSTRING_T_("z"), 1), cstring_hash_fnv1a_len_case(CSTRING_T_("Z"), 1));
-    TEST_INT_NE(cstring_hash_djb2_len(CSTRING_T_("z"), 1), cstring_hash_djb2_len(CSTRING_T_("Z"), 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len(CSTRING_T_("z"), 1), cstring_hash_fnv1a_len(CSTRING_T_("Z"), 1));
+    TEST_INT_EQ(cstring_hash_djb2_buf_case(CSTRING_T_("z"), 1), cstring_hash_djb2_buf_case(CSTRING_T_("Z"), 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf_case(CSTRING_T_("z"), 1), cstring_hash_fnv1a_buf_case(CSTRING_T_("Z"), 1));
+    TEST_INT_NE(cstring_hash_djb2_buf(CSTRING_T_("z"), 1), cstring_hash_djb2_buf(CSTRING_T_("Z"), 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(CSTRING_T_("z"), 1), cstring_hash_fnv1a_buf(CSTRING_T_("Z"), 1));
 
     /* Non-letters have identical case-sensitive and case-insensitive hashes */
-    TEST_INT_EQ(cstring_hash_djb2_len(CSTRING_T_("0"), 1), cstring_hash_djb2_len_case(CSTRING_T_("0"), 1));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(CSTRING_T_("0"), 1), cstring_hash_fnv1a_len_case(CSTRING_T_("0"), 1));
+    TEST_INT_EQ(cstring_hash_djb2_buf(CSTRING_T_("0"), 1), cstring_hash_djb2_buf_case(CSTRING_T_("0"), 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(CSTRING_T_("0"), 1), cstring_hash_fnv1a_buf_case(CSTRING_T_("0"), 1));
 
-    TEST_INT_EQ(cstring_hash_djb2_len(CSTRING_T_("!"), 1), cstring_hash_djb2_len_case(CSTRING_T_("!"), 1));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(CSTRING_T_("!"), 1), cstring_hash_fnv1a_len_case(CSTRING_T_("!"), 1));
+    TEST_INT_EQ(cstring_hash_djb2_buf(CSTRING_T_("!"), 1), cstring_hash_djb2_buf_case(CSTRING_T_("!"), 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(CSTRING_T_("!"), 1), cstring_hash_fnv1a_buf_case(CSTRING_T_("!"), 1));
 
-    TEST_INT_EQ(cstring_hash_djb2_len(CSTRING_T_(" "), 1), cstring_hash_djb2_len_case(CSTRING_T_(" "), 1));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(CSTRING_T_(" "), 1), cstring_hash_fnv1a_len_case(CSTRING_T_(" "), 1));
+    TEST_INT_EQ(cstring_hash_djb2_buf(CSTRING_T_(" "), 1), cstring_hash_djb2_buf_case(CSTRING_T_(" "), 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(CSTRING_T_(" "), 1), cstring_hash_fnv1a_buf_case(CSTRING_T_(" "), 1));
 }
 
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
@@ -311,10 +311,10 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void)
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
     /* Verify consistency between struct and buffer APIs */
-    TEST_INT_EQ(cstring_hash_djb2(&cs_mixed), cstring_hash_djb2_len(cs_mixed.ptr, cs_mixed.len));
-    TEST_INT_EQ(cstring_hash_djb2_case(&cs_mixed), cstring_hash_djb2_len_case(cs_mixed.ptr, cs_mixed.len));
-    TEST_INT_EQ(cstring_hash_fnv1a(&cs_mixed), cstring_hash_fnv1a_len(cs_mixed.ptr, cs_mixed.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_case(&cs_mixed), cstring_hash_fnv1a_len_case(cs_mixed.ptr, cs_mixed.len));
+    TEST_INT_EQ(cstring_hash_djb2(&cs_mixed), cstring_hash_djb2_buf(cs_mixed.ptr, cs_mixed.len));
+    TEST_INT_EQ(cstring_hash_djb2_case(&cs_mixed), cstring_hash_djb2_buf_case(cs_mixed.ptr, cs_mixed.len));
+    TEST_INT_EQ(cstring_hash_fnv1a(&cs_mixed), cstring_hash_fnv1a_buf(cs_mixed.ptr, cs_mixed.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_case(&cs_mixed), cstring_hash_fnv1a_buf_case(cs_mixed.ptr, cs_mixed.len));
 
     /* Case-insensitive hashes must match */
     TEST_INT_EQ(cstring_hash_djb2_case(&cs_mixed), cstring_hash_djb2_case(&cs_lower));
@@ -341,25 +341,25 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
 
     /* Slices without constructing cstring_t */
     /* "quick" starts at index 4, length 5 */
-    djb2_quick_slice = cstring_hash_djb2_len(text + 4, 5);
-    djb2_quick_direct = cstring_hash_djb2_len(CSTRING_T_("quick"), 5);
+    djb2_quick_slice = cstring_hash_djb2_buf(text + 4, 5);
+    djb2_quick_direct = cstring_hash_djb2_buf(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(djb2_quick_direct, djb2_quick_slice);
 
-    fnv1a_quick_slice = cstring_hash_fnv1a_len(text + 4, 5);
-    fnv1a_quick_direct = cstring_hash_fnv1a_len(CSTRING_T_("quick"), 5);
+    fnv1a_quick_slice = cstring_hash_fnv1a_buf(text + 4, 5);
+    fnv1a_quick_direct = cstring_hash_fnv1a_buf(CSTRING_T_("quick"), 5);
     TEST_INT_EQ(fnv1a_quick_direct, fnv1a_quick_slice);
 
     /* "Fox" starts at index 16, length 3 */
-    TEST_INT_EQ(cstring_hash_djb2_len_case(text + 16, 3), cstring_hash_djb2_len_case(CSTRING_T_("fox"), 3));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_case(text + 16, 3), cstring_hash_fnv1a_len_case(CSTRING_T_("fox"), 3));
-    TEST_INT_NE(cstring_hash_djb2_len(text + 16, 3), cstring_hash_djb2_len(CSTRING_T_("fox"), 3));
-    TEST_INT_NE(cstring_hash_fnv1a_len(text + 16, 3), cstring_hash_fnv1a_len(CSTRING_T_("fox"), 3));
+    TEST_INT_EQ(cstring_hash_djb2_buf_case(text + 16, 3), cstring_hash_djb2_buf_case(CSTRING_T_("fox"), 3));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf_case(text + 16, 3), cstring_hash_fnv1a_buf_case(CSTRING_T_("fox"), 3));
+    TEST_INT_NE(cstring_hash_djb2_buf(text + 16, 3), cstring_hash_djb2_buf(CSTRING_T_("fox"), 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(text + 16, 3), cstring_hash_fnv1a_buf(CSTRING_T_("fox"), 3));
 
     /* Hashing full text via buffer API */
     rc = cstring_createLen(&cs, text, total_len);
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
-    TEST_INT_EQ(cstring_hash_djb2_len(text, total_len), cstring_hash_djb2(&cs));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(text, total_len), cstring_hash_fnv1a(&cs));
+    TEST_INT_EQ(cstring_hash_djb2_buf(text, total_len), cstring_hash_djb2(&cs));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(text, total_len), cstring_hash_fnv1a(&cs));
     cstring_destroy(&cs);
 }
 
@@ -370,29 +370,29 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F
 
 #ifndef CSTRING_USE_WIDE_STRINGS
     /* djb2: 5381 * 33 + octet. FNV-1a: one-byte 64-bit vectors. */
-    TEST_INT_EQ(177828ULL, cstring_hash_djb2_len(hi, 1));
-    TEST_INT_EQ(0xaf64724c8602eb6eULL, cstring_hash_fnv1a_len(hi, 1));
-    TEST_INT_EQ(177700ULL, cstring_hash_djb2_len(mid, 1));
-    TEST_INT_EQ(0xaf63f24c860211eeULL, cstring_hash_fnv1a_len(mid, 1));
+    TEST_INT_EQ(177828ULL, cstring_hash_djb2_buf(hi, 1));
+    TEST_INT_EQ(0xaf64724c8602eb6eULL, cstring_hash_fnv1a_buf(hi, 1));
+    TEST_INT_EQ(177700ULL, cstring_hash_djb2_buf(mid, 1));
+    TEST_INT_EQ(0xaf63f24c860211eeULL, cstring_hash_fnv1a_buf(mid, 1));
 
-    TEST_INT_NE(5381ULL, cstring_hash_djb2_len(hi, 1));
-    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(hi, 1));
+    TEST_INT_NE(5381ULL, cstring_hash_djb2_buf(hi, 1));
+    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(hi, 1));
 
     /* tolower of octets above 0x7F follows the process locale. */
-    TEST_INT_NE(cstring_hash_djb2_len_case(mid, 1), cstring_hash_djb2_len_case(hi, 1));
-    TEST_INT_NE(5381ULL, cstring_hash_djb2_len_case(hi, 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(mid, 1), cstring_hash_fnv1a_len_case(hi, 1));
-    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_case(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(mid, 1), cstring_hash_djb2_buf_case(hi, 1));
+    TEST_INT_NE(5381ULL, cstring_hash_djb2_buf_case(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(mid, 1), cstring_hash_fnv1a_buf_case(hi, 1));
+    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf_case(hi, 1));
 #else /* ? CSTRING_USE_WIDE_STRINGS */
     /* Distinct code units only; exact octets would freeze truncation. */
-    TEST_INT_NE(cstring_hash_djb2_len(mid, 1), cstring_hash_djb2_len(hi, 1));
-    TEST_INT_NE(cstring_hash_djb2_len(hi, 0), cstring_hash_djb2_len(hi, 1));
-    TEST_INT_NE(cstring_hash_djb2_len_case(mid, 1), cstring_hash_djb2_len_case(hi, 1));
-    TEST_INT_NE(cstring_hash_djb2_len_case(hi, 0), cstring_hash_djb2_len_case(hi, 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len(mid, 1), cstring_hash_fnv1a_len(hi, 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len(hi, 0), cstring_hash_fnv1a_len(hi, 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(mid, 1), cstring_hash_fnv1a_len_case(hi, 1));
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(hi, 0), cstring_hash_fnv1a_len_case(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_buf(mid, 1), cstring_hash_djb2_buf(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_buf(hi, 0), cstring_hash_djb2_buf(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(mid, 1), cstring_hash_djb2_buf_case(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(hi, 0), cstring_hash_djb2_buf_case(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(mid, 1), cstring_hash_fnv1a_buf(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(hi, 0), cstring_hash_fnv1a_buf(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(mid, 1), cstring_hash_fnv1a_buf_case(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(hi, 0), cstring_hash_fnv1a_buf_case(hi, 1));
 #endif /* CSTRING_USE_WIDE_STRINGS */
 }
 
@@ -404,25 +404,25 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(v
     cstring_char_t const    a_nul_c[3] = { CSTRING_T_('a'), (cstring_char_t)0, CSTRING_T_('c') };
 
     /* Explicit length, so an interior NUL does not end the slice. */
-    TEST_INT_NE(cstring_hash_djb2_len(a_only, 1), cstring_hash_djb2_len(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_djb2_len(ab, 2), cstring_hash_djb2_len(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_djb2_len(a_nul_c, 3), cstring_hash_djb2_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf(a_only, 1), cstring_hash_djb2_buf(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf(ab, 2), cstring_hash_djb2_buf(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf(a_nul_c, 3), cstring_hash_djb2_buf(a_nul_b, 3));
 
-    TEST_INT_NE(cstring_hash_djb2_len_case(a_only, 1), cstring_hash_djb2_len_case(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_djb2_len_case(ab, 2), cstring_hash_djb2_len_case(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_djb2_len_case(a_nul_c, 3), cstring_hash_djb2_len_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(a_only, 1), cstring_hash_djb2_buf_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(ab, 2), cstring_hash_djb2_buf_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_buf_case(a_nul_c, 3), cstring_hash_djb2_buf_case(a_nul_b, 3));
 
-    TEST_INT_NE(cstring_hash_fnv1a_len(a_only, 1), cstring_hash_fnv1a_len(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_fnv1a_len(ab, 2), cstring_hash_fnv1a_len(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_fnv1a_len(a_nul_c, 3), cstring_hash_fnv1a_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(a_only, 1), cstring_hash_fnv1a_buf(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(ab, 2), cstring_hash_fnv1a_buf(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf(a_nul_c, 3), cstring_hash_fnv1a_buf(a_nul_b, 3));
 
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(a_only, 1), cstring_hash_fnv1a_len_case(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(ab, 2), cstring_hash_fnv1a_len_case(a_nul_b, 3));
-    TEST_INT_NE(cstring_hash_fnv1a_len_case(a_nul_c, 3), cstring_hash_fnv1a_len_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(a_only, 1), cstring_hash_fnv1a_buf_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(ab, 2), cstring_hash_fnv1a_buf_case(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_buf_case(a_nul_c, 3), cstring_hash_fnv1a_buf_case(a_nul_b, 3));
 
 #ifndef CSTRING_USE_WIDE_STRINGS
-    TEST_INT_EQ(193482728ULL, cstring_hash_djb2_len(a_nul_b, 3));
-    TEST_INT_EQ(0xe5d29919042666b2ULL, cstring_hash_fnv1a_len(a_nul_b, 3));
+    TEST_INT_EQ(193482728ULL, cstring_hash_djb2_buf(a_nul_b, 3));
+    TEST_INT_EQ(0xe5d29919042666b2ULL, cstring_hash_fnv1a_buf(a_nul_b, 3));
 #endif /* CSTRING_USE_WIDE_STRINGS */
 }
 

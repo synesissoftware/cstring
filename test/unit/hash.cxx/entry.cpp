@@ -148,10 +148,10 @@ static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(v
     TEST_INT_EQ(cstring_hash_fnv1a_case(&cs), hash_fnv1a_case(&cs));
 
     /* Overload by slice/buffer */
-    TEST_INT_EQ(cstring_hash_djb2_len(cs.ptr, cs.len), hash_djb2(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_djb2_len_case(cs.ptr, cs.len), hash_djb2_case(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_len(cs.ptr, cs.len), hash_fnv1a(cs.ptr, cs.len));
-    TEST_INT_EQ(cstring_hash_fnv1a_len_case(cs.ptr, cs.len), hash_fnv1a_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_buf(cs.ptr, cs.len), hash_djb2(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_buf_case(cs.ptr, cs.len), hash_djb2_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(cs.ptr, cs.len), hash_fnv1a(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf_case(cs.ptr, cs.len), hash_fnv1a_case(cs.ptr, cs.len));
 
     cstring_destroy(&cs);
 }

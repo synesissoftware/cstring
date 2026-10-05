@@ -87,7 +87,7 @@ cstring_hash_djb2(
         return CSTRING_HASH_DJB2_SEED;
     }
 
-    return cstring_hash_djb2_len(pcs->ptr, pcs->len);
+    return cstring_hash_djb2_buf(pcs->ptr, pcs->len);
 }
 
 cstring_hash_t
@@ -100,11 +100,11 @@ cstring_hash_djb2_case(
         return CSTRING_HASH_DJB2_SEED;
     }
 
-    return cstring_hash_djb2_len_case(pcs->ptr, pcs->len);
+    return cstring_hash_djb2_buf_case(pcs->ptr, pcs->len);
 }
 
 cstring_hash_t
-cstring_hash_djb2_len(
+cstring_hash_djb2_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
@@ -127,7 +127,7 @@ cstring_hash_djb2_len(
 }
 
 cstring_hash_t
-cstring_hash_djb2_len_case(
+cstring_hash_djb2_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
@@ -163,7 +163,7 @@ cstring_hash_fnv1a(
         return CSTRING_HASH_FNV1A_OFFSET;
     }
 
-    return cstring_hash_fnv1a_len(pcs->ptr, pcs->len);
+    return cstring_hash_fnv1a_buf(pcs->ptr, pcs->len);
 }
 
 cstring_hash_t
@@ -176,11 +176,11 @@ cstring_hash_fnv1a_case(
         return CSTRING_HASH_FNV1A_OFFSET;
     }
 
-    return cstring_hash_fnv1a_len_case(pcs->ptr, pcs->len);
+    return cstring_hash_fnv1a_buf_case(pcs->ptr, pcs->len);
 }
 
 cstring_hash_t
-cstring_hash_fnv1a_len(
+cstring_hash_fnv1a_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
@@ -204,7 +204,7 @@ cstring_hash_fnv1a_len(
 }
 
 cstring_hash_t
-cstring_hash_fnv1a_len_case(
+cstring_hash_fnv1a_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
