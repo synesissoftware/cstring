@@ -44,6 +44,8 @@ static void TEST_cstring_hash_djb2_ci_AND_cstring_hash_fnv1a_ci(void);
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER(void);
 static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F(void);
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -77,6 +79,8 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_SINGLE_CHARACTER);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F);
+        XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL);
 
         XTESTS_PRINT_RESULTS();
 
@@ -353,6 +357,69 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void)
     TEST_INT_EQ(cstring_hash_djb2_len(text, total_len), cstring_hash_djb2(&cs));
     TEST_INT_EQ(cstring_hash_fnv1a_len(text, total_len), cstring_hash_fnv1a(&cs));
     cstring_destroy(&cs);
+}
+
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F(void)
+{
+    cstring_char_t const    hi[1] = { (cstring_char_t)0xFF };
+    cstring_char_t const    mid[1] = { (cstring_char_t)0x7F };
+
+#ifndef CSTRING_USE_WIDE_STRINGS
+    /* djb2: 5381 * 33 + octet. FNV-1a: one-byte 64-bit vectors. */
+    TEST_INT_EQ(177828ULL, cstring_hash_djb2_len(hi, 1));
+    TEST_INT_EQ(0xaf64724c8602eb6eULL, cstring_hash_fnv1a_len(hi, 1));
+    TEST_INT_EQ(177700ULL, cstring_hash_djb2_len(mid, 1));
+    TEST_INT_EQ(0xaf63f24c860211eeULL, cstring_hash_fnv1a_len(mid, 1));
+
+    TEST_INT_NE(5381ULL, cstring_hash_djb2_len(hi, 1));
+    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len(hi, 1));
+
+    /* tolower of octets above 0x7F follows the process locale. */
+    TEST_INT_NE(cstring_hash_djb2_len_ci(mid, 1), cstring_hash_djb2_len_ci(hi, 1));
+    TEST_INT_NE(5381ULL, cstring_hash_djb2_len_ci(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(mid, 1), cstring_hash_fnv1a_len_ci(hi, 1));
+    TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_len_ci(hi, 1));
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+    /* Distinct code units only; exact octets would freeze truncation. */
+    TEST_INT_NE(cstring_hash_djb2_len(mid, 1), cstring_hash_djb2_len(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_len(hi, 0), cstring_hash_djb2_len(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_len_ci(mid, 1), cstring_hash_djb2_len_ci(hi, 1));
+    TEST_INT_NE(cstring_hash_djb2_len_ci(hi, 0), cstring_hash_djb2_len_ci(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_len(mid, 1), cstring_hash_fnv1a_len(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_len(hi, 0), cstring_hash_fnv1a_len(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(mid, 1), cstring_hash_fnv1a_len_ci(hi, 1));
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(hi, 0), cstring_hash_fnv1a_len_ci(hi, 1));
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(void)
+{
+    cstring_char_t const    a_nul_b[3] = { CSTRING_T_('a'), (cstring_char_t)0, CSTRING_T_('b') };
+    cstring_char_t const    a_only[1] = { CSTRING_T_('a') };
+    cstring_char_t const    ab[2] = { CSTRING_T_('a'), CSTRING_T_('b') };
+    cstring_char_t const    a_nul_c[3] = { CSTRING_T_('a'), (cstring_char_t)0, CSTRING_T_('c') };
+
+    /* Explicit length, so an interior NUL does not end the slice. */
+    TEST_INT_NE(cstring_hash_djb2_len(a_only, 1), cstring_hash_djb2_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_len(ab, 2), cstring_hash_djb2_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_len(a_nul_c, 3), cstring_hash_djb2_len(a_nul_b, 3));
+
+    TEST_INT_NE(cstring_hash_djb2_len_ci(a_only, 1), cstring_hash_djb2_len_ci(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_len_ci(ab, 2), cstring_hash_djb2_len_ci(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_len_ci(a_nul_c, 3), cstring_hash_djb2_len_ci(a_nul_b, 3));
+
+    TEST_INT_NE(cstring_hash_fnv1a_len(a_only, 1), cstring_hash_fnv1a_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_len(ab, 2), cstring_hash_fnv1a_len(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_len(a_nul_c, 3), cstring_hash_fnv1a_len(a_nul_b, 3));
+
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(a_only, 1), cstring_hash_fnv1a_len_ci(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(ab, 2), cstring_hash_fnv1a_len_ci(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_fnv1a_len_ci(a_nul_c, 3), cstring_hash_fnv1a_len_ci(a_nul_b, 3));
+
+#ifndef CSTRING_USE_WIDE_STRINGS
+    TEST_INT_EQ(193482728ULL, cstring_hash_djb2_len(a_nul_b, 3));
+    TEST_INT_EQ(0xe5d29919042666b2ULL, cstring_hash_fnv1a_len(a_nul_b, 3));
+#endif /* CSTRING_USE_WIDE_STRINGS */
 }
 
 
