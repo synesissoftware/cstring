@@ -57,6 +57,7 @@
     * [ ] `--no-cpp`;
     * [ ] `--no-p99`;
     * [ ] `--no-shwild`;
+    * [x] ~~~`--wide-strings`~~~ - ✅;
 * [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;

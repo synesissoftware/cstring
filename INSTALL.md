@@ -56,6 +56,8 @@ The primary choice for installation is by use of **CMake**.
      (`NO_CSTRING_CPP_API`);
    * `--no-p99` — do not recognise **p99** (`NO_P99`);
    * `--no-shwild` — do not recognise **shwild** (`NO_SHWILD`);
+   * `--wide-strings` — compile `cstring_char_t` as `wchar_t`
+     (`CSTRING_USE_WIDE_STRINGS`); performance tests are not built;
    * `--disable-examples` / `-E` — omit examples (`BUILD_EXAMPLES=OFF`);
    * `--disable-testing` / `-T` — omit tests (`BUILD_TESTING=OFF`);
    * `--stlsoft-root-dir` / `-s` — pass an **STLSoft** source-tree root when

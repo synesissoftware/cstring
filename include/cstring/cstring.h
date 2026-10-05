@@ -355,13 +355,13 @@ typedef struct cstring_t                                    cstring_t;
  * API functions
  */
 
-/** \brief Returns a non-NULL nul-terminated character string describing the
+/** \brief Returns a non-NULL NUL-terminated character string describing the
  * given error code
  * \ingroup group__cstring_api
  *
  * \param rc The error code. Must be one of the CSTRING_RC enumeration;
  *
- * \return A non-NULL nul-terminated string
+ * \return A non-NULL NUL-terminated string
  */
 CSTRING_EXTERN_C
 char const*
@@ -679,7 +679,7 @@ cstring_assign(
  *   assign. Must not be NULL, unless \c cch is 0;
  * \param cch The number of characters to assign;
  *
- * \note If the source has embedded nul characters, they will be incorporated
+ * \note If the source has embedded NUL characters, they will be incorporated
  *   into the cstring contents, which means that calling strlen() on the payload
  *   pointer may give inconsistent results
  *
@@ -758,7 +758,7 @@ cstring_append(
  *   append. Must not be NULL, unless \c cch is 0;
  * \param cch The number of characters to append;
  *
- * \note If the source has embedded nul characters, they will be incorporated
+ * \note If the source has embedded NUL characters, they will be incorporated
  *   into the cstring contents, which means that calling strlen() on the payload
  *   pointer may give inconsistent results
  *

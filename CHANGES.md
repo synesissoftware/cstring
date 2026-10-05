@@ -3,6 +3,7 @@
 
 ## 4.0.19 - 4th October 2026
 
+* Wide-string build via **prepare_cmake.sh** `--wide-strings` (`CSTRING_USE_WIDE_STRINGS` on **cstring::core**): `cstring_char_t` is `wchar_t`; `cstring_write()` / `cstring_writeline()` emit the payload as multibyte bytes; examples and tests take literals and comparisons from **test/cstring.helpers.h** (`CSTRING_T_()`, `CSTRING_STRCMP_()`, `CSTRING_STRNCMP_()`), which is not part of the library contract; performance tests stay multibyte; CI job **wide-strings**;
 * Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
 * Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
 * Freed a zero-size realloc-arena block on every platform (`realloc(pv, 0)` allocates on some), leaving a `NULL` pointer unchanged;

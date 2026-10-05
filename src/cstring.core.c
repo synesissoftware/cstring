@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 3rd October 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -63,7 +63,15 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef CSTRING_USE_WIDE_STRINGS
+# include <limits.h>
 # include <wchar.h>
+# ifndef MB_LEN_MAX
+
+#  define CSTRING_WRITE_MB_LEN_                             (8)
+# else /* ? MB_LEN_MAX */
+
+#  define CSTRING_WRITE_MB_LEN_                             MB_LEN_MAX
+# endif /* !MB_LEN_MAX */
 #endif /* CSTRING_USE_WIDE_STRINGS */
 
 
@@ -357,6 +365,67 @@ cstring_realloc_(
 )
 {
     return cstring_realloc_2_(pv, cch, flags, prc, NULL, NULL);
+}
+
+/* Writes cch characters of s as bytes. Narrow uses "%.*s". Wide converts
+ * one character at a time with wctomb(), and stops at a NUL the way "%.*s"
+ * does. %ls is not used: its spelling and its precision are not the same on
+ * every compiler this library still supports. Returns the number of bytes
+ * written, or -1.
+ */
+static
+int
+cstring_write_span_(
+    FILE*                   stm
+,   cstring_char_t const*   s
+,   int                     cch
+)
+{
+    if (cch <= 0)
+    {
+        return (0 == cch) ? 0 : -1;
+    }
+    else
+#ifdef CSTRING_USE_WIDE_STRINGS
+    {
+        int total = 0;
+
+        wctomb(NULL, 0); /* reset the shared shift state */
+
+        { int i; for (i = 0; i != cch; ++i)
+        {
+            char mb[CSTRING_WRITE_MB_LEN_];
+
+            if ('\0' == s[i])
+            {
+                break;
+            }
+            else
+            {
+                int const nb = wctomb(mb, s[i]);
+
+                if (nb < 0)
+                {
+                    return -1;
+                }
+
+                if (0 != nb &&
+                    (size_t)nb != fwrite(mb, 1, (size_t)nb, stm))
+                {
+                    return -1;
+                }
+
+                total += nb;
+            }
+        }}
+
+        return total;
+    }
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+    {
+        return fprintf(stm, "%.*s", cch, s);
+    }
+#endif /* CSTRING_USE_WIDE_STRINGS */
 }
 
 
@@ -1456,7 +1525,7 @@ cstring_write_(
     FILE*                   stm
 ,   struct cstring_t const* pcs
 ,   size_t*                 numWritten /* = NULL */
-,   char const*             fmt
+,   int                     newline
 )
 {
     int     r;
@@ -1477,18 +1546,26 @@ cstring_write_(
 
     *numWritten = 0u;
 
-    r = fprintf(stm, fmt, (int)pcs->len, pcs->ptr);
+    r = cstring_write_span_(stm, pcs->ptr, (int)pcs->len);
 
     if (r < 0)
     {
         return CSTRING_RC_IOERROR;
     }
-    else
-    {
-        *numWritten = (size_t)r;
 
-        return CSTRING_RC_SUCCESS;
+    if (newline)
+    {
+        if ('\n' != fputc('\n', stm))
+        {
+            return CSTRING_RC_IOERROR;
+        }
+
+        ++r;
     }
+
+    *numWritten = (size_t)r;
+
+    return CSTRING_RC_SUCCESS;
 }
 
 CSTRING_EXTERN_C
@@ -1499,7 +1576,7 @@ cstring_writeline(
 ,   size_t*                 numWritten /* = NULL */
 )
 {
-    return cstring_write_(stm, pcs, numWritten, "%.*s\n");
+    return cstring_write_(stm, pcs, numWritten, 1);
 }
 
 CSTRING_EXTERN_C
@@ -1510,7 +1587,7 @@ cstring_write(
 ,   size_t*                 numWritten /* = NULL */
 )
 {
-    return cstring_write_(stm, pcs, numWritten, "%.*s");
+    return cstring_write_(stm, pcs, numWritten, 0);
 }
 
 
