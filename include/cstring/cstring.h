@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 1
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     96
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     98
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -304,6 +304,40 @@ typedef unsigned __int64_t                                  cstring_hash_t;
 
 # error 64-bit unsigned integer type not discriminated
 #endif
+
+/** \def CSTRING_HASH_DJB2_SEED
+ * \ingroup group__cstring_api
+ * \brief djb2 initial seed (also the hash of an empty input)
+ *
+ * Daniel J. Bernstein's djb2, as published by Ozan Yigit.
+ * \sa http://www.cse.yorku.ca/~oz/hash.html#djb2
+ */
+#define CSTRING_HASH_DJB2_SEED                              5381ULL
+
+/** \def CSTRING_HASH_FNV1A_OFFSET
+ * \ingroup group__cstring_api
+ * \brief FNV-1a 64-bit offset basis (also the hash of an empty input)
+ *
+ * FNV-1a offset basis published by Fowler, Noll, and Vo, and in RFC 9923.
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-2.2
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-5
+ */
+#define CSTRING_HASH_FNV1A_OFFSET                           0xcbf29ce484222325ULL
+
+/** \def CSTRING_HASH_FNV1A_PRIME
+ * \ingroup group__cstring_api
+ * \brief FNV-1a 64-bit prime
+ *
+ * FNV-1a prime published by Fowler, Noll, and Vo, and in RFC 9923.
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#fnv-prime
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-2.1
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-5
+ */
+#define CSTRING_HASH_FNV1A_PRIME                            0x100000001b3ULL
 
 /** \brief The cstring structure
  * \ingroup group__cstring_api

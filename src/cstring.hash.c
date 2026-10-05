@@ -84,7 +84,7 @@ cstring_hash_djb2(
 {
     if (NULL == pcs)
     {
-        return 5381;
+        return CSTRING_HASH_DJB2_SEED;
     }
 
     return cstring_hash_djb2_len(pcs->ptr, pcs->len);
@@ -97,7 +97,7 @@ cstring_hash_djb2_ci(
 {
     if (NULL == pcs)
     {
-        return 5381;
+        return CSTRING_HASH_DJB2_SEED;
     }
 
     return cstring_hash_djb2_len_ci(pcs->ptr, pcs->len);
@@ -109,7 +109,7 @@ cstring_hash_djb2_len(
 ,   size_t                  cch
 )
 {
-    cstring_hash_t hash = 5381;
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
 
     if (NULL != s)
     {
@@ -132,7 +132,7 @@ cstring_hash_djb2_len_ci(
 ,   size_t                  cch
 )
 {
-    cstring_hash_t hash = 5381;
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
 
     if (NULL != s)
     {
@@ -160,7 +160,7 @@ cstring_hash_fnv1a(
 {
     if (NULL == pcs)
     {
-        return 0xcbf29ce484222325ULL;
+        return CSTRING_HASH_FNV1A_OFFSET;
     }
 
     return cstring_hash_fnv1a_len(pcs->ptr, pcs->len);
@@ -173,7 +173,7 @@ cstring_hash_fnv1a_ci(
 {
     if (NULL == pcs)
     {
-        return 0xcbf29ce484222325ULL;
+        return CSTRING_HASH_FNV1A_OFFSET;
     }
 
     return cstring_hash_fnv1a_len_ci(pcs->ptr, pcs->len);
@@ -185,8 +185,7 @@ cstring_hash_fnv1a_len(
 ,   size_t                  cch
 )
 {
-    cstring_hash_t const    fnv_prime   =   0x100000001b3ULL;
-    cstring_hash_t          hash        =   0xcbf29ce484222325ULL;
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
 
     if (NULL != s)
     {
@@ -197,7 +196,7 @@ cstring_hash_fnv1a_len(
             uint8_t const c = (uint8_t)s[i];
 
             hash ^= c;
-            hash *= fnv_prime;
+            hash *= CSTRING_HASH_FNV1A_PRIME;
         }
     }
 
@@ -210,8 +209,7 @@ cstring_hash_fnv1a_len_ci(
 ,   size_t                  cch
 )
 {
-    cstring_hash_t const    fnv_prime   =   0x100000001b3ULL;
-    cstring_hash_t          hash        =   0xcbf29ce484222325ULL;
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
 
     if (NULL != s)
     {
@@ -226,7 +224,7 @@ cstring_hash_fnv1a_len_ci(
 #endif
 
             hash ^= c;
-            hash *= fnv_prime;
+            hash *= CSTRING_HASH_FNV1A_PRIME;
         }
     }
 

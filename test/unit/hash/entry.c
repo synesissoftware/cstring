@@ -103,6 +103,10 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_NULL_AND_EMPTY(void)
     cstring_t               created_empty;
     CSTRING_RC              rc;
 
+    TEST_INT_EQ(5381ULL, CSTRING_HASH_DJB2_SEED);
+    TEST_INT_EQ(0xcbf29ce484222325ULL, CSTRING_HASH_FNV1A_OFFSET);
+    TEST_INT_EQ(0x100000001b3ULL, CSTRING_HASH_FNV1A_PRIME);
+
     rc = cstring_create(&created_empty, CSTRING_T_(""));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
 
