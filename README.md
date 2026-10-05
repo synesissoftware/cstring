@@ -215,16 +215,11 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Both 64-bit **djb2** (initial seed `5381`, `CSTRING_HASH_DJB2_SEED`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, `CSTRING_HASH_FNV1A_OFFSET`; prime `0x100000001b3ULL`, `CSTRING_HASH_FNV1A_PRIME`) hash functions are provided, returning `cstring_hash_t` (`uint64_t`). Buffer/slice variants (`_len`) allow hashing character sequences without constructing a `cstring_t` instance. Case-insensitive variants (`_ci`) fold characters to lower case, facilitating case-folded lookups and comparisons. All functions safely tolerate `NULL` pointers and zero lengths. An empty or `NULL` input hashes to `CSTRING_HASH_DJB2_SEED` or `CSTRING_HASH_FNV1A_OFFSET`:
+Declared in **cstring/hash.h**, which **cstring.h** includes. Both 64-bit **djb2** (initial seed `5381`, `CSTRING_HASH_DJB2_SEED`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, `CSTRING_HASH_FNV1A_OFFSET`; prime `0x100000001b3ULL`, `CSTRING_HASH_FNV1A_PRIME`) are provided, returning `cstring_hash_t` (`uint64_t`).
 
-* `cstring_hash_djb2()` — calculates a 64-bit djb2 hash of a `cstring_t` instance;
-* `cstring_hash_djb2_ci()` — calculates a case-insensitive 64-bit djb2 hash of a `cstring_t` instance;
-* `cstring_hash_djb2_len()` — calculates a 64-bit djb2 hash of a character buffer or slice;
-* `cstring_hash_djb2_len_ci()` — calculates a case-insensitive 64-bit djb2 hash of a character buffer or slice;
-* `cstring_hash_fnv1a()` — calculates a 64-bit FNV-1a hash of a `cstring_t` instance;
-* `cstring_hash_fnv1a_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a `cstring_t` instance;
-* `cstring_hash_fnv1a_len()` — calculates a 64-bit FNV-1a hash of a character buffer or slice;
-* `cstring_hash_fnv1a_len_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a character buffer or slice;
+Multibyte (`_mbs`, `_mbuf`) and wide (`_wcs`, `_wbuf`) entry points are present in every build, whatever `cstring_char_t` is. Nul-terminated forms stop at the first nul. Buffer forms hash exactly the given number of code units, including embedded nuls. Each code unit contributes its low 8 bits, so ASCII text has the same hash in both encodings. The ambient `_buf` form calls `_mbuf` or `_wbuf`. Case-insensitive forms (`_case`) fold with `tolower` or `towlower`, which follow the process locale. A `NULL` pointer or a zero length hashes to `CSTRING_HASH_DJB2_SEED` or `CSTRING_HASH_FNV1A_OFFSET`.
+
+For each algorithm the six forms are `cstring_hash_djb2()` (`cstring_t`), `cstring_hash_djb2_mbs()` (`char const*`), `cstring_hash_djb2_wcs()` (`wchar_t const*`), `cstring_hash_djb2_buf()` (ambient buffer), `cstring_hash_djb2_mbuf()` (`char const*` and length), and `cstring_hash_djb2_wbuf()` (`wchar_t const*` and length). The case-insensitive forms are `cstring_hash_djb2_case()`, `cstring_hash_djb2_mbs_case()`, `cstring_hash_djb2_wcs_case()`, `cstring_hash_djb2_buf_case()`, `cstring_hash_djb2_mbuf_case()`, and `cstring_hash_djb2_wbuf_case()`. **FNV-1a** repeats that set as `cstring_hash_fnv1a()` and the same suffixes.
 
 
 ### Vector API
@@ -244,7 +239,7 @@ Defined in **cstring/cstring.vector.h**:
 
 When included in C++ compilation units, **cstring/cstring.h** provides inline access shims:
 * **String access shims** — `c_str_data()`, `c_str_len()`, and `c_str_ptr()`, allowing `cstring_t` instances to be used directly with **STLSoft** and generic C++ templates;
-* **Hash access shims** — `hash_djb2()`, `hash_djb2_ci()`, `hash_fnv1a()`, and `hash_fnv1a_ci()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, and slice / buffer forms `(cstring_char_t const* s, size_t cch)`;
+* **Hash access shims** — `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, and `hash_fnv1a_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
 
 
 ## Examples

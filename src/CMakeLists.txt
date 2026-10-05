@@ -77,8 +77,10 @@ endif(_BUILD_AS_WIN32)
 # header files from sub-directories, so this is done below in an additional
 # `install()` step
 set(CORE_PUBLIC_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/common.h"
 	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/${PROJECT_NAME_LOWER}.h"
 	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/cstring.vector.h"
+	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/hash.h"
 )
 
 set_target_properties(core PROPERTIES

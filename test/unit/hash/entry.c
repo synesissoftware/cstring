@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for the cstring hashing API.
  *
  * Created: 5th September 2026
- * Updated: 5th October 2026
+ * Updated: 6th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -17,7 +17,7 @@
  * test component header file include(s)
  */
 
-#include <cstring/cstring.h>
+#include <cstring/hash.h>
 
 /* /////////////////////////////////////
  * general includes
@@ -46,6 +46,7 @@ static void TEST_cstring_hash_djb2_AND_cstring_hash_fnv1a_LONG_STRING(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(void);
+static void TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL);
+        XTESTS_RUN_CASE(TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf);
 
         XTESTS_PRINT_RESULTS();
 
@@ -424,6 +426,105 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(v
     TEST_INT_EQ(193482728ULL, cstring_hash_djb2_buf(a_nul_b, 3));
     TEST_INT_EQ(0xe5d29919042666b2ULL, cstring_hash_fnv1a_buf(a_nul_b, 3));
 #endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+static void TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf(void)
+{
+    char const      hi[1] = { (char)(unsigned char)0xFF };
+    char const      a_nul_b[3] = { 'a', '\0', 'b' };
+    wchar_t const   wide_alias[1] = { (wchar_t)0x161 };
+    wchar_t const   wa_nul_b[3] = { L'a', L'\0', L'b' };
+    cstring_t       cs;
+    CSTRING_RC      rc;
+
+    /* NULL and empty */
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbs(NULL));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wcs(NULL));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbs_case(NULL));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wcs_case(NULL));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbuf(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wbuf(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbuf_case(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wbuf_case(NULL, 10));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbs(""));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wcs(L""));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_mbuf("", 0));
+    TEST_INT_EQ(5381ULL, cstring_hash_djb2_wbuf(L"", 0));
+
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_mbs(NULL));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_wcs(NULL));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_mbs_case(NULL));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_wcs_case(NULL));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_mbuf(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_wbuf(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_mbuf_case(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_wbuf_case(NULL, 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_mbs(""));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, cstring_hash_fnv1a_wcs(L""));
+
+    /* Published octet vectors, identical for multibyte and wide ASCII */
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_mbs("a"));
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_mbuf("a", 1));
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_wcs(L"a"));
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_wbuf(L"a", 1));
+    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_mbs("foobar"));
+    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_mbuf("foobar", 6));
+    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_wcs(L"foobar"));
+    TEST_INT_EQ(6953516687550ULL, cstring_hash_djb2_wbuf(L"foobar", 6));
+
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_mbs("a"));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_mbuf("a", 1));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_wcs(L"a"));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_wbuf(L"a", 1));
+    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_mbs("foobar"));
+    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_mbuf("foobar", 6));
+    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_wcs(L"foobar"));
+    TEST_INT_EQ(0x85944171f73967e8ULL, cstring_hash_fnv1a_wbuf(L"foobar", 6));
+
+    /* Case fold agrees across encodings for ASCII */
+    TEST_INT_EQ(cstring_hash_djb2_mbs_case("Test"), cstring_hash_djb2_mbs_case("test"));
+    TEST_INT_EQ(cstring_hash_djb2_mbs_case("Test"), cstring_hash_djb2_wcs_case(L"TEST"));
+    TEST_INT_EQ(cstring_hash_djb2_mbs_case("Test"), cstring_hash_djb2_wbuf_case(L"tEst", 4));
+    TEST_INT_EQ(cstring_hash_fnv1a_mbs_case("Test"), cstring_hash_fnv1a_wcs_case(L"test"));
+    TEST_INT_NE(cstring_hash_djb2_mbs("Test"), cstring_hash_djb2_wcs(L"test"));
+    TEST_INT_NE(cstring_hash_fnv1a_mbs("Test"), cstring_hash_fnv1a_wcs(L"test"));
+
+    /* Sized forms include an embedded nul; nul-terminated forms stop */
+    TEST_INT_NE(cstring_hash_djb2_mbs("a"), cstring_hash_djb2_mbuf(a_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_mbs("ab"), cstring_hash_djb2_mbuf(a_nul_b, 3));
+    TEST_INT_EQ(193482728ULL, cstring_hash_djb2_mbuf(a_nul_b, 3));
+    TEST_INT_EQ(0xe5d29919042666b2ULL, cstring_hash_fnv1a_mbuf(a_nul_b, 3));
+    TEST_INT_EQ(cstring_hash_djb2_mbuf(a_nul_b, 3), cstring_hash_djb2_wbuf(wa_nul_b, 3));
+    TEST_INT_EQ(cstring_hash_fnv1a_mbuf(a_nul_b, 3), cstring_hash_fnv1a_wbuf(wa_nul_b, 3));
+    TEST_INT_NE(cstring_hash_djb2_wcs(L"ab"), cstring_hash_djb2_wbuf(wa_nul_b, 3));
+
+    /* Wide code units contribute the low 8 bits */
+    TEST_INT_EQ(177670ULL, cstring_hash_djb2_wbuf(wide_alias, 1));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, cstring_hash_fnv1a_wbuf(wide_alias, 1));
+    TEST_INT_EQ(cstring_hash_djb2_mbuf("a", 1), cstring_hash_djb2_wbuf(wide_alias, 1));
+
+    /* Octet above 0x7F is hashed as that octet on every build */
+    TEST_INT_EQ(177828ULL, cstring_hash_djb2_mbuf(hi, 1));
+    TEST_INT_EQ(0xaf64724c8602eb6eULL, cstring_hash_fnv1a_mbuf(hi, 1));
+
+    rc = cstring_create(&cs, CSTRING_T_("foobar"));
+    TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    TEST_INT_EQ(cstring_hash_djb2_wbuf(L"foobar", 6), cstring_hash_djb2_buf(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_wbuf_case(L"foobar", 6), cstring_hash_djb2_buf_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_wbuf(L"foobar", 6), cstring_hash_fnv1a_buf(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_wbuf_case(L"foobar", 6), cstring_hash_fnv1a_buf_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_wcs(L"foobar"), cstring_hash_djb2(&cs));
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    TEST_INT_EQ(cstring_hash_djb2_mbuf("foobar", 6), cstring_hash_djb2_buf(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_mbuf_case("foobar", 6), cstring_hash_djb2_buf_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_mbuf("foobar", 6), cstring_hash_fnv1a_buf(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_fnv1a_mbuf_case("foobar", 6), cstring_hash_fnv1a_buf_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_djb2_mbs("foobar"), cstring_hash_djb2(&cs));
+#endif /* CSTRING_USE_WIDE_STRINGS */
+    cstring_destroy(&cs);
 }
 
 

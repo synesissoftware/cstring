@@ -9,6 +9,7 @@ string instances and extensible arrays of such, for Unix and Windows.
 | Module | Header | Summary |
 | ------ | ------ | ------- |
 | @ref group__cstring_api | `<cstring/cstring.h>` | Core `cstring_t` API (create, mutate, stream I/O, status codes) |
+| @ref group__cstring_api__hashing | `<cstring/hash.h>` | djb2 and FNV-1a hashes of `cstring_t`, C strings, and buffers |
 | @ref group__cstring_api__flags | `<cstring/cstring.h>` | Memory-arena and capacity control flags |
 | Vector API | `<cstring/cstring.vector.h>` | `cstring_vector_t` sequences of `cstring_t` |
 

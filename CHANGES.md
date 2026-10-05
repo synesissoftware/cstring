@@ -3,10 +3,12 @@
 
 ## 4.1.0 - 5th October 2026
 
-* Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_ci()`, `cstring_hash_djb2_len()`, and `cstring_hash_djb2_len_ci()`;
-* Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_ci()`, `cstring_hash_fnv1a_len()`, and `cstring_hash_fnv1a_len_ci()`;
+* Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_case()`, `cstring_hash_djb2_buf()`, and `cstring_hash_djb2_buf_case()`;
+* Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_case()`, `cstring_hash_fnv1a_buf()`, and `cstring_hash_fnv1a_buf_case()`;
+* Added multibyte and wide hash entry points `cstring_hash_djb2_mbs()`, `cstring_hash_djb2_wcs()`, `cstring_hash_djb2_mbuf()`, `cstring_hash_djb2_wbuf()`, and the `_case` forms, and the same set for `cstring_hash_fnv1a()`;
 * Added `cstring_hash_t` typedef (`uint64_t`);
-* Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
+* Added **common.h** for shared `<stdint.h>` discrimination, and **hash.h** for the hash API, included from **cstring.h**;
+* Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, and `hash_fnv1a_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
 * Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` as the djb2 and FNV-1a basis constants;
 * Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` with references to the published djb2 and FNV-1a algorithms;
