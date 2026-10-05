@@ -12,6 +12,7 @@
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
 * Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` as the djb2 and FNV-1a basis constants;
 * Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` with references to the published djb2 and FNV-1a algorithms;
+* Documented the hash contract (forms, low octet, case fold, published vectors) and grouped the algorithms as `group__cstring_api__hashing__djb2` and `group__cstring_api__hashing__fnv1a`;
 
 
 ## 4.0.19 - 4th October 2026

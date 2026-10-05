@@ -27,6 +27,8 @@ Small standalone C library that provides extensible C-style strings and extensib
     - [Modification functions](#modification-functions)
     - [File functions](#file-functions)
     - [Hashing functions](#hashing-functions)
+      - [djb2](#djb2)
+      - [FNV-1a](#fnv-1a)
   - [Vector API](#vector-api)
   - [C++ Integration](#c-integration)
 - [Examples](#examples)
@@ -215,11 +217,48 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Declared in **cstring/hash.h**, which **cstring.h** includes. Both 64-bit **djb2** (initial seed `5381`, `CSTRING_HASH_DJB2_SEED`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, `CSTRING_HASH_FNV1A_OFFSET`; prime `0x100000001b3ULL`, `CSTRING_HASH_FNV1A_PRIME`) are provided, returning `cstring_hash_t` (`uint64_t`).
+Declared in **cstring/hash.h**, which **cstring.h** includes. Both algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. Each code unit contributes its low 8 bits, so ASCII text has one hash in both encodings. A wide code unit of value `0x161` hashes as the octet `0x61` (`'a'`). A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer.
 
-Multibyte (`_mbs`, `_mbuf`) and wide (`_wcs`, `_wbuf`) entry points are present in every build, whatever `cstring_char_t` is. Nul-terminated forms stop at the first nul. Buffer forms hash exactly the given number of code units, including embedded nuls. Each code unit contributes its low 8 bits, so ASCII text has the same hash in both encodings. The ambient `_buf` form calls `_mbuf` or `_wbuf`. Case-insensitive forms (`_case`) fold with `tolower` or `towlower`, which follow the process locale. A `NULL` pointer or a zero length hashes to `CSTRING_HASH_DJB2_SEED` or `CSTRING_HASH_FNV1A_OFFSET`.
+| Suffix | Input | What is hashed |
+| ------ | ----- | -------------- |
+| (none) | `cstring_t const*` | `ptr` for `len` code units, including embedded NULs |
+| `_mbs` | `char const*` | stops at the first NUL |
+| `_wcs` | `wchar_t const*` | stops at the first NUL |
+| `_buf` | `cstring_char_t const*`, `size_t` | ambient buffer; calls `_mbuf` or `_wbuf` |
+| `_mbuf` | `char const*`, `size_t` | exactly `cch` code units, including embedded NULs |
+| `_wbuf` | `wchar_t const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 
-For each algorithm the six forms are `cstring_hash_djb2()` (`cstring_t`), `cstring_hash_djb2_mbs()` (`char const*`), `cstring_hash_djb2_wcs()` (`wchar_t const*`), `cstring_hash_djb2_buf()` (ambient buffer), `cstring_hash_djb2_mbuf()` (`char const*` and length), and `cstring_hash_djb2_wbuf()` (`wchar_t const*` and length). The case-insensitive forms are `cstring_hash_djb2_case()`, `cstring_hash_djb2_mbs_case()`, `cstring_hash_djb2_wcs_case()`, `cstring_hash_djb2_buf_case()`, `cstring_hash_djb2_mbuf_case()`, and `cstring_hash_djb2_wbuf_case()`. **FNV-1a** repeats that set as `cstring_hash_fnv1a()` and the same suffixes.
+`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, and so on). Case folding uses `tolower` or `towlower`, which follow the process locale, and then the low 8 bits.
+
+Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_djb2_mbuf()`, and `cstring_hash_fnv1a_wbuf_case()`.
+
+
+##### djb2
+
+The hash starts at `CSTRING_HASH_DJB2_SEED` (`5381`). For each octet `b` the step is `hash = ((hash << 5) + hash) + b`, which is `hash * 33 + b`. Daniel J. Bernstein's djb2, as published by Ozan Yigit.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `5381` |
+| `"a"` | `177670` |
+| `"foobar"` | `6953516687550` |
+| `{ 'a', 0, 'b' }` length 3 | `193482728` |
+| octet `0xFF` | `177828` |
+
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed.
+
+
+##### FNV-1a
+
+The hash starts at `CSTRING_HASH_FNV1A_OFFSET` (`0xcbf29ce484222325`). For each octet `b` the step is `hash ^= b` and then `hash *= CSTRING_HASH_FNV1A_PRIME` (`0x100000001b3`). Fowler, Noll, and Vo FNV-1a, 64-bit.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `0xcbf29ce484222325` |
+| `"a"` | `0xaf63dc4c8601ec8c` |
+| `"foobar"` | `0x85944171f73967e8` |
+| `{ 'a', 0, 'b' }` length 3 | `0xe5d29919042666b2` |
+| octet `0xFF` | `0xaf64724c8602eb6e` |
 
 
 ### Vector API
@@ -239,7 +278,7 @@ Defined in **cstring/cstring.vector.h**:
 
 When included in C++ compilation units, **cstring/cstring.h** provides inline access shims:
 * **String access shims** — `c_str_data()`, `c_str_len()`, and `c_str_ptr()`, allowing `cstring_t` instances to be used directly with **STLSoft** and generic C++ templates;
-* **Hash access shims** — `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, and `hash_fnv1a_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
+* **Hash access shims** — `cstring::hash_djb2()`, `cstring::hash_djb2_case()`, `cstring::hash_fnv1a()`, and `cstring::hash_fnv1a_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
 
 
 ## Examples
@@ -294,11 +333,15 @@ When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not rec
 
 ### Related projects
 
-Projects in which **cstring** is used include:
+Projects that call the **cstring** API, or that require the **CMake** package `cstring`:
 
-* [**errni**](https://github.com/sistools/errni)
-* [**rstrip**](https://github.com/sistools/rstrip)
-* [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch)
+| Project | Use |
+| ------- | --- |
+| [**errni**](https://github.com/sistools/errni) | Builds each result line and writes it with `cstring_writeline()` |
+| [**lnunique**](https://github.com/sistools/lnunique) | Requires `cstring` 4.0 and links `cstring::core` for line strings |
+| [**rstrip**](https://github.com/sistools/rstrip) | Accumulates each output line and writes it with `cstring_write()` |
+| [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch) | Holds patterns and subject strings as `cstring_t` |
+| [**STLSoft**](https://github.com/synesissoftware/STLSoft) | Optional; the C unit test `output_debug_line.C` uses `cstring_t` when the package is found |
 
 
 ### License

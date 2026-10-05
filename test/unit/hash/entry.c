@@ -489,7 +489,7 @@ static void TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf(void)
     TEST_INT_NE(cstring_hash_djb2_mbs("Test"), cstring_hash_djb2_wcs(L"test"));
     TEST_INT_NE(cstring_hash_fnv1a_mbs("Test"), cstring_hash_fnv1a_wcs(L"test"));
 
-    /* Sized forms include an embedded nul; nul-terminated forms stop */
+    /* Sized forms include an embedded NUL; NUL-terminated forms stop */
     TEST_INT_NE(cstring_hash_djb2_mbs("a"), cstring_hash_djb2_mbuf(a_nul_b, 3));
     TEST_INT_NE(cstring_hash_djb2_mbs("ab"), cstring_hash_djb2_mbuf(a_nul_b, 3));
     TEST_INT_EQ(193482728ULL, cstring_hash_djb2_mbuf(a_nul_b, 3));

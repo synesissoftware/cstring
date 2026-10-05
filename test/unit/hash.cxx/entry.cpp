@@ -91,6 +91,11 @@ int main(int argc, char* argv[])
 
 namespace
 {
+    using cstring::hash_djb2;
+    using cstring::hash_djb2_case;
+    using cstring::hash_fnv1a;
+    using cstring::hash_fnv1a_case;
+
 
 static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
 {
