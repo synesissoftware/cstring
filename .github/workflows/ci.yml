@@ -64,6 +64,34 @@ jobs:
       toolchain: ${{ matrix.toolchain }}
     secrets: inherit
 
+  # Same Windows cells as above, configured with --wide-strings. Performance
+  # steps are skipped in the cell when that input is set.
+  cell-wide:
+    name: CI (${{ matrix.id }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: windows-cl-wide
+            os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+          - id: windows-mingw-wide
+            os: windows-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            toolchain: mingw
+    uses: ./.github/workflows/ci-cell.yml
+    with:
+      build-type: Release
+      c-compiler: ${{ matrix.c_compiler }}
+      cell-id: ${{ matrix.id }}
+      cpp-compiler: ${{ matrix.cpp_compiler }}
+      os: ${{ matrix.os }}
+      toolchain: ${{ matrix.toolchain }}
+      wide-strings: true
+    secrets: inherit
+
   install-smoke:
     name: Install smoke (${{ matrix.os }}, ${{ matrix.toolchain || matrix.c_compiler }})
     runs-on: ${{ matrix.os }}

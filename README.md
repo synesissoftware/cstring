@@ -293,7 +293,7 @@ When supplying `'--no-p99'` — sets `NO_P99=ON` — **p99** is not recognised; 
 
 When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not recognised and pattern-match assertions are compiled out; other unit-tests still run.
 
-When supplying `'--wide-strings'` — sets `CSTRING_USE_WIDE_STRINGS=ON` — `cstring_char_t` is `wchar_t`. Examples and unit/component tests follow that type. Performance tests are not built: they compare `char` payloads with `std::string`.
+When supplying `'--wide-strings'` — sets `CSTRING_USE_WIDE_STRINGS=ON` — `cstring_char_t` is `wchar_t`. Examples and unit/component tests follow that type. Performance tests are not built: they compare `char` payloads with `std::string`. CI runs that configuration as **windows-cl-wide** and **windows-mingw-wide**.
 
 
 ### Related projects

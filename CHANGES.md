@@ -8,6 +8,7 @@
 * Added `cstring_hash_t` typedef (`uint64_t`);
 * Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
 * Added unit test suite **test.unit.hash**;
+* Wide-string CI cells **windows-cl-wide** and **windows-mingw-wide** run the Windows cell suite with `--wide-strings`, and do not run performance tests;
 
 
 ## 4.0.19 - 4th October 2026
