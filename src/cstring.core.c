@@ -368,7 +368,7 @@ cstring_realloc_(
 }
 
 /* Writes cch characters of s as bytes. Narrow uses "%.*s". Wide converts
- * one character at a time with wctomb(), and stops at a NUL the way "%.*s"
+ * one character at a time with wcrtomb(), and stops at a NUL the way "%.*s"
  * does. %ls is not used: its spelling and its precision are not the same on
  * every compiler this library still supports. Returns the number of bytes
  * written, or -1.
@@ -388,13 +388,10 @@ cstring_write_span_(
     else
 #ifdef CSTRING_USE_WIDE_STRINGS
     {
-        int total = 0;
+        int         total = 0;
+        mbstate_t   state;
 
-        /* reset the shared shift state */
-        if (wctomb(NULL, 0) < 0)
-        {
-            return -1;
-        }
+        memset(&state, 0, sizeof(state));
 
         { int i; for (i = 0; i != cch; ++i)
         {
@@ -406,20 +403,31 @@ cstring_write_span_(
             }
             else
             {
-                int const nb = wctomb(mb, s[i]);
+                size_t nb;
 
-                if (nb < 0)
+#if defined(_MSC_VER)
+
+                if (0 != wcrtomb_s(&nb, mb, sizeof(mb), s[i], &state))
                 {
                     return -1;
                 }
+#else /* ? _MSC_VER */
+
+                nb = wcrtomb(mb, s[i], &state);
+
+                if ((size_t)(-1) == nb)
+                {
+                    return -1;
+                }
+#endif /* !_MSC_VER */
 
                 if (0 != nb &&
-                    (size_t)nb != fwrite(mb, 1, (size_t)nb, stm))
+                    nb != fwrite(mb, 1, nb, stm))
                 {
                     return -1;
                 }
 
-                total += nb;
+                total += (int)nb;
             }
         }}
 
