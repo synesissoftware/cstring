@@ -10,6 +10,8 @@
 * Added **common.h** for shared `<stdint.h>` discrimination, and **hash.h** for the hash API, included from **cstring.h**;
 * Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, and `hash_fnv1a_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
+* Added **test.performance.hash**, timing `djb2` and `FNV-1a` against a degenerate lose-lose sum for cstring, multibyte, wide, counted-buffer, and case-insensitive inputs;
+* Stopped counted copies (`cstring_createLen()`, `cstring_assignLen()`, and the insert and append forms) from reading past `cch` when that slice contains no NUL;
 * Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` as the djb2 and FNV-1a basis constants;
 * Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` with references to the published djb2 and FNV-1a algorithms;
 * Documented the hash contract (forms, low octet, case fold, published vectors) and grouped the algorithms as `group__cstring_api__hashing__djb2` and `group__cstring_api__hashing__fnv1a`;
