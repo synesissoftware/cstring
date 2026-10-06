@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 3rd October 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *

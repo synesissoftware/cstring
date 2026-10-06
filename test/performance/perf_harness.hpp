@@ -203,7 +203,7 @@ write_lines_file(
 struct run_result
 {
     interval_t      tm_ns;
-    std::uint64_t   anchor;
+    uint64_t        anchor;
 #ifdef HAS_P99
 
     p99::histogram  hist;
@@ -248,7 +248,7 @@ time_iterations(
 
         if (1 == w)
         {
-            std::uint64_t volatile hist_anchor = 0;
+            uint64_t volatile hist_anchor = 0;
 
             for (size_t i = 0; num_iterations != i; ++i)
             {
@@ -258,7 +258,7 @@ time_iterations(
 
                 interval_t const sample = sw.get_nanoseconds();
 
-                (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
+                (void)result.hist.push_ns(static_cast<uint64_t>(sample));
             }
 
             (void)hist_anchor;

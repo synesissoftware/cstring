@@ -7,7 +7,9 @@
 * Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_ci()`, `cstring_hash_fnv1a_len()`, and `cstring_hash_fnv1a_len_ci()`;
 * Added `cstring_hash_t` typedef (`uint64_t`);
 * Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
-* Added unit test suite **test.unit.hash**;
+* Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
+* Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` as the djb2 and FNV-1a basis constants;
+* Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` with references to the published djb2 and FNV-1a algorithms;
 
 
 ## 4.0.19 - 4th October 2026

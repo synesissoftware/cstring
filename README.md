@@ -164,6 +164,9 @@ Supporting scalar typedefs:
 * `cstring_vector_t_DEFAULT` — the same shape for a `cstring_vector_t`;
 * `cstring_vector_DEFAULT_CAPACITY` — sentinel (`~(size_t)0`) passed to creators so the implementation chooses the capacity;
 * `CSTRING_FROM_END(x)` — reverse index for `cstring_insert()`, `cstring_insertLen()`, `cstring_replace()`, and `cstring_replaceLen()`;
+* `CSTRING_HASH_DJB2_SEED` — djb2 initial seed (`5381`); also the hash of an empty input;
+* `CSTRING_HASH_FNV1A_OFFSET` — FNV-1a 64-bit offset basis (`0xcbf29ce484222325ULL`); also the hash of an empty input;
+* `CSTRING_HASH_FNV1A_PRIME` — FNV-1a 64-bit prime (`0x100000001b3ULL`);
 
 
 ### String API
@@ -212,7 +215,7 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Both 64-bit **djb2** (initial seed `5381`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, prime `0x100000001b3ULL`) hash functions are provided, returning `cstring_hash_t` (`uint64_t`). Buffer/slice variants (`_len`) allow hashing character sequences without constructing a `cstring_t` instance. Case-insensitive variants (`_ci`) fold characters to lower case, facilitating case-folded lookups and comparisons. All functions safely tolerate `NULL` pointers and zero lengths, returning the respective algorithm's initial basis / seed value:
+Both 64-bit **djb2** (initial seed `5381`, `CSTRING_HASH_DJB2_SEED`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, `CSTRING_HASH_FNV1A_OFFSET`; prime `0x100000001b3ULL`, `CSTRING_HASH_FNV1A_PRIME`) hash functions are provided, returning `cstring_hash_t` (`uint64_t`). Buffer/slice variants (`_len`) allow hashing character sequences without constructing a `cstring_t` instance. Case-insensitive variants (`_ci`) fold characters to lower case, facilitating case-folded lookups and comparisons. All functions safely tolerate `NULL` pointers and zero lengths. An empty or `NULL` input hashes to `CSTRING_HASH_DJB2_SEED` or `CSTRING_HASH_FNV1A_OFFSET`:
 
 * `cstring_hash_djb2()` — calculates a 64-bit djb2 hash of a `cstring_t` instance;
 * `cstring_hash_djb2_ci()` — calculates a case-insensitive 64-bit djb2 hash of a `cstring_t` instance;

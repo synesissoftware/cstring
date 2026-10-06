@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     94
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     98
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -142,14 +142,46 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * includes
+ * includes - 1
  */
 
 #include <stddef.h>
-#if defined(_MSC_VER) && \
-    _MSC_VER < 1600
-typedef unsigned __int64                                    uint64_t;
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * compatibility
+ */
+
+#if 0
+#elif defined(__STDC_VERSION__) &&\
+      __STDC_VERSION__ >= 199901L
+
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      defined(__has_include) &&\
+      __has_include(<stdint.h>)
+
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      __cplusplus >= 201103L
+
+# define CSTRING_HAS_h_stdint_
+#elif 0 ||\
+      (   defined(_MSC_VER) &&\
+          _MSC_VER >= 1310) ||\
+      0
+
+# define CSTRING_HAS_h_stdint_
 #else
+
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * includes - 2
+ */
+
+#ifdef CSTRING_HAS_h_stdint_
 # include <stdint.h>
 #endif
 #include <stdio.h>
@@ -260,7 +292,52 @@ typedef int                                                 cstring_flags_t;
 /** \brief Hash value type
  * \ingroup group__cstring_api
  */
+#if 0
+#elif defined(CSTRING_HAS_h_stdint_) ||\
+      defined(CSTRING_DOCUMENTATION_SKIP_SECTION)
+
 typedef uint64_t                                            cstring_hash_t;
+#elif defined(_MSC_VER)
+
+typedef unsigned __int64_t                                  cstring_hash_t;
+#else
+
+# error 64-bit unsigned integer type not discriminated
+#endif
+
+/** \def CSTRING_HASH_DJB2_SEED
+ * \ingroup group__cstring_api
+ * \brief djb2 initial seed (also the hash of an empty input)
+ *
+ * Daniel J. Bernstein's djb2, as published by Ozan Yigit.
+ * \sa http://www.cse.yorku.ca/~oz/hash.html#djb2
+ */
+#define CSTRING_HASH_DJB2_SEED                              5381ULL
+
+/** \def CSTRING_HASH_FNV1A_OFFSET
+ * \ingroup group__cstring_api
+ * \brief FNV-1a 64-bit offset basis (also the hash of an empty input)
+ *
+ * FNV-1a offset basis published by Fowler, Noll, and Vo, and in RFC 9923.
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-2.2
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-5
+ */
+#define CSTRING_HASH_FNV1A_OFFSET                           0xcbf29ce484222325ULL
+
+/** \def CSTRING_HASH_FNV1A_PRIME
+ * \ingroup group__cstring_api
+ * \brief FNV-1a 64-bit prime
+ *
+ * FNV-1a prime published by Fowler, Noll, and Vo, and in RFC 9923.
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
+ * \sa https://www.isthe.com/chongo/tech/comp/fnv/#fnv-prime
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-2.1
+ * \sa https://www.rfc-editor.org/rfc/rfc9923.html#section-5
+ */
+#define CSTRING_HASH_FNV1A_PRIME                            0x100000001b3ULL
 
 /** \brief The cstring structure
  * \ingroup group__cstring_api
@@ -1108,7 +1185,7 @@ cstring_appendLenFn(
  * \return A 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_djb2(
     struct cstring_t const* pcs
 );
@@ -1122,8 +1199,8 @@ cstring_hash_djb2(
  * \return A case-insensitive 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_ci(
+cstring_hash_t
+cstring_hash_djb2_case(
     struct cstring_t const* pcs
 );
 
@@ -1137,8 +1214,8 @@ cstring_hash_djb2_ci(
  * \return A 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_len(
+cstring_hash_t
+cstring_hash_djb2_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1153,8 +1230,8 @@ cstring_hash_djb2_len(
  * \return A case-insensitive 64-bit djb2 hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_len_ci(
+cstring_hash_t
+cstring_hash_djb2_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1167,7 +1244,7 @@ cstring_hash_djb2_len_ci(
  * \return A 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a(
     struct cstring_t const* pcs
 );
@@ -1181,8 +1258,8 @@ cstring_hash_fnv1a(
  * \return A case-insensitive 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_ci(
+cstring_hash_t
+cstring_hash_fnv1a_case(
     struct cstring_t const* pcs
 );
 
@@ -1196,8 +1273,8 @@ cstring_hash_fnv1a_ci(
  * \return A 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_len(
+cstring_hash_t
+cstring_hash_fnv1a_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1212,8 +1289,8 @@ cstring_hash_fnv1a_len(
  * \return A case-insensitive 64-bit FNV-1a hash value.
  */
 CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_len_ci(
+cstring_hash_t
+cstring_hash_fnv1a_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 );
@@ -1234,10 +1311,15 @@ cstring_hash_fnv1a_len_ci(
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * string access shims
+ * language
  */
 
 #ifdef __cplusplus
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * string access shims
+ */
 
 inline
 cstring_char_t const*
@@ -1429,7 +1511,7 @@ c_str_ptr(
  */
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     struct cstring_t const* pcs
 )
@@ -1438,7 +1520,7 @@ hash_djb2(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     struct cstring_t const& cs
 )
@@ -1447,45 +1529,45 @@ hash_djb2(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_djb2(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_djb2_len(s, cch);
+    return cstring_hash_djb2_buf(s, cch);
 }
 
 inline
-uint64_t
-hash_djb2_ci(
+cstring_hash_t
+hash_djb2_case(
     struct cstring_t const* pcs
 )
 {
-    return cstring_hash_djb2_ci(pcs);
+    return cstring_hash_djb2_case(pcs);
 }
 
 inline
-uint64_t
-hash_djb2_ci(
+cstring_hash_t
+hash_djb2_case(
     struct cstring_t const& cs
 )
 {
-    return cstring_hash_djb2_ci(&cs);
+    return cstring_hash_djb2_case(&cs);
 }
 
 inline
-uint64_t
-hash_djb2_ci(
+cstring_hash_t
+hash_djb2_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_djb2_len_ci(s, cch);
+    return cstring_hash_djb2_buf_case(s, cch);
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     struct cstring_t const* pcs
 )
@@ -1494,7 +1576,7 @@ hash_fnv1a(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     struct cstring_t const& cs
 )
@@ -1503,41 +1585,41 @@ hash_fnv1a(
 }
 
 inline
-uint64_t
+cstring_hash_t
 hash_fnv1a(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_fnv1a_len(s, cch);
+    return cstring_hash_fnv1a_buf(s, cch);
 }
 
 inline
-uint64_t
-hash_fnv1a_ci(
+cstring_hash_t
+hash_fnv1a_case(
     struct cstring_t const* pcs
 )
 {
-    return cstring_hash_fnv1a_ci(pcs);
+    return cstring_hash_fnv1a_case(pcs);
 }
 
 inline
-uint64_t
-hash_fnv1a_ci(
+cstring_hash_t
+hash_fnv1a_case(
     struct cstring_t const& cs
 )
 {
-    return cstring_hash_fnv1a_ci(&cs);
+    return cstring_hash_fnv1a_case(&cs);
 }
 
 inline
-uint64_t
-hash_fnv1a_ci(
+cstring_hash_t
+hash_fnv1a_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    return cstring_hash_fnv1a_len_ci(s, cch);
+    return cstring_hash_fnv1a_buf_case(s, cch);
 }
 
 # ifndef _STLSOFT_NO_NAMESPACE
@@ -1557,6 +1639,12 @@ namespace stlsoft
 
 } /* namespace stlsoft */
 # endif /* !_STLSOFT_NO_NAMESPACE */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * language
+ */
+
 #endif /* __cplusplus */
 
 

@@ -1,15 +1,14 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    cstring.core.c
+ * File:    cstring.hash.c
  *
- * Purpose: The implementation of the cstring core API
+ * Purpose: The implementation of the cstring hash API
  *
- * Created: 16th June 1994
- * Updated: 29th September 2026
+ * Created: 5th September 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
- * Copyright (c) 1994-2019, Matthew Wilson and Synesis Software
+ * Copyright (c) 2026, Matthew Wilson and Synesis Information Systems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +40,7 @@
  * ////////////////////////////////////////////////////////////////////// */
 
 
-/** \file cstring.core.c The implementation of the cstring core API
+/** \file cstring.hash.c The implementation of the cstring hash API
  */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -78,39 +77,39 @@
  * hashing functions
  */
 
-uint64_t
+cstring_hash_t
 cstring_hash_djb2(
     struct cstring_t const* pcs
 )
 {
     if (NULL == pcs)
     {
-        return 5381;
+        return CSTRING_HASH_DJB2_SEED;
     }
 
-    return cstring_hash_djb2_len(pcs->ptr, pcs->len);
+    return cstring_hash_djb2_buf(pcs->ptr, pcs->len);
 }
 
-uint64_t
-cstring_hash_djb2_ci(
+cstring_hash_t
+cstring_hash_djb2_case(
     struct cstring_t const* pcs
 )
 {
     if (NULL == pcs)
     {
-        return 5381;
+        return CSTRING_HASH_DJB2_SEED;
     }
 
-    return cstring_hash_djb2_len_ci(pcs->ptr, pcs->len);
+    return cstring_hash_djb2_buf_case(pcs->ptr, pcs->len);
 }
 
-uint64_t
-cstring_hash_djb2_len(
+cstring_hash_t
+cstring_hash_djb2_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t hash = 5381;
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
 
     if (NULL != s)
     {
@@ -127,13 +126,13 @@ cstring_hash_djb2_len(
     return hash;
 }
 
-uint64_t
-cstring_hash_djb2_len_ci(
+cstring_hash_t
+cstring_hash_djb2_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t hash = 5381;
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
 
     if (NULL != s)
     {
@@ -154,40 +153,39 @@ cstring_hash_djb2_len_ci(
     return hash;
 }
 
-uint64_t
+cstring_hash_t
 cstring_hash_fnv1a(
     struct cstring_t const* pcs
 )
 {
     if (NULL == pcs)
     {
-        return 0xcbf29ce484222325ULL;
+        return CSTRING_HASH_FNV1A_OFFSET;
     }
 
-    return cstring_hash_fnv1a_len(pcs->ptr, pcs->len);
+    return cstring_hash_fnv1a_buf(pcs->ptr, pcs->len);
 }
 
-uint64_t
-cstring_hash_fnv1a_ci(
+cstring_hash_t
+cstring_hash_fnv1a_case(
     struct cstring_t const* pcs
 )
 {
     if (NULL == pcs)
     {
-        return 0xcbf29ce484222325ULL;
+        return CSTRING_HASH_FNV1A_OFFSET;
     }
 
-    return cstring_hash_fnv1a_len_ci(pcs->ptr, pcs->len);
+    return cstring_hash_fnv1a_buf_case(pcs->ptr, pcs->len);
 }
 
-uint64_t
-cstring_hash_fnv1a_len(
+cstring_hash_t
+cstring_hash_fnv1a_buf(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t const fnv_prime = 0x100000001b3ULL;
-    uint64_t hash = 0xcbf29ce484222325ULL;
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
 
     if (NULL != s)
     {
@@ -198,21 +196,20 @@ cstring_hash_fnv1a_len(
             uint8_t const c = (uint8_t)s[i];
 
             hash ^= c;
-            hash *= fnv_prime;
+            hash *= CSTRING_HASH_FNV1A_PRIME;
         }
     }
 
     return hash;
 }
 
-uint64_t
-cstring_hash_fnv1a_len_ci(
+cstring_hash_t
+cstring_hash_fnv1a_buf_case(
     cstring_char_t const*   s
 ,   size_t                  cch
 )
 {
-    uint64_t const fnv_prime = 0x100000001b3ULL;
-    uint64_t hash = 0xcbf29ce484222325ULL;
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
 
     if (NULL != s)
     {
@@ -227,7 +224,7 @@ cstring_hash_fnv1a_len_ci(
 #endif
 
             hash ^= c;
-            hash *= fnv_prime;
+            hash *= CSTRING_HASH_FNV1A_PRIME;
         }
     }
 
