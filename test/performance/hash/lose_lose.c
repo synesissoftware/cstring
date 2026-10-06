@@ -17,12 +17,10 @@
 
 #include "lose_lose.h"
 
-#include <ctype.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -32,7 +30,8 @@
  * SDBM do that too, so the ratio compares the mix: addition against
  * hash*33+octet, the FNV-1a xor-multiply, and hash*65599+octet. The
  * published LoseLose loop that calls strlen on every step is not used here.
- * Wide forms add every octet of each wchar_t, low byte first.
+ * Wide forms add every octet of each wchar_t, low byte first. Case forms
+ * map ASCII A-Z to a-z before those octets are taken.
  */
 
 cstring_hash_t
@@ -57,6 +56,28 @@ lose_lose_mbuf(
     return hash;
 }
 
+static uint8_t
+lose_lose_ascii_fold_octet_(uint8_t octet)
+{
+    if (octet >= (uint8_t)'A' && octet <= (uint8_t)'Z')
+    {
+        octet = (uint8_t)(octet + 0x20u);
+    }
+
+    return octet;
+}
+
+static wchar_t
+lose_lose_ascii_fold_wchar_(wchar_t unit)
+{
+    if (unit >= L'A' && unit <= L'Z')
+    {
+        unit = (wchar_t)(unit + 0x20);
+    }
+
+    return unit;
+}
+
 cstring_hash_t
 lose_lose_mbuf_case(
     char const* s
@@ -72,7 +93,7 @@ lose_lose_mbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            hash += (uint8_t)tolower(p[i]);
+            hash += lose_lose_ascii_fold_octet_(p[i]);
         }
     }
 
@@ -132,7 +153,7 @@ lose_lose_wbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            hash = lose_lose_wchar_octets_(hash, (wchar_t)towlower(s[i]));
+            hash = lose_lose_wchar_octets_(hash, lose_lose_ascii_fold_wchar_(s[i]));
         }
     }
 

@@ -549,7 +549,10 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F
     TEST_INT_NE(0xcbf29ce484222325ULL, cstring_hash_fnv1a_buf(hi, 1));
     TEST_INT_NE(0ULL, cstring_hash_sdbm_buf(hi, 1));
 
-    /* tolower of octets above 0x7F follows the process locale. */
+    /* ASCII fold leaves octets outside A-Z unchanged. */
+    TEST_INT_EQ(cstring_hash_djb2_buf(hi, 1), cstring_hash_djb2_buf_case(hi, 1));
+    TEST_INT_EQ(cstring_hash_fnv1a_buf(hi, 1), cstring_hash_fnv1a_buf_case(hi, 1));
+    TEST_INT_EQ(cstring_hash_sdbm_buf(hi, 1), cstring_hash_sdbm_buf_case(hi, 1));
     TEST_INT_NE(cstring_hash_djb2_buf_case(mid, 1), cstring_hash_djb2_buf_case(hi, 1));
     TEST_INT_NE(5381ULL, cstring_hash_djb2_buf_case(hi, 1));
     TEST_INT_NE(cstring_hash_fnv1a_buf_case(mid, 1), cstring_hash_fnv1a_buf_case(hi, 1));
@@ -791,11 +794,12 @@ static void TEST_cstring_hash_case_SETLOCALE(void)
     cstring_hash_t  sdbm_m;
     cstring_hash_t  sdbm_w;
 
-    /* _case must ignore the process locale. ASCII "I" does not show that
-     * here: towlower(L'I') stays U+0069 under tr_TR.UTF-8. Octet 0xDD and
-     * U+00C0 do. The C locale leaves both unchanged; tr_TR.UTF-8 maps them
-     * to 0xFD and U+00E0. These comparisons fail while _case calls tolower
-     * and towlower.
+    /* _case ignores the process locale: ASCII A-Z maps to a-z and every
+     * other code unit is unchanged. ASCII "I" does not distinguish that
+     * from tolower here, because towlower(L'I') stays U+0069 under
+     * tr_TR.UTF-8. Octet 0xDD and U+00C0 do change under tolower and
+     * towlower: the C locale leaves them unchanged, and tr_TR.UTF-8 maps
+     * them to 0xFD and U+00E0.
      */
 
     current = setlocale(LC_CTYPE, NULL);

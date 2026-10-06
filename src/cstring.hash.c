@@ -54,10 +54,8 @@
 
 /* Standard C header files */
 
-#include <ctype.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -67,9 +65,34 @@
 /* Multibyte input is one unsigned char per char. Each wchar_t contributes
  * sizeof(wchar_t) octets, low byte first. The shift uses the unsigned
  * value, so a big-endian host emits the same octets as a little-endian host
- * of the same wchar_t width. Case-folded wide input applies towlower to the
- * code unit before those octets are taken.
+ * of the same wchar_t width. Case-folded input maps ASCII A-Z to a-z before
+ * those octets are taken. Every other code unit is left unchanged.
  */
+
+/* ASCII A-Z becomes a-z by adding 0x20. Every other code unit is unchanged,
+ * including octets above 0x7F and wide units such as U+0141.
+ */
+static uint8_t
+cstring_hash_ascii_fold_octet_(uint8_t octet)
+{
+    if (octet >= (uint8_t)'A' && octet <= (uint8_t)'Z')
+    {
+        octet = (uint8_t)(octet + 0x20u);
+    }
+
+    return octet;
+}
+
+static wchar_t
+cstring_hash_ascii_fold_wchar_(wchar_t unit)
+{
+    if (unit >= L'A' && unit <= L'Z')
+    {
+        unit = (wchar_t)(unit + 0x20);
+    }
+
+    return unit;
+}
 
 static cstring_hash_t
 cstring_hash_djb2_step_(
@@ -294,7 +317,7 @@ cstring_hash_djb2_mbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            hash = cstring_hash_djb2_step_(hash, (uint8_t)tolower(p[i]));
+            hash = cstring_hash_djb2_step_(hash, cstring_hash_ascii_fold_octet_(p[i]));
         }
     }
 
@@ -315,7 +338,7 @@ cstring_hash_djb2_wbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            wchar_t const unit = (wchar_t)towlower(s[i]);
+            wchar_t const unit = cstring_hash_ascii_fold_wchar_(s[i]);
 
             hash = cstring_hash_wchar_octets_(hash, unit, cstring_hash_djb2_step_);
         }
@@ -495,7 +518,7 @@ cstring_hash_fnv1a_mbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            hash = cstring_hash_fnv1a_step_(hash, (uint8_t)tolower(p[i]));
+            hash = cstring_hash_fnv1a_step_(hash, cstring_hash_ascii_fold_octet_(p[i]));
         }
     }
 
@@ -516,7 +539,7 @@ cstring_hash_fnv1a_wbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            wchar_t const unit = (wchar_t)towlower(s[i]);
+            wchar_t const unit = cstring_hash_ascii_fold_wchar_(s[i]);
 
             hash = cstring_hash_wchar_octets_(hash, unit, cstring_hash_fnv1a_step_);
         }
@@ -696,7 +719,7 @@ cstring_hash_sdbm_mbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            hash = cstring_hash_sdbm_step_(hash, (uint8_t)tolower(p[i]));
+            hash = cstring_hash_sdbm_step_(hash, cstring_hash_ascii_fold_octet_(p[i]));
         }
     }
 
@@ -717,7 +740,7 @@ cstring_hash_sdbm_wbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            wchar_t const unit = (wchar_t)towlower(s[i]);
+            wchar_t const unit = cstring_hash_ascii_fold_wchar_(s[i]);
 
             hash = cstring_hash_wchar_octets_(hash, unit, cstring_hash_sdbm_step_);
         }

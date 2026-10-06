@@ -30,8 +30,8 @@ extern "C" {
 
 
 /* Each function walks the same octets as the matching cstring hash. The mix
- * is addition only. Case forms fold, then add those octets. Wide forms add
- * every octet of each wchar_t, low byte first. NULL yields 0.
+ * is addition only. Case forms fold ASCII A-Z, then add those octets. Wide
+ * forms add every octet of each wchar_t, low byte first. NULL yields 0.
  */
 
 cstring_hash_t

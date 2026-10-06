@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_HASH_MAJOR       1
 # define CSTRING_VER_CSTRING_H_HASH_MINOR       0
 # define CSTRING_VER_CSTRING_H_HASH_REVISION    3
-# define CSTRING_VER_CSTRING_H_HASH_EDIT        6
+# define CSTRING_VER_CSTRING_H_HASH_EDIT        7
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -106,8 +106,9 @@
  * pointer, or a zero length, yields that algorithm's empty-input value and
  * does not read the pointer.
  *
- * \c _case forms fold with \c tolower or \c towlower, which follow the
- * process locale, and then hash the octets of the folded code unit.
+ * \c _case forms map ASCII A-Z to a-z and leave every other code unit
+ * unchanged. The fold does not follow the process locale, and it is not a
+ * Unicode case-fold. The octets of the folded code unit are then hashed.
  *
  * In C++, namespace \c cstring provides \c hash_djb2(),
  * \c hash_djb2_case(), \c hash_fnv1a(), \c hash_fnv1a_case(),

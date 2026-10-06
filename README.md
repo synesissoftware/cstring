@@ -231,7 +231,7 @@ Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorith
 | `_mbuf` | `char const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 | `_wbuf` | `wchar_t const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 
-`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding uses `tolower` or `towlower`, which follow the process locale, and then hashes the octets of the folded code unit.
+`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding maps ASCII A-Z to a-z and leaves every other code unit unchanged, independent of the process locale, and then hashes the octets of the folded code unit. It is not a Unicode case-fold.
 
 Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_fnv1a_wbuf_case()`, and `cstring_hash_sdbm_mbuf()`.
 
