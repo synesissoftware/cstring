@@ -53,7 +53,7 @@ namespace
 
     static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void);
     static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void);
-    static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void);
+    static void TEST_hash_djb2_AND_hash_djb2_case_AND_hash_fnv1a_AND_hash_fnv1a_case(void);
     static void TEST_hash_mbs_AND_wcs_OVERLOADS(void);
 #ifdef CSTRING_HAS_std_hash_cstring_t_
     static void TEST_std_hash_cstring_t_IS_FNV1A(void);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     {
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY);
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS);
-        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case);
+        XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_case_AND_hash_fnv1a_AND_hash_fnv1a_case);
         XTESTS_RUN_CASE(TEST_hash_mbs_AND_wcs_OVERLOADS);
 #ifdef CSTRING_HAS_std_hash_cstring_t_
         XTESTS_RUN_CASE(TEST_std_hash_cstring_t_IS_FNV1A);
@@ -203,7 +203,7 @@ static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
     cstring_destroy(&cs_foobar);
 }
 
-static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void)
+static void TEST_hash_djb2_AND_hash_djb2_case_AND_hash_fnv1a_AND_hash_fnv1a_case(void)
 {
     cstring_t   cs;
     CSTRING_RC  rc = cstring_create(&cs, CSTRING_T_("Hello World"));
