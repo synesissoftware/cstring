@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring instance general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 5th October 2026
+ * Updated: 6th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -837,6 +837,30 @@ static void TEST_cstring_createLen(void)
         TEST_INT_EQ(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
     }}
+
+    /* Exactly cch characters and no trailing NUL. The copy must not read
+     * past that slice.
+     */
+    {
+        cstring_char_t  raw[3];
+        cstring_t       str = cstring_t_DEFAULT;
+        CSTRING_RC      rc;
+
+        raw[0] = CSTRING_T_('a');
+        raw[1] = CSTRING_T_('b');
+        raw[2] = CSTRING_T_('c');
+
+        rc = cstring_createLen(&str, raw, 3u);
+
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+        TEST_INT_EQ(3u, str.len);
+        TEST_CHAR_EQ(CSTRING_T_('a'), str.ptr[0]);
+        TEST_CHAR_EQ(CSTRING_T_('b'), str.ptr[1]);
+        TEST_CHAR_EQ(CSTRING_T_('c'), str.ptr[2]);
+        TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[3]);
+
+        cstring_destroy(&str);
+    }
 }
 
 static void TEST_cstring_createEx(void)

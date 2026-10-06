@@ -25,8 +25,12 @@ Small standalone C library that provides extensible C-style strings and extensib
     - [Status and capacity](#status-and-capacity)
     - [Creation/destruction functions](#creationdestruction-functions)
     - [Modification functions](#modification-functions)
+    - [Comparison functions](#comparison-functions)
     - [File functions](#file-functions)
     - [Hashing functions](#hashing-functions)
+      - [djb2](#djb2)
+      - [FNV-1a](#fnv-1a)
+      - [SDBM](#sdbm)
   - [Vector API](#vector-api)
   - [C++ Integration](#c-integration)
 - [Examples](#examples)
@@ -164,6 +168,11 @@ Supporting scalar typedefs:
 * `cstring_vector_t_DEFAULT` — the same shape for a `cstring_vector_t`;
 * `cstring_vector_DEFAULT_CAPACITY` — sentinel (`~(size_t)0`) passed to creators so the implementation chooses the capacity;
 * `CSTRING_FROM_END(x)` — reverse index for `cstring_insert()`, `cstring_insertLen()`, `cstring_replace()`, and `cstring_replaceLen()`;
+* `CSTRING_HASH_DJB2_SEED` — djb2 initial seed (`5381`); also the hash of an empty input;
+* `CSTRING_HASH_FNV1A_OFFSET` — FNV-1a 64-bit offset basis (`0xcbf29ce484222325ULL`); also the hash of an empty input;
+* `CSTRING_HASH_FNV1A_PRIME` — FNV-1a 64-bit prime (`0x100000001b3ULL`);
+* `CSTRING_HASH_SDBM_MULTIPLIER` — sdbm multiplier (`65599`);
+* `CSTRING_HASH_SDBM_SEED` — sdbm initial seed (`0`); also the hash of an empty input;
 
 
 ### String API
@@ -203,6 +212,12 @@ Defined in **cstring/cstring.h**:
 * `cstring_truncate()` — shortens the logical length (capacity unchanged);
 * `cstring_swap()` — swaps the contents of two instances;
 
+#### Comparison functions
+
+* `cstring_equal()` — non-zero when two strings hold the same code units for `len`. A `NULL` pointer and a zero length are empty. `capacity` and `flags` are ignored;
+* `cstring_compare()` — negative, zero, or positive order of those same code units. Test equality with `cstring_equal()`;
+* C++ `operator==` and `operator!=` call `cstring_equal()`; `operator<` calls `cstring_compare()`;
+
 #### File functions
 
 * `cstring_readline()` — reads a line of text from the given text stream into the instance;
@@ -212,16 +227,65 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Both 64-bit **djb2** (initial seed `5381`) and **FNV-1a** (offset basis `0xcbf29ce484222325ULL`, prime `0x100000001b3ULL`) hash functions are provided, returning `cstring_hash_t` (`uint64_t`). Buffer/slice variants (`_len`) allow hashing character sequences without constructing a `cstring_t` instance. Case-insensitive variants (`_ci`) fold characters to lower case, facilitating case-folded lookups and comparisons. All functions safely tolerate `NULL` pointers and zero lengths, returning the respective algorithm's initial basis / seed value:
+Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. A multibyte code unit contributes its one octet. A wide code unit contributes every octet of the `wchar_t`, low byte first, so `"a"` and `L"a"` differ. The wide value depends on `sizeof(wchar_t)`: two octets on Windows, four on Unix. Big-endian and little-endian hosts of the same width agree. A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer. The numeric tables below are the multibyte results.
 
-* `cstring_hash_djb2()` — calculates a 64-bit djb2 hash of a `cstring_t` instance;
-* `cstring_hash_djb2_ci()` — calculates a case-insensitive 64-bit djb2 hash of a `cstring_t` instance;
-* `cstring_hash_djb2_len()` — calculates a 64-bit djb2 hash of a character buffer or slice;
-* `cstring_hash_djb2_len_ci()` — calculates a case-insensitive 64-bit djb2 hash of a character buffer or slice;
-* `cstring_hash_fnv1a()` — calculates a 64-bit FNV-1a hash of a `cstring_t` instance;
-* `cstring_hash_fnv1a_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a `cstring_t` instance;
-* `cstring_hash_fnv1a_len()` — calculates a 64-bit FNV-1a hash of a character buffer or slice;
-* `cstring_hash_fnv1a_len_ci()` — calculates a case-insensitive 64-bit FNV-1a hash of a character buffer or slice;
+| Suffix | Input | What is hashed |
+| ------ | ----- | -------------- |
+| (none) | `cstring_t const*` | `ptr` for `len` code units, including embedded NULs |
+| `_mbs` | `char const*` | stops at the first NUL |
+| `_wcs` | `wchar_t const*` | stops at the first NUL |
+| `_buf` | `cstring_char_t const*`, `size_t` | ambient buffer; calls `_mbuf` or `_wbuf` |
+| `_mbuf` | `char const*`, `size_t` | exactly `cch` code units, including embedded NULs |
+| `_wbuf` | `wchar_t const*`, `size_t` | exactly `cch` code units, including embedded NULs |
+
+`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding maps ASCII A-Z to a-z and leaves every other code unit unchanged, independent of the process locale, and then hashes the octets of the folded code unit. It is not a Unicode case-fold.
+
+Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_fnv1a_wbuf_case()`, and `cstring_hash_sdbm_mbuf()`.
+
+From C++11, `std::hash<cstring_t>` is the FNV-1a hash of `ptr` and `len`, converted to `size_t`. djb2 and SDBM are not used for that specialisation.
+
+
+##### djb2
+
+The hash starts at `CSTRING_HASH_DJB2_SEED` (`5381`). For each octet `b` the step is `hash = ((hash << 5) + hash) + b`, which is `hash * 33 + b`. Daniel J. Bernstein's djb2, as published by Ozan Yigit.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `5381` |
+| `"a"` | `177670` |
+| `"foobar"` | `6953516687550` |
+| `{ 'a', 0, 'b' }` length 3 | `193482728` |
+| octet `0xFF` | `177828` |
+
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed. 64-bit djb2 matches 32-bit djb2 only while the running total stays below 2^32. `"foobar"` is already past that point.
+
+
+##### FNV-1a
+
+The hash starts at `CSTRING_HASH_FNV1A_OFFSET` (`0xcbf29ce484222325`). For each octet `b` the step is `hash ^= b` and then `hash *= CSTRING_HASH_FNV1A_PRIME` (`0x100000001b3`). Fowler, Noll, and Vo FNV-1a, 64-bit.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `0xcbf29ce484222325` |
+| `"a"` | `0xaf63dc4c8601ec8c` |
+| `"foobar"` | `0x85944171f73967e8` |
+| `{ 'a', 0, 'b' }` length 3 | `0xe5d29919042666b2` |
+| octet `0xFF` | `0xaf64724c8602eb6e` |
+
+
+##### SDBM
+
+The hash starts at `CSTRING_HASH_SDBM_SEED` (`0`). For each octet `b` the step is `hash * CSTRING_HASH_SDBM_MULTIPLIER + b`. The multiplier is `65599`. This is the sdbm recurrence published by Ozan Yigit, evaluated in a 64-bit accumulator.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `0` |
+| `"a"` | `97` |
+| `"foobar"` | `0x430d469aa6437b0d` |
+| `{ 'a', 0, 'b' }` length 3 | `0x612fc3e043` |
+| octet `0xFF` | `255` |
+
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed.
 
 
 ### Vector API
@@ -241,7 +305,7 @@ Defined in **cstring/cstring.vector.h**:
 
 When included in C++ compilation units, **cstring/cstring.h** provides inline access shims:
 * **String access shims** — `c_str_data()`, `c_str_len()`, and `c_str_ptr()`, allowing `cstring_t` instances to be used directly with **STLSoft** and generic C++ templates;
-* **Hash access shims** — `hash_djb2()`, `hash_djb2_ci()`, `hash_fnv1a()`, and `hash_fnv1a_ci()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, and slice / buffer forms `(cstring_char_t const* s, size_t cch)`;
+* **Hash access shims** — `cstring::hash_djb2()`, `cstring::hash_djb2_case()`, `cstring::hash_fnv1a()`, `cstring::hash_fnv1a_case()`, `cstring::hash_sdbm()`, and `cstring::hash_sdbm_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
 
 
 ## Examples
@@ -298,11 +362,15 @@ When supplying `'--wide-strings'` — sets `CSTRING_USE_WIDE_STRINGS=ON` — `cs
 
 ### Related projects
 
-Projects in which **cstring** is used include:
+Projects that call the **cstring** API, or that require the **CMake** package `cstring`:
 
-* [**errni**](https://github.com/sistools/errni)
-* [**rstrip**](https://github.com/sistools/rstrip)
-* [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch)
+| Project | Use |
+| ------- | --- |
+| [**errni**](https://github.com/sistools/errni) | Builds each result line and writes it with `cstring_writeline()` |
+| [**lnunique**](https://github.com/sistools/lnunique) | Requires `cstring` 4.0 and links `cstring::core` for line strings |
+| [**rstrip**](https://github.com/sistools/rstrip) | Accumulates each output line and writes it with `cstring_write()` |
+| [**shwild.fnmatch**](https://github.com/synesissoftware/shwild.fnmatch) | Holds patterns and subject strings as `cstring_t` |
+| [**STLSoft**](https://github.com/synesissoftware/STLSoft) | Optional; the C unit test `output_debug_line.C` uses `cstring_t` when the package is found |
 
 
 ### License

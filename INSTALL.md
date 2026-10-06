@@ -3,8 +3,8 @@
 **cstring** is a classic-form C library, insofar as it has implementation
 files in its **src** directory and header files in its **include/cstring**
 directory. Thus, once "installed", one must simply include
-**cstring/cstring.h** (and, where needed, **cstring/cstring.vector.h**), and
-compile-in or link-in the implementation.
+**cstring/cstring.h** (which includes **cstring/hash.h**) and, where needed,
+**cstring/cstring.vector.h**, and compile-in or link-in the implementation.
 
 The **C** API has no non-standard dependencies. Building the project's tests
 additionally requires **STLSoft** and **xTests** (and optionally recognises
@@ -166,10 +166,11 @@ The primary choice for installation is by use of **CMake**.
 In that case:
 
 * add **cstring**'s **include** directory to your project's include path;
-* compile **src/cstring.core.c** and **src/cstring.vector.c** into your build
-  (or link a previously built **libcstring**); and
+* compile **src/cstring.core.c**, **src/cstring.hash.c**, and
+  **src/cstring.vector.c** into your build (or link a previously built
+  **libcstring**); and
 * `#include <cstring/cstring.h>` (and **cstring/cstring.vector.h** where
-  needed).
+  needed). **cstring.h** includes **cstring/hash.h**.
 
 
 <!-- ########################### end of file ########################### -->

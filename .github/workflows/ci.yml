@@ -10,7 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
-      - directories
+      - hash-review
   pull_request:
 
 concurrency:

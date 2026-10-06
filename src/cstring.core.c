@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring core API
  *
  * Created: 16th June 1994
- * Updated: 5th October 2026
+ * Updated: 6th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -173,11 +173,16 @@ convert_negative_index_(
 }
 
 /*
+ * Copies at most \c lim characters from \c src. Stops at a NUL inside that
+ * span. Does not read \c src past \c lim: callers pass a slice of \c lim
+ * characters, which need not be NUL-terminated.
+ *
  * \param dst Destination. May NOT be \c NULL;
  * \param src Source. May be \c NULL;
- * \param lim Maximum number of elements in \c dst;
+ * \param lim Maximum number of characters to read from \c src;
  *
- * \return The actual length of src if not \c NULL; 0 otherwise
+ * \return The index of the NUL, or \c lim when the slice contains none; 0
+ *   when \c src is \c NULL
  *
  * \pre NULL != dst
  */
@@ -211,10 +216,9 @@ cstring_strlcpy_safe_(
             }
         }
 
-        memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
-
-        for (; '\0' != src[0]; ++i, ++src)
+        if (i != lim)
         {
+            memset(dst, 0, sizeof(cstring_char_t) * (lim - i));
         }
 
         return i;

@@ -1,15 +1,14 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    cstring/internal/safestr.h
+ * File:    cstring/common.h
  *
- * Purpose: Internal utility header for the cstring API.
+ * Purpose: Common definitions for the cstring headers.
  *
- * Created: 13th May 2008
+ * Created: 5th October 2026
  * Updated: 6th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
- * Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
- * Copyright (c) 2008-2019, Matthew Wilson and Synesis Software
+ * Copyright (c) 2026, Matthew Wilson and Synesis Information Systems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,70 +40,84 @@
  * ////////////////////////////////////////////////////////////////////// */
 
 
-/** \file cstring/internal/safestr.h Internal utility header for the cstring API
+/** \file cstring/common.h Common definitions for the cstring headers
  */
 
-#ifndef CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
-#define CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR
+#ifndef CSTRING_INCL_CSTRING_H_COMMON
+#define CSTRING_INCL_CSTRING_H_COMMON
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * version
+ */
+
+#ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
+# define CSTRING_VER_CSTRING_H_COMMON_MAJOR     1
+# define CSTRING_VER_CSTRING_H_COMMON_MINOR     0
+# define CSTRING_VER_CSTRING_H_COMMON_REVISION  1
+# define CSTRING_VER_CSTRING_H_COMMON_EDIT      2
+#endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * includes
  */
 
-#include <cstring/cstring.h>
-
-#ifdef CSTRING_SAFE_STR_USE_crtdefs_h_
-# undef CSTRING_SAFE_STR_USE_crtdefs_h_
-#endif /* CSTRING_SAFE_STR_USE_crtdefs_h_ */
-
-#if 0
-#elif defined(__BORLANDC__)
-#elif defined(__DMC__)
-#elif defined(__GNUC__)
-#elif defined(__INTEL_COMPILER)
-
-# if defined(_MSC_VER) && \
-     _MSC_VER >= 1400
-
-#  define CSTRING_SAFE_STR_USE_crtdefs_h_
-# endif /* _MSC_VER >= 1400 */
-#elif defined(__MWERKS__)
-#elif defined(__WATCOMC__)
-#elif defined(_MSC_VER)
-
-# if _MSC_VER >= 1400
-
-#  define CSTRING_SAFE_STR_USE_crtdefs_h_
-# endif /* _MSC_VER >= 1400 */
-#elif defined(__COMO__)
-#else
-#endif /* compiler */
-
-#ifdef CSTRING_SAFE_STR_USE_crtdefs_h_
-# include <crtdefs.h>
-#endif /* CSTRING_SAFE_STR_USE_crtdefs_h_ */
+#include <stddef.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * feature detection
+ * compatibility
  */
 
-#ifdef __STDC_SECURE_LIB__
+/* Shared detection of <stdint.h>, used by cstring/hash.h when selecting the
+ * type of cstring_hash_t. Visual C++ provides <stdint.h> from _MSC_VER 1600
+ * (Visual Studio 2010). Older MSVC keeps unsigned __int64.
+ */
 
-# if defined(__STDC_WANT_SECURE_LIB__) && \
-     __STDC_WANT_SECURE_LIB__ == 1
+#if 0
+#elif defined(__STDC_VERSION__) &&\
+      __STDC_VERSION__ >= 199901L
 
-#  define CSTRING_USING_SAFE_STR_FUNCTIONS
-# endif /* __STDC_WANT_SECURE_LIB__ == 1 */
-#endif /* __STDC_SECURE_LIB__ */
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      defined(__has_include) &&\
+      __has_include(<stdint.h>)
+
+# define CSTRING_HAS_h_stdint_
+#elif defined(__cplusplus) &&\
+      __cplusplus >= 201103L
+
+# define CSTRING_HAS_h_stdint_
+#elif 0 ||\
+      (   defined(_MSC_VER) &&\
+          _MSC_VER >= 1600) ||\
+      0
+
+# define CSTRING_HAS_h_stdint_
+#else
+
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+#ifdef CSTRING_HAS_h_stdint_
+# include <stdint.h>
+#endif /* CSTRING_HAS_h_stdint_ */
 
 
 /* /////////////////////////////////////////////////////////////////////////
  * inclusion control
  */
 
-#endif /* CSTRING_INCL_CSTRING_INTERNAL_H_SAFESTR */
+#ifdef STLSOFT_PPF_pragma_once_SUPPORT
+# pragma once
+#endif /* STLSOFT_PPF_pragma_once_SUPPORT */
+
+#endif /* CSTRING_INCL_CSTRING_H_COMMON */
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 4th October 2026
+ * Updated: 6th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -54,9 +54,9 @@
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
-# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    12
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 2
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     94
+# define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 3
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     100
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -145,13 +145,7 @@
  * includes
  */
 
-#include <stddef.h>
-#if defined(_MSC_VER) && \
-    _MSC_VER < 1600
-typedef unsigned __int64                                    uint64_t;
-#else
-# include <stdint.h>
-#endif
+#include <cstring/common.h>
 #include <stdio.h>
 
 
@@ -257,10 +251,22 @@ typedef char                                                cstring_char_t;
  */
 typedef int                                                 cstring_flags_t;
 
-/** \brief Hash value type
+/** \brief Signed comparison result
  * \ingroup group__cstring_api
+ *
+ * Negative when the left string is less, zero when the strings compare
+ * equal, positive when the left string is greater. The magnitude is not
+ * significant. Equality checks use \c cstring_equal().
  */
-typedef uint64_t                                            cstring_hash_t;
+typedef signed int                                          cstring_sint_t;
+
+/** \brief Truthy result
+ * \ingroup group__cstring_api
+ *
+ * Zero is false. Any other value is true. \c cstring_equal() returns this
+ * type so an equality check is not a use of \c cstring_compare().
+ */
+typedef int                                                 cstring_truthy_t;
 
 /** \brief The cstring structure
  * \ingroup group__cstring_api
@@ -361,6 +367,58 @@ typedef struct cstring_t                                    cstring_t;
 /* I/O */
 #define CSTRING_F_IO_MASK                                   (0x0000)
 /** @} */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * comparison
+ */
+
+/** \brief Compares two strings for equality, including any embedded NUL
+ * characters.
+ * \ingroup group__cstring_api
+ *
+ * Compares \c len code units of each string. Embedded NULs count.
+ * \c capacity and \c flags do not. A \c NULL pointer, or a zero length, is
+ * empty and does not read \c ptr. Different lengths are not equal, and
+ * neither payload is read. A multibyte code unit is compared as
+ * \c unsigned char. A wide code unit is compared as \c wchar_t.
+ *
+ * \param lhs Left string. May be NULL;
+ * \param rhs Right string. May be NULL;
+ *
+ * \return Non-zero when the strings are equal; zero otherwise;
+ *
+ * \pre (NULL == lhs || 0 == lhs->len || NULL != lhs->ptr)
+ * \pre (NULL == rhs || 0 == rhs->len || NULL != rhs->ptr)
+ */
+CSTRING_EXTERN_C
+cstring_truthy_t
+cstring_equal(
+    struct cstring_t const* lhs
+,   struct cstring_t const* rhs
+);
+
+/** \brief Compares two strings for order, including any embedded NUL
+ * characters.
+ * \ingroup group__cstring_api
+ *
+ * The same code units as \c cstring_equal(). A shorter string that is a
+ * prefix of a longer one is less. Use \c cstring_equal() to test equality.
+ *
+ * \param lhs Left string. May be NULL;
+ * \param rhs Right string. May be NULL;
+ *
+ * \return Negative, zero, or positive. The magnitude is not significant;
+ *
+ * \pre (NULL == lhs || 0 == lhs->len || NULL != lhs->ptr)
+ * \pre (NULL == rhs || 0 == rhs->len || NULL != rhs->ptr)
+ */
+CSTRING_EXTERN_C
+cstring_sint_t
+cstring_compare(
+    struct cstring_t const* lhs
+,   struct cstring_t const* rhs
+);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -1090,135 +1148,10 @@ cstring_appendLenFn(
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * hashing functions
+ * Hash API
  */
 
-/** \defgroup group__cstring_api__hashing Hashing Functions
- * \ingroup group__cstring_api
- * \brief Functions for calculating hash values of strings and string
- *   slices.
- * @{
- */
-
-/** \brief Computes a 64-bit djb2 hash of the given cstring instance.
- *
- * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
- *   5381.
- *
- * \return A 64-bit djb2 hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2(
-    struct cstring_t const* pcs
-);
-
-/** \brief Computes a case-insensitive 64-bit djb2 hash of the given
- *   cstring instance.
- *
- * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
- *   5381.
- *
- * \return A case-insensitive 64-bit djb2 hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_ci(
-    struct cstring_t const* pcs
-);
-
-/** \brief Computes a 64-bit djb2 hash of a character buffer of specified
- *   length.
- *
- * \param s Pointer to the character buffer. If NULL, treated as empty
- *   string.
- * \param cch Number of characters in the buffer.
- *
- * \return A 64-bit djb2 hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_len(
-    cstring_char_t const*   s
-,   size_t                  cch
-);
-
-/** \brief Computes a case-insensitive 64-bit djb2 hash of a character
- *   buffer of specified length.
- *
- * \param s Pointer to the character buffer. If NULL, treated as empty
- *   string.
- * \param cch Number of characters in the buffer.
- *
- * \return A case-insensitive 64-bit djb2 hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_djb2_len_ci(
-    cstring_char_t const*   s
-,   size_t                  cch
-);
-
-/** \brief Computes a 64-bit FNV-1a hash of the given cstring instance.
- *
- * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
- *   0xcbf29ce484222325ULL.
- *
- * \return A 64-bit FNV-1a hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a(
-    struct cstring_t const* pcs
-);
-
-/** \brief Computes a case-insensitive 64-bit FNV-1a hash of the given
- *   cstring instance.
- *
- * \param pcs Pointer to the cstring instance to be hashed. If NULL, returns
- *   0xcbf29ce484222325ULL.
- *
- * \return A case-insensitive 64-bit FNV-1a hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_ci(
-    struct cstring_t const* pcs
-);
-
-/** \brief Computes a 64-bit FNV-1a hash of a character buffer of specified
- *   length.
- *
- * \param s Pointer to the character buffer. If NULL, treated as empty
- *   string.
- * \param cch Number of characters in the buffer.
- *
- * \return A 64-bit FNV-1a hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_len(
-    cstring_char_t const*   s
-,   size_t                  cch
-);
-
-/** \brief Computes a case-insensitive 64-bit FNV-1a hash of a character
- *   buffer of specified length.
- *
- * \param s Pointer to the character buffer. If NULL, treated as empty
- *   string.
- * \param cch Number of characters in the buffer.
- *
- * \return A case-insensitive 64-bit FNV-1a hash value.
- */
-CSTRING_EXTERN_C
-uint64_t
-cstring_hash_fnv1a_len_ci(
-    cstring_char_t const*   s
-,   size_t                  cch
-);
-
-/** @} */
+#include <cstring/hash.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -1234,10 +1167,15 @@ cstring_hash_fnv1a_len_ci(
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * string access shims
+ * language
  */
 
 #ifdef __cplusplus
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * string access shims
+ */
 
 inline
 cstring_char_t const*
@@ -1423,122 +1361,40 @@ c_str_ptr(
     return cstring_getStatusCodeString(rc);
 }
 
-
 /* /////////////////////////////////////////////////////////////////////////
- * hash access shims
+ * comparison
  */
 
 inline
-uint64_t
-hash_djb2(
-    struct cstring_t const* pcs
+bool
+operator ==(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
 )
 {
-    return cstring_hash_djb2(pcs);
+    return 0 != cstring_equal(&lhs, &rhs);
 }
 
 inline
-uint64_t
-hash_djb2(
-    struct cstring_t const& cs
+bool
+operator !=(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
 )
 {
-    return cstring_hash_djb2(&cs);
+    return 0 == cstring_equal(&lhs, &rhs);
 }
 
 inline
-uint64_t
-hash_djb2(
-    cstring_char_t const*   s
-,   size_t                  cch
+bool
+operator <(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
 )
 {
-    return cstring_hash_djb2_len(s, cch);
+    return cstring_compare(&lhs, &rhs) < 0;
 }
 
-inline
-uint64_t
-hash_djb2_ci(
-    struct cstring_t const* pcs
-)
-{
-    return cstring_hash_djb2_ci(pcs);
-}
-
-inline
-uint64_t
-hash_djb2_ci(
-    struct cstring_t const& cs
-)
-{
-    return cstring_hash_djb2_ci(&cs);
-}
-
-inline
-uint64_t
-hash_djb2_ci(
-    cstring_char_t const*   s
-,   size_t                  cch
-)
-{
-    return cstring_hash_djb2_len_ci(s, cch);
-}
-
-inline
-uint64_t
-hash_fnv1a(
-    struct cstring_t const* pcs
-)
-{
-    return cstring_hash_fnv1a(pcs);
-}
-
-inline
-uint64_t
-hash_fnv1a(
-    struct cstring_t const& cs
-)
-{
-    return cstring_hash_fnv1a(&cs);
-}
-
-inline
-uint64_t
-hash_fnv1a(
-    cstring_char_t const*   s
-,   size_t                  cch
-)
-{
-    return cstring_hash_fnv1a_len(s, cch);
-}
-
-inline
-uint64_t
-hash_fnv1a_ci(
-    struct cstring_t const* pcs
-)
-{
-    return cstring_hash_fnv1a_ci(pcs);
-}
-
-inline
-uint64_t
-hash_fnv1a_ci(
-    struct cstring_t const& cs
-)
-{
-    return cstring_hash_fnv1a_ci(&cs);
-}
-
-inline
-uint64_t
-hash_fnv1a_ci(
-    cstring_char_t const*   s
-,   size_t                  cch
-)
-{
-    return cstring_hash_fnv1a_len_ci(s, cch);
-}
 
 # ifndef _STLSOFT_NO_NAMESPACE
 namespace stlsoft
@@ -1557,6 +1413,12 @@ namespace stlsoft
 
 } /* namespace stlsoft */
 # endif /* !_STLSOFT_NO_NAMESPACE */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * language
+ */
+
 #endif /* __cplusplus */
 
 

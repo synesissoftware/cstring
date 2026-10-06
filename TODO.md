@@ -59,12 +59,18 @@
     * [ ] `--no-p99`;
     * [ ] `--no-shwild`;
     * [x] ~~~`--wide-strings`~~~ - ✅;
+* [ ] API headers reconciled:
+  * [ ] String API in cstring/string.h;
+  * [ ] Hash API in cstring/hash.h;
+  * [ ] Vector API in cstring/vector.h;
+  * [ ] Umbrella / All API in cstring/cstring.h;
 * [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;
   * [ ] HomeBrew;
   * [ ] . . .
 * [ ] Website;
+* [ ] Project README.md and website need to mention clearly the provenance of the "auto-buffer" concept;
 * [ ] . . .
 
 
