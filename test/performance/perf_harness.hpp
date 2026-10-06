@@ -203,13 +203,17 @@ write_lines_file(
 struct run_result
 {
     interval_t      tm_ns;
-    std::uint64_t   anchor;
+    uint64_t        anchor;
 #ifdef HAS_P99
 
     p99::histogram  hist;
 #endif /* HAS_P99 */
 };
 
+/* tm_ns is one start/stop around the iteration loop. That total is ns/op
+ * and vs cstr. When p99 is linked, the recorded warmup also times each call
+ * into the histogram. Those samples are the percentiles only.
+ */
 template <typename F>
 run_result
 time_iterations(
@@ -228,29 +232,37 @@ time_iterations(
 
         result.hist.clear();
 #endif /* HAS_P99 */
-        interval_t tm_ns = 0;
-#ifdef HAS_P99
-
-        for (size_t i = 0; num_iterations != i; ++i)
-        {
-            sw.start();
-            result.anchor += fn();
-            sw.stop();
-
-            interval_t const sample = sw.get_nanoseconds();
-
-            tm_ns += sample;
-            (void)result.hist.push_ns(static_cast<std::uint64_t>(sample));
-        }
-#else /* ? HAS_P99 */
 
         sw.start();
+
         for (size_t i = 0; num_iterations != i; ++i)
         {
             result.anchor += fn();
         }
+
         sw.stop();
-        tm_ns = sw.get_nanoseconds();
+
+        interval_t const tm_ns = sw.get_nanoseconds();
+
+#ifdef HAS_P99
+
+        if (1 == w)
+        {
+            uint64_t volatile hist_anchor = 0;
+
+            for (size_t i = 0; num_iterations != i; ++i)
+            {
+                sw.start();
+                hist_anchor += fn();
+                sw.stop();
+
+                interval_t const sample = sw.get_nanoseconds();
+
+                (void)result.hist.push_ns(static_cast<uint64_t>(sample));
+            }
+
+            (void)hist_anchor;
+        }
 #endif /* HAS_P99 */
 
         if (1 == w)
@@ -295,7 +307,11 @@ display_banner(
         << "  small sizes favour std::string. Prefer Release builds."
         << std::endl
 #ifdef HAS_P99
-        << "  p99: available — per-op percentiles reported where timed."
+        << "  p99: p50/p90/p99/max are one iteration, not divided by #acts."
+        << std::endl
+        << "  ns/op is one start/stop around the loop, then divided by #acts."
+        << std::endl
+        << "  vs cstr is \"-\" when p50 is 0 and ns/op does not grow with size."
         << std::endl
         << "  Env: CSTRING_PERF_ITERATIONS, CSTRING_PERF_WARMUPS"
         << ", CSTRING_PERF_FILE_TRIALS"
@@ -438,13 +454,13 @@ display_results_title()
         << std::setw(10) << std::right << "vs cstr"
 #ifdef HAS_P99
         << '\t'
-        << std::setw(10) << std::right << "p50"
+        << std::setw(10) << std::right << "p50/iter"
         << '\t'
-        << std::setw(10) << std::right << "p90"
+        << std::setw(10) << std::right << "p90/iter"
         << '\t'
-        << std::setw(10) << std::right << "p99"
+        << std::setw(10) << std::right << "p99/iter"
         << '\t'
-        << std::setw(10) << std::right << "max"
+        << std::setw(10) << std::right << "max/iter"
 #endif /* HAS_P99 */
         << '\t'
         << std::setw(14) << std::right << "anchor"
@@ -551,8 +567,110 @@ impl_is_baseline(
     return false;
 }
 
+#ifdef HAS_P99
+
+struct prior_ns_op
+{
+    std::string scenario;
+    std::string impl;
+    size_t      size;
+    interval_t  ns_per_op;
+};
+
+inline
+bool
+median_sample_is_zero(
+    p99::histogram const& h
+)
+{
+    if (h.empty())
+    {
+        return false;
+    }
+
+    uint64_t p50 = 0;
+
+    if (!h.try_get_value_at_p50(&p50))
+    {
+        return false;
+    }
+
+    return 0 == p50;
+}
+
+inline
+interval_t
+ns_per_op(
+    interval_t  tm_ns
+,   size_t      num_iterations
+,   size_t      num_actions
+)
+{
+    size_t const denom =
+        (0 == num_iterations || 0 == num_actions)
+            ? 1u
+            : (num_iterations * num_actions)
+            ;
+
+    return tm_ns / denom;
+}
+
+/* p50 of 0 means the median sample did no timed work. The ratio is then
+ * suppressed when ns/op has not increased against the previous smaller size
+ * of the same scenario and implementation. The first such size is
+ * suppressed as well, because there is no growth to report.
+ */
+inline
+bool
+ratio_elided(
+    char const*         scenario
+,   size_t              size
+,   char const*         impl
+,   size_t              num_iterations
+,   size_t              num_actions
+,   run_result const&   r
+)
+{
+    interval_t const ns_op = ns_per_op(r.tm_ns, num_iterations, num_actions);
+
+    static std::vector<prior_ns_op> seen;
+    bool        have_prev   =   false;
+    interval_t  prev_ns     =   0;
+    size_t      prev_size   =   0;
+
+    for (size_t i = 0; seen.size() != i; ++i)
+    {
+        if (seen[i].scenario == scenario &&
+            seen[i].impl == impl &&
+            seen[i].size < size &&
+            (   !have_prev ||
+                seen[i].size > prev_size))
+        {
+            have_prev   =   true;
+            prev_size   =   seen[i].size;
+            prev_ns     =   seen[i].ns_per_op;
+        }
+    }
+
+    prior_ns_op row;
+
+    row.scenario    =   scenario;
+    row.impl        =   impl;
+    row.size        =   size;
+    row.ns_per_op   =   ns_op;
+    seen.push_back(row);
+
+    if (!median_sample_is_zero(r.hist))
+    {
+        return false;
+    }
+
+    return !have_prev || ns_op <= prev_ns;
+}
+#endif /* HAS_P99 */
+
 /* Baseline impl names are ratio 1.0. Every other impl is timed against
- * baseline_ns.
+ * baseline_ns. An elided ratio is reported as "-".
  */
 inline
 void
@@ -568,11 +686,28 @@ emit_row(
 ,   size_t              num_baselines
 )
 {
+#ifdef HAS_P99
+
+    bool const elided = ratio_elided(
+        scenario
+    ,   size
+    ,   impl
+    ,   num_iterations
+    ,   num_actions
+    ,   r
+    );
+#else /* ? HAS_P99 */
+
+    bool const elided = false;
+#endif /* HAS_P99 */
+
     double const ratio =
-        impl_is_baseline(impl, baseline_impls, num_baselines)
-            ? 1.0
-            : ratio_or_dash(r.tm_ns, baseline_ns)
-            ;
+        elided
+            ? -1.0
+            : impl_is_baseline(impl, baseline_impls, num_baselines)
+                ? 1.0
+                : ratio_or_dash(r.tm_ns, baseline_ns)
+                ;
 
     display_results(
         scenario
@@ -607,9 +742,9 @@ raw_init(
     raw_string* s
 )
 {
-    s->ptr = NULL;
-    s->len = 0;
-    s->capacity = 0;
+    s->ptr      =   NULL;
+    s->len      =   0;
+    s->capacity =   0;
 }
 
 inline
@@ -619,6 +754,7 @@ raw_destroy(
 )
 {
     ::free(s->ptr);
+
     raw_init(s);
 }
 
@@ -759,9 +895,9 @@ raw_vec_init(
     raw_string_vector* v
 )
 {
-    v->ptr = NULL;
-    v->len = 0;
-    v->capacity = 0;
+    v->ptr      =   NULL;
+    v->len      =   0;
+    v->capacity =   0;
 }
 
 inline

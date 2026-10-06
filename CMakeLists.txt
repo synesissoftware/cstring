@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for cstring
 #
 # Created:  21st December 2023
-# Updated:  3rd October 2026
+# Updated:  4th October 2026
 #
 # ######################################################################## #
 
@@ -116,6 +116,8 @@ include(TargetMacros)
 option(BUILD_EXAMPLES "Build examples" ON)
 
 option(BUILD_TESTING "Build tests" ON)
+
+option(CSTRING_USE_WIDE_STRINGS "Compile cstring_char_t as wchar_t" OFF)
 
 option(NO_CSTRING_CPP_API "Disable C++ API (and associated C++ examples/tests)" OFF)
 

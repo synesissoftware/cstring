@@ -6,13 +6,14 @@
  *          `CSTRING_F_MEMORY_CAN_GROW_TO_HEAP`).
  *
  * Created: 28th July 2011
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* cstring header files */
 #include <cstring/cstring.h>
+#include "cstring.helpers.h"
 
 /* STLSoft header files */
 #if 0
@@ -37,12 +38,12 @@ int main(int argc, char* argv[])
 {
     /* Create on a fixed buffer. */
     cstring_t   cs;
-    char        buff[10];
+    cstring_char_t  buff[10];
     int         flags   =   0
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    CSTRING_RC  rc      =   cstring_createEx(&cs, "String-#1", flags, buff, sizeof(buff));
+    CSTRING_RC  rc      =   cstring_createEx(&cs, CSTRING_T_("String-#1"), flags, buff, sizeof(buff) / sizeof(buff[0]));
 
     ((void)&argc);
     ((void)&argv);
@@ -54,14 +55,15 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    printf("cs=<len=%lu, capacity=%lu>: '%.*s'\n"
+    printf("cs=<len=%lu, capacity=%lu>: '"
     ,   (unsigned long)cs.len
     ,   (unsigned long)cs.capacity
-    ,   (int)cs.len, cs.ptr
     );
+    cstring_write(stdout, &cs, NULL);
+    printf("'\n");
 
     /* add some more to exceed capacity */
-    rc = cstring_append(&cs, " : something very long");
+    rc = cstring_append(&cs, CSTRING_T_(" : something very long"));
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -70,11 +72,12 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    printf("cs=<len=%lu, capacity=%lu>: '%.*s'\n"
+    printf("cs=<len=%lu, capacity=%lu>: '"
     ,   (unsigned long)cs.len
     ,   (unsigned long)cs.capacity
-    ,   (int)cs.len, cs.ptr
     );
+    cstring_write(stdout, &cs, NULL);
+    printf("'\n");
 
     cstring_destroy(&cs);
 

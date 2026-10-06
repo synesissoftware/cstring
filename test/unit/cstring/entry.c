@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring instance general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 4th October 2026
+ * Updated: 6th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -29,6 +29,8 @@
 /* /////////////////////////////////////
  * general includes
  */
+
+#include "../../cstring_testing.h"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -144,23 +146,6 @@ int main(int argc, char* argv[])
 #  pragma warning(pop)
 # endif /* compiler */
 #endif /* compiler */
-
-
-/* /////////////////////////////////////////////////////////////////////////
- * compatibility
- */
-
-#ifdef CSTRING_USE_WIDE_STRINGS
-
-# define CSTRING_T_(x)                                      L ## x
-# define TEST_STR_EQ_                                       TEST_WS_EQ
-# define TEST_STR_EQ_N_                                     TEST_WS_EQ_N
-#else /* ? CSTRING_USE_WIDE_STRINGS */
-
-# define CSTRING_T_(x)                                      x
-# define TEST_STR_EQ_                                       TEST_MS_EQ
-# define TEST_STR_EQ_N_                                     TEST_MS_EQ_N
-#endif /* CSTRING_USE_WIDE_STRINGS */
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -408,12 +393,12 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
             TEST_INT_EQ(5u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
             TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_CHAR_EQ('\0', str.ptr[0]);
-            TEST_CHAR_EQ('\0', str.ptr[1]);
-            TEST_CHAR_EQ('\0', str.ptr[2]);
-            TEST_CHAR_EQ('\0', str.ptr[3]);
-            TEST_CHAR_EQ('\0', str.ptr[4]);
-            TEST_CHAR_EQ('\0', str.ptr[5]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[0]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[1]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[2]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[3]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[4]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[5]);
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -439,12 +424,12 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
             TEST_INT_EQ(5u, str.len);
             TEST_PTR_NE(NULL, str.ptr);
             TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_CHAR_EQ('\0', str.ptr[0]);
-            TEST_CHAR_EQ('\0', str.ptr[1]);
-            TEST_CHAR_EQ('\0', str.ptr[2]);
-            TEST_CHAR_EQ('\0', str.ptr[3]);
-            TEST_CHAR_EQ('\0', str.ptr[4]);
-            TEST_CHAR_EQ('\0', str.ptr[5]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[0]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[1]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[2]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[3]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[4]);
+            TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[5]);
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
 
@@ -852,6 +837,30 @@ static void TEST_cstring_createLen(void)
         TEST_INT_EQ(0u, str.capacity);
         TEST_INT_EQ(0, str.flags);
     }}
+
+    /* Exactly cch characters and no trailing NUL. The copy must not read
+     * past that slice.
+     */
+    {
+        cstring_char_t  raw[3];
+        cstring_t       str = cstring_t_DEFAULT;
+        CSTRING_RC      rc;
+
+        raw[0] = CSTRING_T_('a');
+        raw[1] = CSTRING_T_('b');
+        raw[2] = CSTRING_T_('c');
+
+        rc = cstring_createLen(&str, raw, 3u);
+
+        TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+        TEST_INT_EQ(3u, str.len);
+        TEST_CHAR_EQ(CSTRING_T_('a'), str.ptr[0]);
+        TEST_CHAR_EQ(CSTRING_T_('b'), str.ptr[1]);
+        TEST_CHAR_EQ(CSTRING_T_('c'), str.ptr[2]);
+        TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[3]);
+
+        cstring_destroy(&str);
+    }
 }
 
 static void TEST_cstring_createEx(void)

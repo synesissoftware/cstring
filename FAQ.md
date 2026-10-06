@@ -46,7 +46,8 @@ See [INSTALL.md](./INSTALL.md) for details of how to install **cstring**.
 
 ## Q3: "How do I use cstring?"
 
-Include **cstring/cstring.h** (and **cstring/cstring.vector.h** where needed)
+Include **cstring/cstring.h** (which includes **cstring/hash.h**; and
+**cstring/cstring.vector.h** where needed)
 and link against **libcstring** (the **CMake** target is `cstring::core`).
 Create and destroy instances with `cstring_create()` / `cstring_destroy()`,
 and mutate with `cstring_assign()`, `cstring_append()`, and related APIs.
@@ -61,8 +62,8 @@ A minimal sketch:
 
 int main(void)
 {
-    cstring_t cs;
-    CSTRING_RC rc = cstring_create(&cs, "Hello");
+    cstring_t   cs;
+    CSTRING_RC  rc = cstring_create(&cs, "Hello");
 
     if (CSTRING_RC_SUCCESS != rc)
     {

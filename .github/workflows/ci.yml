@@ -10,7 +10,7 @@ on:
       - rc1
       - rc2
       - rc3
-      - directories
+      - hash-review
   pull_request:
 
 concurrency:
@@ -62,6 +62,34 @@ jobs:
       cpp-compiler: ${{ matrix.cpp_compiler }}
       build-type: Release
       toolchain: ${{ matrix.toolchain }}
+    secrets: inherit
+
+  # Same Windows cells as above, configured with --wide-strings. Performance
+  # steps are skipped in the cell when that input is set.
+  cell-wide:
+    name: CI (${{ matrix.id }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: windows-cl-wide
+            os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+          - id: windows-mingw-wide
+            os: windows-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            toolchain: mingw
+    uses: ./.github/workflows/ci-cell.yml
+    with:
+      build-type: Release
+      c-compiler: ${{ matrix.c_compiler }}
+      cell-id: ${{ matrix.id }}
+      cpp-compiler: ${{ matrix.cpp_compiler }}
+      os: ${{ matrix.os }}
+      toolchain: ${{ matrix.toolchain }}
+      wide-strings: true
     secrets: inherit
 
   install-smoke:
@@ -264,3 +292,49 @@ jobs:
         run: |
           set -euo pipefail
           SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_automated_tests.sh -M
+
+  wide-strings:
+    name: Build with --wide-strings
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install test dependencies (STLSoft + shwild + xTests)
+        uses: ./.github/actions/install-sis-deps
+        with:
+          build-type: ${{ env.BUILD_TYPE }}
+          c-compiler: gcc
+          cpp-compiler: g++
+          dependencies: STLSoft shwild xTests
+
+      - name: Configure via prepare_cmake.sh --wide-strings
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Same prefix rule as the --no-cpp job: xTests::core links
+          # STLSoft::STLSoft, which exists only when that package is
+          # imported. --wide-strings defines CSTRING_USE_WIDE_STRINGS.
+          export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+          ./prepare_cmake.sh --wide-strings
+
+      - name: Build via build_cmake.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          export CMAKE_PREFIX_PATH="${{ env.SIS_DEPS }}"
+          ./build_cmake.sh
+
+      - name: Run automated tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" ./run_all_automated_tests.sh -M
+
+      - name: Run examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          SIS_EXAMPLE_SMOKE=1 \
+            SIS_CMAKE_BUILD_DIR="${{ github.workspace }}/_build" \
+            ./run_all_examples.sh -M

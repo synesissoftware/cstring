@@ -4,7 +4,7 @@
  * Purpose: Tests borrowed string functionality.
  *
  * Created: 28th July 2011
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -22,6 +22,8 @@
 /* /////////////////////////////////////
  * general includes
  */
+
+#include "../../cstring_testing.h"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -131,11 +133,11 @@ static void TEST_cstring_createEx_FLAG_COMBINATIONS(void)
         int const   flags   =   0
                             |   goods[i]
                             ;
-        char        buff[10];
+        cstring_char_t buff[10];
         cstring_t   cs;
         CSTRING_RC  rc;
 
-        rc = cstring_createEx(&cs, "string: ", flags, buff, sizeof(buff));
+        rc = cstring_createEx(&cs, CSTRING_T_("string: "), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
         TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     }}
@@ -145,11 +147,11 @@ static void TEST_cstring_createEx_FLAG_COMBINATIONS(void)
         int const   flags   =   0
                             |   bads[i]
                             ;
-        char        buff[10];
+        cstring_char_t buff[10];
         cstring_t   cs;
         CSTRING_RC  rc;
 
-        rc = cstring_createEx(&cs, "string: ", flags, buff, sizeof(buff));
+        rc = cstring_createEx(&cs, CSTRING_T_("string: "), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
         TEST_ENUM_NE(CSTRING_RC_SUCCESS, rc);
     }}
@@ -161,25 +163,25 @@ static void TEST_cstring_createEx_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
     cstring_destroy(&cs);
 
 
     /* try to resize. */
 
-    rc = cstring_createEx(&cs, "oversized", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("oversized"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -187,13 +189,13 @@ static void TEST_cstring_createEx_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("oversized", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("oversized"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
         cstring_destroy(&cs);
@@ -206,25 +208,25 @@ static void TEST_cstring_createLenEx_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
     cstring_destroy(&cs);
 
 
     /* try to resize. */
 
-    rc = cstring_createLenEx(&cs, "oversized string", 9, flags, buff, sizeof(buff));
+    rc = cstring_createLenEx(&cs, CSTRING_T_("oversized string"), 9, flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -232,13 +234,13 @@ static void TEST_cstring_createLenEx_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("oversized", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("oversized"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
         cstring_destroy(&cs);
@@ -251,18 +253,18 @@ static void TEST_cstring_setCapacity_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
 
     /* try to resize. */
@@ -275,15 +277,15 @@ static void TEST_cstring_setCapacity_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_NE(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
         TEST_INT_GE(9u - 1u, cs.capacity);
     }
 
@@ -296,23 +298,23 @@ static void TEST_cstring_assign_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
 
     /* try to resize. */
 
-    rc = cstring_assign(&cs, "oversized");
+    rc = cstring_assign(&cs, CSTRING_T_("oversized"));
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -320,24 +322,24 @@ static void TEST_cstring_assign_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("oversized", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("oversized"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
 
         /* shrink again */
-        rc = cstring_assign(&cs, "small");
+        rc = cstring_assign(&cs, CSTRING_T_("small"));
 
         TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
         TEST_INT_EQ(0, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_NE(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
     }
 
     cstring_destroy(&cs);
@@ -349,23 +351,23 @@ static void TEST_cstring_assignLen_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
 
     /* try to resize. */
 
-    rc = cstring_assignLen(&cs, "oversized", 9);
+    rc = cstring_assignLen(&cs, CSTRING_T_("oversized"), 9);
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -373,24 +375,24 @@ static void TEST_cstring_assignLen_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("oversized", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("oversized"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
 
         /* shrink again */
-        rc = cstring_assign(&cs, "small");
+        rc = cstring_assign(&cs, CSTRING_T_("small"));
 
         TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
         TEST_INT_EQ(0, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_NE(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
     }
 
     cstring_destroy(&cs);
@@ -402,23 +404,23 @@ static void TEST_cstring_append_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
 
     /* try to resize. */
 
-    rc = cstring_append(&cs, "ish, but big enough");
+    rc = cstring_append(&cs, CSTRING_T_("ish, but big enough"));
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -426,24 +428,24 @@ static void TEST_cstring_append_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("smallish, but big enough", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("smallish, but big enough"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
 
         /* shrink again */
-        rc = cstring_assign(&cs, "small");
+        rc = cstring_assign(&cs, CSTRING_T_("small"));
 
         TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
         TEST_INT_EQ(0, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_NE(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
     }
 
     cstring_destroy(&cs);
@@ -455,23 +457,23 @@ static void TEST_cstring_appendLen_GROW_TO_HEAP(void)
                         |   CSTRING_F_MEMORY_IS_BORROWED
                         |   CSTRING_F_MEMORY_CAN_GROW_TO_HEAP
                         ;
-    char        buff[8];
+    cstring_char_t buff[8];
     cstring_t   cs;
     CSTRING_RC  rc;
 
 
     /* must succeed in stack buffer. */
 
-    rc = cstring_createEx(&cs, "small", flags, buff, sizeof(buff));
+    rc = cstring_createEx(&cs, CSTRING_T_("small"), flags, buff, (sizeof(buff) / sizeof((buff)[0])));
 
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(5u, cs.len);
-    TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+    TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
 
 
     /* try to resize. */
 
-    rc = cstring_appendLen(&cs, "ish, but big enough", 19);
+    rc = cstring_appendLen(&cs, CSTRING_T_("ish, but big enough"), 19);
 
     if (CSTRING_RC_SUCCESS != rc)
     {
@@ -479,24 +481,24 @@ static void TEST_cstring_appendLen_GROW_TO_HEAP(void)
         TEST_INT_EQ(flags, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_EQ(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
-        TEST_INT_EQ(sizeof(buff) - 1u, cs.capacity);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
+        TEST_INT_EQ((sizeof(buff) / sizeof((buff)[0])) - 1u, cs.capacity);
     }
     else
     {
         TEST_INT_EQ(0, cs.flags);
-        TEST_MS_EQ("smallish, but big enough", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("smallish, but big enough"), cs.ptr);
         TEST_PTR_NE(buff, cs.ptr);
 
 
         /* shrink again */
-        rc = cstring_assign(&cs, "small");
+        rc = cstring_assign(&cs, CSTRING_T_("small"));
 
         TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
         TEST_INT_EQ(0, cs.flags);
         TEST_INT_EQ(5u, cs.len);
         TEST_PTR_NE(buff, cs.ptr);
-        TEST_MS_EQ("small", cs.ptr);
+        TEST_STR_EQ_(CSTRING_T_("small"), cs.ptr);
     }
 
     cstring_destroy(&cs);
