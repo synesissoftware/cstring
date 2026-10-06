@@ -99,6 +99,31 @@ namespace
     using cstring::hash_sdbm_case;
 
 
+static size_t
+test_wchar_le_octets_(
+    wchar_t const*  ws
+,   size_t          cch
+,   unsigned char*  octets
+)
+{
+    size_t i;
+
+    for (i = 0; i != cch; ++i)
+    {
+        cstring_hash_t  bits = static_cast<cstring_hash_t>(ws[i]);
+        size_t          b;
+
+        for (b = 0; b != sizeof(wchar_t); ++b)
+        {
+            octets[(i * sizeof(wchar_t)) + b] = static_cast<unsigned char>(bits & 0xffu);
+            bits >>= 8;
+        }
+    }
+
+    return cch * sizeof(wchar_t);
+}
+
+
 static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
 {
     cstring_t const default_cs = cstring_t_DEFAULT;
@@ -141,16 +166,34 @@ static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
 
     rc = cstring_create(&cs_a, CSTRING_T_("a"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+#ifndef CSTRING_USE_WIDE_STRINGS
     TEST_INT_EQ(177670ULL, hash_djb2(cs_a));
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(cs_a));
     TEST_INT_EQ(97ULL, hash_sdbm(cs_a));
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+    TEST_INT_NE(177670ULL, hash_djb2(cs_a));
+    TEST_INT_NE(0xaf63dc4c8601ec8cULL, hash_fnv1a(cs_a));
+    TEST_INT_NE(97ULL, hash_sdbm(cs_a));
+    TEST_INT_EQ(cstring_hash_djb2_wbuf(CSTRING_T_("a"), 1), hash_djb2(cs_a));
+    TEST_INT_EQ(cstring_hash_fnv1a_wbuf(CSTRING_T_("a"), 1), hash_fnv1a(cs_a));
+    TEST_INT_EQ(cstring_hash_sdbm_wbuf(CSTRING_T_("a"), 1), hash_sdbm(cs_a));
+#endif /* CSTRING_USE_WIDE_STRINGS */
     cstring_destroy(&cs_a);
 
     rc = cstring_create(&cs_foobar, CSTRING_T_("foobar"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+#ifndef CSTRING_USE_WIDE_STRINGS
     TEST_INT_EQ(6953516687550ULL, hash_djb2(cs_foobar));
     TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(cs_foobar));
     TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm(cs_foobar));
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+    TEST_INT_NE(6953516687550ULL, hash_djb2(cs_foobar));
+    TEST_INT_NE(0x85944171f73967e8ULL, hash_fnv1a(cs_foobar));
+    TEST_INT_NE(0x430d469aa6437b0dULL, hash_sdbm(cs_foobar));
+    TEST_INT_EQ(cstring_hash_djb2_wbuf(CSTRING_T_("foobar"), 6), hash_djb2(cs_foobar));
+    TEST_INT_EQ(cstring_hash_fnv1a_wbuf(CSTRING_T_("foobar"), 6), hash_fnv1a(cs_foobar));
+    TEST_INT_EQ(cstring_hash_sdbm_wbuf(CSTRING_T_("foobar"), 6), hash_sdbm(cs_foobar));
+#endif /* CSTRING_USE_WIDE_STRINGS */
     cstring_destroy(&cs_foobar);
 }
 
@@ -195,36 +238,60 @@ static void TEST_hash_mbs_AND_wcs_OVERLOADS(void)
     wchar_t const   wa_nul_b[3] = { L'a', L'\0', L'b' };
 
     TEST_INT_EQ(177670ULL, hash_djb2("a"));
-    TEST_INT_EQ(177670ULL, hash_djb2(L"a"));
+    TEST_INT_NE(177670ULL, hash_djb2(L"a"));
     TEST_INT_EQ(177670ULL, hash_djb2("a", 1));
-    TEST_INT_EQ(177670ULL, hash_djb2(L"a", 1));
+    TEST_INT_NE(177670ULL, hash_djb2(L"a", 1));
     TEST_INT_EQ(6953516687550ULL, hash_djb2("foobar"));
-    TEST_INT_EQ(6953516687550ULL, hash_djb2(L"foobar", 6));
+    TEST_INT_NE(6953516687550ULL, hash_djb2(L"foobar", 6));
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a("a"));
-    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(L"a"));
+    TEST_INT_NE(0xaf63dc4c8601ec8cULL, hash_fnv1a(L"a"));
     TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a("foobar", 6));
-    TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(L"foobar"));
+    TEST_INT_NE(0x85944171f73967e8ULL, hash_fnv1a(L"foobar"));
     TEST_INT_EQ(97ULL, hash_sdbm("a"));
-    TEST_INT_EQ(97ULL, hash_sdbm(L"a"));
+    TEST_INT_NE(97ULL, hash_sdbm(L"a"));
     TEST_INT_EQ(97ULL, hash_sdbm("a", 1));
-    TEST_INT_EQ(97ULL, hash_sdbm(L"a", 1));
+    TEST_INT_NE(97ULL, hash_sdbm(L"a", 1));
     TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm("foobar"));
-    TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm(L"foobar", 6));
+    TEST_INT_NE(0x430d469aa6437b0dULL, hash_sdbm(L"foobar", 6));
 
-    TEST_INT_EQ(hash_djb2_case("Test"), hash_djb2_case(L"tEst"));
-    TEST_INT_EQ(hash_fnv1a_case("TEST", 4), hash_fnv1a_case(L"test"));
-    TEST_INT_EQ(hash_sdbm_case("Test"), hash_sdbm_case(L"tEst"));
+    TEST_INT_EQ(hash_djb2_case(L"Test"), hash_djb2_case(L"tEst"));
+    TEST_INT_NE(hash_djb2_case("Test"), hash_djb2_case(L"tEst"));
+    TEST_INT_EQ(hash_fnv1a_case(L"TEST", 4), hash_fnv1a_case(L"test"));
+    TEST_INT_NE(hash_fnv1a_case("TEST", 4), hash_fnv1a_case(L"test"));
+    TEST_INT_EQ(hash_sdbm_case(L"Test"), hash_sdbm_case(L"tEst"));
+    TEST_INT_NE(hash_sdbm_case("Test"), hash_sdbm_case(L"tEst"));
     TEST_INT_NE(hash_djb2("Test"), hash_djb2(L"test"));
     TEST_INT_NE(hash_sdbm("Test"), hash_sdbm(L"test"));
 
     TEST_INT_NE(hash_djb2("ab"), hash_djb2(a_nul_b, 3));
-    TEST_INT_EQ(hash_djb2(a_nul_b, 3), hash_djb2(wa_nul_b, 3));
+    TEST_INT_NE(hash_djb2(a_nul_b, 3), hash_djb2(wa_nul_b, 3));
     TEST_INT_NE(hash_djb2(L"ab"), hash_djb2(wa_nul_b, 3));
-    TEST_INT_EQ(hash_djb2("a"), hash_djb2(wide_alias, 1));
-    TEST_INT_EQ(hash_fnv1a(L"a"), hash_fnv1a(wide_alias, 1));
+    TEST_INT_NE(hash_djb2("a"), hash_djb2(wide_alias, 1));
+    TEST_INT_NE(hash_fnv1a(L"a"), hash_fnv1a(wide_alias, 1));
     TEST_INT_NE(hash_sdbm("ab"), hash_sdbm(a_nul_b, 3));
-    TEST_INT_EQ(hash_sdbm(a_nul_b, 3), hash_sdbm(wa_nul_b, 3));
-    TEST_INT_EQ(hash_sdbm("a"), hash_sdbm(wide_alias, 1));
+    TEST_INT_NE(hash_sdbm(a_nul_b, 3), hash_sdbm(wa_nul_b, 3));
+    TEST_INT_NE(hash_sdbm("a"), hash_sdbm(wide_alias, 1));
+
+    {
+        unsigned char   octets[sizeof(wchar_t) * 3];
+        wchar_t const   latin_a = static_cast<wchar_t>(0x0041);
+        wchar_t const   lstroke = static_cast<wchar_t>(0x0141);
+        size_t          n;
+
+        n = test_wchar_le_octets_(L"a", 1, octets);
+        TEST_INT_EQ(hash_djb2(reinterpret_cast<char const*>(octets), n), hash_djb2(L"a", 1));
+        TEST_INT_EQ(hash_fnv1a(reinterpret_cast<char const*>(octets), n), hash_fnv1a(L"a", 1));
+        TEST_INT_EQ(hash_sdbm(reinterpret_cast<char const*>(octets), n), hash_sdbm(L"a", 1));
+
+        n = test_wchar_le_octets_(wide_alias, 1, octets);
+        TEST_INT_EQ(hash_djb2(reinterpret_cast<char const*>(octets), n), hash_djb2(wide_alias, 1));
+        TEST_INT_EQ(hash_fnv1a(reinterpret_cast<char const*>(octets), n), hash_fnv1a(wide_alias, 1));
+        TEST_INT_EQ(hash_sdbm(reinterpret_cast<char const*>(octets), n), hash_sdbm(wide_alias, 1));
+
+        TEST_INT_NE(hash_djb2(&latin_a, 1), hash_djb2(&lstroke, 1));
+        TEST_INT_NE(hash_fnv1a(&latin_a, 1), hash_fnv1a(&lstroke, 1));
+        TEST_INT_NE(hash_sdbm(&latin_a, 1), hash_sdbm(&lstroke, 1));
+    }
 
     TEST_INT_EQ(cstring_hash_djb2_mbs("foobar"), hash_djb2("foobar"));
     TEST_INT_EQ(cstring_hash_djb2_wcs(L"foobar"), hash_djb2(L"foobar"));

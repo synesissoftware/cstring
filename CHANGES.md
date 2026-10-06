@@ -17,7 +17,9 @@
 * Stopped counted copies (`cstring_createLen()`, `cstring_assignLen()`, and the insert and append forms) from reading past `cch` when that slice contains no NUL;
 * Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, `CSTRING_HASH_FNV1A_PRIME`, `CSTRING_HASH_SDBM_MULTIPLIER`, and `CSTRING_HASH_SDBM_SEED` as the djb2, FNV-1a, and SDBM basis constants;
 * Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, `CSTRING_HASH_FNV1A_PRIME`, `CSTRING_HASH_SDBM_MULTIPLIER`, and `CSTRING_HASH_SDBM_SEED` with references to the published djb2, FNV-1a, and SDBM algorithms;
-* Documented the hash contract (forms, low octet, case fold, published vectors) and grouped the algorithms as `group__cstring_api__hashing__djb2`, `group__cstring_api__hashing__fnv1a`, and `group__cstring_api__hashing__sdbm`;
+* Hashed every octet of each wide code unit, low byte first, so a multibyte string and its wide equivalent differ;
+* Counted those same wide octets in the lose-lose timing baseline;
+* Documented the hash contract (forms, little-endian wide code units, case fold, published multibyte vectors, and the 32-bit djb2 limit) and grouped the algorithms as `group__cstring_api__hashing__djb2`, `group__cstring_api__hashing__fnv1a`, and `group__cstring_api__hashing__sdbm`;
 
 
 ## 4.0.19 - 4th October 2026

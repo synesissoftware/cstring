@@ -29,9 +29,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-/* Each function walks the same octets as the matching cstring hash entry
- * point. The mix is addition only. Case forms fold, then add the low 8
- * bits. Wide forms add the low 8 bits of each code unit. NULL yields 0.
+/* Each function walks the same octets as the matching cstring hash. The mix
+ * is addition only. Case forms fold, then add those octets. Wide forms add
+ * every octet of each wchar_t, low byte first. NULL yields 0.
  */
 
 cstring_hash_t

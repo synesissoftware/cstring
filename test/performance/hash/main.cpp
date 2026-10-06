@@ -691,7 +691,7 @@ display_banner()
         << std::endl
         << "  *_case rows fold case. mbuf_high_case folds octets >= 0x80."
         << std::endl
-        << "  wbuf_high_case folds code units above 0xFF (low 8 bits)."
+        << "  wbuf_high_case uses wchar_t values at and above U+0180."
         << std::endl
         << "  *_embedded_nul hashes interior NULs (odd units are NUL)."
         << std::endl

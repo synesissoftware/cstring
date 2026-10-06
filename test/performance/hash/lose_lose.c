@@ -31,8 +31,8 @@
  * NUL-terminated forms measure the length once, then add. djb2, FNV-1a, and
  * SDBM do that too, so the ratio compares the mix: addition against
  * hash*33+octet, the FNV-1a xor-multiply, and hash*65599+octet. The
- * published LoseLose loop that calls strlen on every step is not used
- * here.
+ * published LoseLose loop that calls strlen on every step is not used here.
+ * Wide forms add every octet of each wchar_t, low byte first.
  */
 
 cstring_hash_t
@@ -79,6 +79,24 @@ lose_lose_mbuf_case(
     return hash;
 }
 
+static cstring_hash_t
+lose_lose_wchar_octets_(
+    cstring_hash_t  hash
+,   wchar_t         unit
+)
+{
+    cstring_hash_t  bits = (cstring_hash_t)unit;
+    size_t          b;
+
+    for (b = 0; b != sizeof(wchar_t); ++b)
+    {
+        hash += (uint8_t)(bits & 0xffu);
+        bits >>= 8;
+    }
+
+    return hash;
+}
+
 cstring_hash_t
 lose_lose_wbuf(
     wchar_t const*  s
@@ -93,7 +111,7 @@ lose_lose_wbuf(
 
         for (i = 0; i != cch; ++i)
         {
-            hash += (uint8_t)s[i];
+            hash = lose_lose_wchar_octets_(hash, s[i]);
         }
     }
 
@@ -114,9 +132,7 @@ lose_lose_wbuf_case(
 
         for (i = 0; i != cch; ++i)
         {
-            uint8_t const octet = (uint8_t)(unsigned)towlower(s[i]);
-
-            hash += octet;
+            hash = lose_lose_wchar_octets_(hash, (wchar_t)towlower(s[i]));
         }
     }
 

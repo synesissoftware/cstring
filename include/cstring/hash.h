@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_HASH_MAJOR       1
 # define CSTRING_VER_CSTRING_H_HASH_MINOR       0
 # define CSTRING_VER_CSTRING_H_HASH_REVISION    2
-# define CSTRING_VER_CSTRING_H_HASH_EDIT        4
+# define CSTRING_VER_CSTRING_H_HASH_EDIT        5
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -98,14 +98,16 @@
  * and \c len, so embedded NULs count.
  *
  * NUL-terminated forms stop at the first NUL. Buffer forms hash exactly
- * \c cch code units and include embedded NULs. Each code unit contributes
- * its low 8 bits, so ASCII text has one hash in both encodings. A wide code
- * unit of value 0x161 hashes as the octet 0x61 ('a'). A \c NULL pointer, or
- * a zero length, yields that algorithm's empty-input value and does not
- * read the pointer.
+ * \c cch code units and include embedded NULs. A multibyte code unit
+ * contributes its one octet. A wide code unit contributes every octet of
+ * the \c wchar_t, low byte first, so \c "a" and \c L"a" differ. The wide
+ * value depends on \c sizeof(wchar_t): two octets on Windows, four on Unix.
+ * Big-endian and little-endian hosts of the same width agree. A \c NULL
+ * pointer, or a zero length, yields that algorithm's empty-input value and
+ * does not read the pointer.
  *
  * \c _case forms fold with \c tolower or \c towlower, which follow the
- * process locale, and then take the low 8 bits.
+ * process locale, and then hash the octets of the folded code unit.
  *
  * In C++, namespace \c cstring provides \c hash_djb2(),
  * \c hash_djb2_case(), \c hash_fnv1a(), \c hash_fnv1a_case(),
@@ -160,7 +162,9 @@ typedef unsigned __int64_t                                  cstring_hash_t;
  * <code>"a"</code> hash to 177670. The octets of <code>"foobar"</code> hash
  * to 6953516687550. The buffer <code>{ 'a', 0, 'b' }</code> of length 3
  * hashes to 193482728, which differs from <code>"ab"</code>. The octet
- * <code>0xFF</code> hashes to 177828.
+ * <code>0xFF</code> hashes to 177828. These figures are multibyte results.
+ * 64-bit djb2 matches 32-bit djb2 only while the running total stays below
+ * 2^32. <code>"foobar"</code> is already past that point.
  *
  * \sa http://www.cse.yorku.ca/~oz/hash.html#djb2
  * @{
@@ -355,7 +359,8 @@ cstring_hash_djb2_wbuf_case(
  * The octets of <code>"foobar"</code> hash to
  * <code>0x85944171f73967e8</code>. The buffer <code>{ 'a', 0, 'b' }</code>
  * of length 3 hashes to <code>0xe5d29919042666b2</code>. The octet
- * <code>0xFF</code> hashes to <code>0xaf64724c8602eb6e</code>.
+ * <code>0xFF</code> hashes to <code>0xaf64724c8602eb6e</code>. These
+ * figures are the multibyte results.
  *
  * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
  * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
@@ -561,6 +566,7 @@ cstring_hash_fnv1a_wbuf_case(
  * to <code>0x430d469aa6437b0d</code>. The buffer
  * <code>{ 'a', 0, 'b' }</code> of length 3 hashes to
  * <code>0x612fc3e043</code>. The octet <code>0xFF</code> hashes to 255.
+ * These figures are the multibyte results.
  *
  * \sa http://www.cse.yorku.ca/~oz/hash.html#sdbm
  * @{

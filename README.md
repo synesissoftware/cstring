@@ -220,7 +220,7 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. Each code unit contributes its low 8 bits, so ASCII text has one hash in both encodings. A wide code unit of value `0x161` hashes as the octet `0x61` (`'a'`). A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer.
+Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. A multibyte code unit contributes its one octet. A wide code unit contributes every octet of the `wchar_t`, low byte first, so `"a"` and `L"a"` differ. The wide value depends on `sizeof(wchar_t)`: two octets on Windows, four on Unix. Big-endian and little-endian hosts of the same width agree. A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer. The numeric tables below are the multibyte results.
 
 | Suffix | Input | What is hashed |
 | ------ | ----- | -------------- |
@@ -231,7 +231,7 @@ Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorith
 | `_mbuf` | `char const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 | `_wbuf` | `wchar_t const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 
-`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding uses `tolower` or `towlower`, which follow the process locale, and then the low 8 bits.
+`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding uses `tolower` or `towlower`, which follow the process locale, and then hashes the octets of the folded code unit.
 
 Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_fnv1a_wbuf_case()`, and `cstring_hash_sdbm_mbuf()`.
 
@@ -248,7 +248,7 @@ The hash starts at `CSTRING_HASH_DJB2_SEED` (`5381`). For each octet `b` the ste
 | `{ 'a', 0, 'b' }` length 3 | `193482728` |
 | octet `0xFF` | `177828` |
 
-The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed.
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed. 64-bit djb2 matches 32-bit djb2 only while the running total stays below 2^32. `"foobar"` is already past that point.
 
 
 ##### FNV-1a
