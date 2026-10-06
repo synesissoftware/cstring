@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  21st December 2023
-# Updated:  3rd October 2026
+# Updated:  6th October 2026
 #
 # ######################################################################## #
 
@@ -45,9 +45,10 @@ endif()
 
 
 set(CORE_SRCS
-	cstring.vector.c
+	cstring.compare.c
 	cstring.core.c
 	cstring.hash.c
+	cstring.vector.c
 )
 
 if(_BUILD_AS_WIN32)

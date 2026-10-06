@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 3
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     99
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     100
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -251,6 +251,23 @@ typedef char                                                cstring_char_t;
  */
 typedef int                                                 cstring_flags_t;
 
+/** \brief Signed comparison result
+ * \ingroup group__cstring_api
+ *
+ * Negative when the left string is less, zero when the strings compare
+ * equal, positive when the left string is greater. The magnitude is not
+ * significant. Equality checks use \c cstring_equal().
+ */
+typedef signed int                                          cstring_sint_t;
+
+/** \brief Truthy result
+ * \ingroup group__cstring_api
+ *
+ * Zero is false. Any other value is true. \c cstring_equal() returns this
+ * type so an equality check is not a use of \c cstring_compare().
+ */
+typedef int                                                 cstring_truthy_t;
+
 /** \brief The cstring structure
  * \ingroup group__cstring_api
  *
@@ -350,6 +367,58 @@ typedef struct cstring_t                                    cstring_t;
 /* I/O */
 #define CSTRING_F_IO_MASK                                   (0x0000)
 /** @} */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * comparison
+ */
+
+/** \brief Compares two strings for equality, including any embedded NUL
+ * characters.
+ * \ingroup group__cstring_api
+ *
+ * Compares \c len code units of each string. Embedded NULs count.
+ * \c capacity and \c flags do not. A \c NULL pointer, or a zero length, is
+ * empty and does not read \c ptr. Different lengths are not equal, and
+ * neither payload is read. A multibyte code unit is compared as
+ * \c unsigned char. A wide code unit is compared as \c wchar_t.
+ *
+ * \param lhs Left string. May be NULL;
+ * \param rhs Right string. May be NULL;
+ *
+ * \return Non-zero when the strings are equal; zero otherwise;
+ *
+ * \pre (NULL == lhs || 0 == lhs->len || NULL != lhs->ptr)
+ * \pre (NULL == rhs || 0 == rhs->len || NULL != rhs->ptr)
+ */
+CSTRING_EXTERN_C
+cstring_truthy_t
+cstring_equal(
+    struct cstring_t const* lhs
+,   struct cstring_t const* rhs
+);
+
+/** \brief Compares two strings for order, including any embedded NUL
+ * characters.
+ * \ingroup group__cstring_api
+ *
+ * The same code units as \c cstring_equal(). A shorter string that is a
+ * prefix of a longer one is less. Use \c cstring_equal() to test equality.
+ *
+ * \param lhs Left string. May be NULL;
+ * \param rhs Right string. May be NULL;
+ *
+ * \return Negative, zero, or positive. The magnitude is not significant;
+ *
+ * \pre (NULL == lhs || 0 == lhs->len || NULL != lhs->ptr)
+ * \pre (NULL == rhs || 0 == rhs->len || NULL != rhs->ptr)
+ */
+CSTRING_EXTERN_C
+cstring_sint_t
+cstring_compare(
+    struct cstring_t const* lhs
+,   struct cstring_t const* rhs
+);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -1291,6 +1360,41 @@ c_str_ptr(
 {
     return cstring_getStatusCodeString(rc);
 }
+
+/* /////////////////////////////////////////////////////////////////////////
+ * comparison
+ */
+
+inline
+bool
+operator ==(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
+)
+{
+    return 0 != cstring_equal(&lhs, &rhs);
+}
+
+inline
+bool
+operator !=(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
+)
+{
+    return 0 == cstring_equal(&lhs, &rhs);
+}
+
+inline
+bool
+operator <(
+    struct cstring_t const& lhs
+,   struct cstring_t const& rhs
+)
+{
+    return cstring_compare(&lhs, &rhs) < 0;
+}
+
 
 # ifndef _STLSOFT_NO_NAMESPACE
 namespace stlsoft

@@ -23,6 +23,7 @@
 * Documented the hash contract (forms, little-endian wide code units, case fold, published multibyte vectors, and the 32-bit djb2 limit) and grouped the algorithms as `group__cstring_api__hashing__djb2`, `group__cstring_api__hashing__fnv1a`, and `group__cstring_api__hashing__sdbm`;
 * Folded `_case` on ASCII A-Z only, independent of the process locale, and applied that same fold in the lose-lose timing baseline;
 * Specialised `std::hash<cstring_t>` on FNV-1a for C++11 and later;
+* Added `cstring_equal()` (`cstring_truthy_t`) and `cstring_compare()` (`cstring_sint_t`). Equality is the truthy function; compare is the signed order. C++ `==`, `!=`, and `<` call them;
 
 
 ## 4.0.19 - 4th October 2026

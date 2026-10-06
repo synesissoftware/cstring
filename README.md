@@ -25,6 +25,7 @@ Small standalone C library that provides extensible C-style strings and extensib
     - [Status and capacity](#status-and-capacity)
     - [Creation/destruction functions](#creationdestruction-functions)
     - [Modification functions](#modification-functions)
+    - [Comparison functions](#comparison-functions)
     - [File functions](#file-functions)
     - [Hashing functions](#hashing-functions)
       - [djb2](#djb2)
@@ -210,6 +211,12 @@ Defined in **cstring/cstring.h**:
 * `cstring_replaceAll()` — replaces all occurrences of one substring with another;
 * `cstring_truncate()` — shortens the logical length (capacity unchanged);
 * `cstring_swap()` — swaps the contents of two instances;
+
+#### Comparison functions
+
+* `cstring_equal()` — non-zero when two strings hold the same code units for `len`. A `NULL` pointer and a zero length are empty. `capacity` and `flags` are ignored;
+* `cstring_compare()` — negative, zero, or positive order of those same code units. Test equality with `cstring_equal()`;
+* C++ `operator==` and `operator!=` call `cstring_equal()`; `operator<` calls `cstring_compare()`;
 
 #### File functions
 
