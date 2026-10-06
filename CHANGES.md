@@ -12,6 +12,7 @@
 * Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, `hash_fnv1a_case()`, `hash_sdbm()`, and `hash_sdbm_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
 * Added **test.performance.hash**, timing `djb2`, `FNV-1a`, and `SDBM` against a degenerate lose-lose sum for cstring, multibyte, wide, counted-buffer, and case-insensitive inputs;
+* Suppressed MSVC warning 4996 (`getenv` in **perf_harness.hpp**) on **test.performance.hash**, matching the other performance programs;
 * Added scratch program **test.scratch.hash**, reporting full-hash, per-octet, and hashtable-modulo spread of lose-lose, `djb2`, `FNV-1a`, and `SDBM` on 10000 pseudo-random strings;
 * Stopped counted copies (`cstring_createLen()`, `cstring_assignLen()`, and the insert and append forms) from reading past `cch` when that slice contains no NUL;
 * Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, `CSTRING_HASH_FNV1A_PRIME`, `CSTRING_HASH_SDBM_MULTIPLIER`, and `CSTRING_HASH_SDBM_SEED` as the djb2, FNV-1a, and SDBM basis constants;
