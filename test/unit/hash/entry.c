@@ -30,6 +30,7 @@
 #include <stlsoft/stlsoft.h>
 
 /* Standard C header files */
+#include <locale.h>
 #include <stdlib.h>
 
 
@@ -48,6 +49,7 @@ static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_SLICES(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F(void);
 static void TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL(void);
 static void TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf(void);
+static void TEST_cstring_hash_case_SETLOCALE(void);
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -114,6 +116,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_OCTET_ABOVE_7F);
         XTESTS_RUN_CASE(TEST_cstring_hash_djb2_len_AND_cstring_hash_fnv1a_len_EMBEDDED_NUL);
         XTESTS_RUN_CASE(TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf);
+        XTESTS_RUN_CASE(TEST_cstring_hash_case_SETLOCALE);
 
         XTESTS_PRINT_RESULTS();
 
@@ -773,6 +776,80 @@ static void TEST_cstring_hash_mbs_AND_wcs_AND_mbuf_AND_wbuf(void)
     TEST_INT_EQ(cstring_hash_sdbm_mbs("foobar"), cstring_hash_sdbm(&cs));
 #endif /* CSTRING_USE_WIDE_STRINGS */
     cstring_destroy(&cs);
+}
+
+static void TEST_cstring_hash_case_SETLOCALE(void)
+{
+    char            saved[128];
+    char*           current;
+    char const      octet_dd[1] = { (char)(unsigned char)0xDD };
+    wchar_t const   agrave[1] = { (wchar_t)0x00C0 };
+    cstring_hash_t  djb2_m;
+    cstring_hash_t  djb2_w;
+    cstring_hash_t  fnv1a_m;
+    cstring_hash_t  fnv1a_w;
+    cstring_hash_t  sdbm_m;
+    cstring_hash_t  sdbm_w;
+
+    /* _case must ignore the process locale. ASCII "I" does not show that
+     * here: towlower(L'I') stays U+0069 under tr_TR.UTF-8. Octet 0xDD and
+     * U+00C0 do. The C locale leaves both unchanged; tr_TR.UTF-8 maps them
+     * to 0xFD and U+00E0. These comparisons fail while _case calls tolower
+     * and towlower.
+     */
+
+    current = setlocale(LC_CTYPE, NULL);
+    saved[0] = '\0';
+
+    if (NULL != current)
+    {
+        size_t n = 0;
+
+        while ('\0' != current[n] && (n + 1u) < sizeof(saved))
+        {
+            saved[n] = current[n];
+            ++n;
+        }
+
+        saved[n] = '\0';
+    }
+
+    if (NULL == setlocale(LC_CTYPE, "C"))
+    {
+        TEST_FAIL("LC_CTYPE \"C\" could not be selected");
+    }
+    else
+    {
+        djb2_m = cstring_hash_djb2_mbuf_case(octet_dd, 1);
+        djb2_w = cstring_hash_djb2_wbuf_case(agrave, 1);
+        fnv1a_m = cstring_hash_fnv1a_mbuf_case(octet_dd, 1);
+        fnv1a_w = cstring_hash_fnv1a_wbuf_case(agrave, 1);
+        sdbm_m = cstring_hash_sdbm_mbuf_case(octet_dd, 1);
+        sdbm_w = cstring_hash_sdbm_wbuf_case(agrave, 1);
+
+        if (NULL == setlocale(LC_CTYPE, "tr_TR.UTF-8"))
+        {
+            TEST_FAIL("LC_CTYPE \"tr_TR.UTF-8\" could not be selected");
+        }
+        else
+        {
+            TEST_INT_EQ(djb2_m, cstring_hash_djb2_mbuf_case(octet_dd, 1));
+            TEST_INT_EQ(djb2_w, cstring_hash_djb2_wbuf_case(agrave, 1));
+            TEST_INT_EQ(fnv1a_m, cstring_hash_fnv1a_mbuf_case(octet_dd, 1));
+            TEST_INT_EQ(fnv1a_w, cstring_hash_fnv1a_wbuf_case(agrave, 1));
+            TEST_INT_EQ(sdbm_m, cstring_hash_sdbm_mbuf_case(octet_dd, 1));
+            TEST_INT_EQ(sdbm_w, cstring_hash_sdbm_wbuf_case(agrave, 1));
+        }
+    }
+
+    if ('\0' != saved[0])
+    {
+        (void)setlocale(LC_CTYPE, saved);
+    }
+    else
+    {
+        (void)setlocale(LC_CTYPE, "C");
+    }
 }
 
 
