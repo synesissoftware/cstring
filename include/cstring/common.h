@@ -55,7 +55,7 @@
 # define CSTRING_VER_CSTRING_H_COMMON_MAJOR     1
 # define CSTRING_VER_CSTRING_H_COMMON_MINOR     0
 # define CSTRING_VER_CSTRING_H_COMMON_REVISION  1
-# define CSTRING_VER_CSTRING_H_COMMON_EDIT      1
+# define CSTRING_VER_CSTRING_H_COMMON_EDIT      2
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -71,7 +71,8 @@
  */
 
 /* Shared detection of <stdint.h>, used by cstring/hash.h when selecting the
- * type of cstring_hash_t.
+ * type of cstring_hash_t. Visual C++ provides <stdint.h> from _MSC_VER 1600
+ * (Visual Studio 2010). Older MSVC keeps unsigned __int64.
  */
 
 #if 0
@@ -90,7 +91,7 @@
 # define CSTRING_HAS_h_stdint_
 #elif 0 ||\
       (   defined(_MSC_VER) &&\
-          _MSC_VER >= 1310) ||\
+          _MSC_VER >= 1600) ||\
       0
 
 # define CSTRING_HAS_h_stdint_

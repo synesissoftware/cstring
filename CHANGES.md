@@ -9,6 +9,7 @@
 * Added 64-bit `SDBM` hash functions: `cstring_hash_sdbm()`, `cstring_hash_sdbm_case()`, and the multibyte, wide, and counted-buffer forms, including `_case`;
 * Added `cstring_hash_t` typedef (`uint64_t`);
 * Added **common.h** for shared `<stdint.h>` discrimination, and **hash.h** for the hash API, included from **cstring.h**;
+* Recognised `<stdint.h>` on Visual C++ from `_MSC_VER` 1600 (Visual Studio 2010); older MSVC uses `unsigned __int64` for `cstring_hash_t`;
 * Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, `hash_fnv1a_case()`, `hash_sdbm()`, and `hash_sdbm_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
 * Added **test.performance.hash**, timing `djb2`, `FNV-1a`, and `SDBM` against a degenerate lose-lose sum for cstring, multibyte, wide, counted-buffer, and case-insensitive inputs;
