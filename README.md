@@ -235,6 +235,8 @@ Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorith
 
 Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_fnv1a_wbuf_case()`, and `cstring_hash_sdbm_mbuf()`.
 
+From C++11, `std::hash<cstring_t>` is the FNV-1a hash of `ptr` and `len`, converted to `size_t`. djb2 and SDBM are not used for that specialisation.
+
 
 ##### djb2
 

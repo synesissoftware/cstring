@@ -55,6 +55,9 @@ namespace
     static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void);
     static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void);
     static void TEST_hash_mbs_AND_wcs_OVERLOADS(void);
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+    static void TEST_std_hash_cstring_t_IS_FNV1A(void);
+#endif /* CSTRING_HAS_std_hash_cstring_t_ */
 } /* anonymous namespace */
 
 
@@ -75,6 +78,9 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS);
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case);
         XTESTS_RUN_CASE(TEST_hash_mbs_AND_wcs_OVERLOADS);
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+        XTESTS_RUN_CASE(TEST_std_hash_cstring_t_IS_FNV1A);
+#endif /* CSTRING_HAS_std_hash_cstring_t_ */
 
         XTESTS_PRINT_RESULTS();
 
@@ -302,6 +308,35 @@ static void TEST_hash_mbs_AND_wcs_OVERLOADS(void)
     TEST_INT_EQ(cstring_hash_sdbm_mbuf("foobar", 6), hash_sdbm("foobar", 6));
     TEST_INT_EQ(cstring_hash_sdbm_wbuf(L"foobar", 6), hash_sdbm(L"foobar", 6));
 }
+
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+static void TEST_std_hash_cstring_t_IS_FNV1A(void)
+{
+    cstring_t const         empty = cstring_t_DEFAULT;
+    cstring_t               cs;
+    CSTRING_RC              rc;
+    std::hash<cstring_t>    hasher;
+
+    TEST_INT_EQ(static_cast<size_t>(hash_fnv1a(empty)), hasher(empty));
+
+    rc = cstring_create(&cs, CSTRING_T_("a"));
+    TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+    TEST_INT_EQ(static_cast<size_t>(hash_fnv1a(cs)), hasher(cs));
+    TEST_INT_NE(static_cast<size_t>(hash_djb2(cs)), hasher(cs));
+    TEST_INT_NE(static_cast<size_t>(hash_sdbm(cs)), hasher(cs));
+    cstring_destroy(&cs);
+
+    rc = cstring_create(&cs, CSTRING_T_("foobar"));
+    TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+    TEST_INT_EQ(static_cast<size_t>(hash_fnv1a(cs)), hasher(cs));
+    cstring_destroy(&cs);
+
+    rc = cstring_create(&cs, CSTRING_T_("A"));
+    TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
+    TEST_INT_NE(static_cast<size_t>(hash_fnv1a_case(cs)), hasher(cs));
+    cstring_destroy(&cs);
+}
+#endif /* CSTRING_HAS_std_hash_cstring_t_ */
 } /* anonymous namespace */
 
 

@@ -55,12 +55,12 @@
 # define CSTRING_VER_CSTRING_H_HASH_MAJOR       1
 # define CSTRING_VER_CSTRING_H_HASH_MINOR       0
 # define CSTRING_VER_CSTRING_H_HASH_REVISION    3
-# define CSTRING_VER_CSTRING_H_HASH_EDIT        7
+# define CSTRING_VER_CSTRING_H_HASH_EDIT        9
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * includes
+ * includes - 1
  */
 
 #include <cstring/common.h>
@@ -73,6 +73,35 @@
 #ifndef CSTRING_INCL_CSTRING_H_CSTRING
 # include <cstring/cstring.h>
 #endif /* !CSTRING_INCL_CSTRING_H_CSTRING */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * compatibility
+ */
+
+#ifdef __cplusplus
+
+# if 0
+# elif 0 ||\
+       __cplusplus >= 201103L ||\
+       (    1 &&\
+            defined(_MSVC_LANG) &&\
+            _MSVC_LANG >= 201103L ||\
+            1) ||\
+       0
+
+#  define CSTRING_HAS_std_hash_cstring_t_
+# endif
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * includes - 2
+ */
+
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+# include <functional>
+#endif
 
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -115,7 +144,9 @@
  * \c hash_sdbm(), and \c hash_sdbm_case(). Each
  * overloads on \c cstring_t (pointer and reference), \c char const*,
  * \c wchar_t const*, and both buffer forms. \c NULL is ambiguous between
- * \c char const* and \c wchar_t const* and must be cast.
+ * \c char const* and \c wchar_t const* and must be cast. From C++11,
+ * \c std::hash<cstring_t> is FNV-1a of \c ptr and \c len, converted to
+ * \c size_t. djb2 and SDBM are not used for that specialisation.
  * @{
  */
 
@@ -1253,6 +1284,33 @@ hash_sdbm_case(
  */
 
 } /* namespace cstring */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * std::hash<cstring_t>
+ */
+
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+
+/* FNV-1a of ptr and len, converted to size_t. djb2 and SDBM are not used.
+ * C++98 has no std::hash.
+ */
+namespace std
+{
+
+template <>
+struct hash< ::cstring_t>
+{
+    size_t
+    operator ()(
+        ::cstring_t const& cs
+    ) const noexcept
+    {
+        return static_cast<size_t>(::cstring::hash_fnv1a(cs));
+    }
+};
+} /* namespace std */
+#endif /* C++11 */
 
 
 /* /////////////////////////////////////////////////////////////////////////
