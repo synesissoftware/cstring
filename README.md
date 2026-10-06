@@ -115,7 +115,7 @@ A few further rules:
 
 * `cstring_init()` stores `cstring_t_DEFAULT`. That instance does not need `cstring_destroy()`. Every `cstring_create*` does;
 * `cstring_yield2()` hands back an owned payload. Borrowed and readonly instances refuse it. A Windows DLL built on `realloc` returns `CSTRING_RC_CANNOTYIELDFROMSO`;
-* The character type is `char` unless `CSTRING_USE_WIDE_STRINGS` is set (normally both `UNICODE` and `_UNICODE` on Windows). `CSTRING_NO_USE_WIDE_STRINGS` forces `char`. That choice is made at compile time;
+* The character type is `char` unless `CSTRING_USE_WIDE_STRINGS` is set (normally both `UNICODE` and `_UNICODE` on Windows). `CSTRING_NO_USE_WIDE_STRINGS` forces `char`. That choice is made at compile time. **prepare_cmake.sh** `--wide-strings` sets the CMake option `CSTRING_USE_WIDE_STRINGS`, which defines the macro on the library and everything that links it. Examples and tests include **cstring.helpers.h** for `CSTRING_T_()`, `CSTRING_STRCMP_()`, and `CSTRING_STRNCMP_()`. That header is not part of the library contract. Print a payload with `cstring_write()` / `cstring_writeline()`;
 * Custom arenas (`CSTRING_F_USE_CUSTOMARENAFUNCTIONS`) are declared and return `CSTRING_RC_CUSTOMARENANOTSUPPORTED`. `CSTRING_F_MEMORY_IS_OFFSET` is set by the implementation and is not a client mode.
 
 
@@ -182,7 +182,7 @@ Defined in **cstring/cstring.h**:
 
 #### Status and capacity
 
-* `cstring_getStatusCodeString()` — returns a nul-terminated description of a `CSTRING_RC` code;
+* `cstring_getStatusCodeString()` — returns a NUL-terminated description of a `CSTRING_RC` code;
 * `cstring_getStatusCodeStringLength()` — returns the length of that description, or 0 if the code is not recognised;
 * `cstring_setCapacity()` — adjusts capacity (subject to fixed / borrowed / readonly rules);
 * `cstring_yield2()` — yields ownership of the payload (and raw buffer) to the caller;
@@ -356,6 +356,8 @@ When supplying `'--no-cpp'` to **prepare_cmake.sh** — sets the CMake option `N
 When supplying `'--no-p99'` — sets `NO_P99=ON` — **p99** is not recognised; performance tests still build but omit percentiles and the filesystem file_lines suite.
 
 When supplying `'--no-shwild'` — sets `NO_SHWILD=ON` — **shwild** is not recognised and pattern-match assertions are compiled out; other unit-tests still run.
+
+When supplying `'--wide-strings'` — sets `CSTRING_USE_WIDE_STRINGS=ON` — `cstring_char_t` is `wchar_t`. Examples and unit/component tests follow that type. Performance tests are not built: they compare `char` payloads with `std::string`. CI runs that configuration as **windows-cl-wide** and **windows-mingw-wide**.
 
 
 ### Related projects

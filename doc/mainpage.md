@@ -27,8 +27,8 @@ string instances and extensible arrays of such, for Unix and Windows.
 
 int main(void)
 {
-    cstring_t cs;
-    CSTRING_RC rc = cstring_create(&cs, "Hello");
+    cstring_t   cs;
+    CSTRING_RC  rc = cstring_create(&cs, "Hello");
 
     if (CSTRING_RC_SUCCESS != rc)
     {

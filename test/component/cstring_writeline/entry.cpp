@@ -4,7 +4,7 @@
  * Purpose: Unit-tests of `cstring_write()` and `cstring_writeline()`.
  *
  * Created: 10th August 2020
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -24,6 +24,7 @@
  */
 
 #include "component_fixture.hpp"
+#include "../../cstring_testing.h"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -170,7 +171,7 @@ static void TEST_cstring_writeline_MULTIPLE_LINES()
                 CSTRING_RC  rc;
                 int         flags = 0;//CSTRING_F_MEMORY_IS_BORROWED;
 
-                rc = cstring_createEx(&cs, s_lines[i], flags, NULL, 0);
+                rc = cstring_testing_createEx_mb_(&cs, s_lines[i], flags, NULL, 0);
 
                 ((void)&rc);
 
@@ -222,7 +223,7 @@ static void TEST_cstring_write_CONCATENATED()
                 CSTRING_RC  rc;
                 int         flags = 0;//CSTRING_F_MEMORY_IS_BORROWED;
 
-                rc = cstring_createEx(&cs, s_lines[i], flags, NULL, 0);
+                rc = cstring_testing_createEx_mb_(&cs, s_lines[i], flags, NULL, 0);
 
                 ((void)&rc);
 

@@ -12,6 +12,7 @@
 
 /* cstring header files */
 #include <cstring/cstring.vector.h>
+#include "cstring.helpers.h"
 
 /* Standard C header files */
 #include <errno.h>
@@ -197,14 +198,9 @@ int run_(
 
         { size_t i; for (i = 0; i != csv.len; ++i)
         {
-            if (sizeof(int) == sizeof(size_t))
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, csv.ptr[i]);
-            }
-            else
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, (int)csv.ptr[i].len, csv.ptr[i].ptr);
-            }
+            printf("line-%u: ", (unsigned)i);
+            cstring_write(stdout, &csv.ptr[i], NULL);
+            printf("\n");
         }}
         printf("\n");
 
@@ -220,14 +216,9 @@ int run_(
 
         { size_t i; for (i = 0; i != csv.len; ++i)
         {
-            if (sizeof(int) == sizeof(size_t))
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, csv.ptr[i]);
-            }
-            else
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, (int)csv.ptr[i].len, csv.ptr[i].ptr);
-            }
+            printf("line-%u: ", (unsigned)i);
+            cstring_write(stdout, &csv.ptr[i], NULL);
+            printf("\n");
         }}
         printf("\n");
 
@@ -243,14 +234,9 @@ int run_(
 
         { size_t i; for (i = 0; i != csv.len; ++i)
         {
-            if (sizeof(int) == sizeof(size_t))
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, csv.ptr[i]);
-            }
-            else
-            {
-                printf("line-%u: %.*s\n", (unsigned)i, (int)csv.ptr[i].len, csv.ptr[i].ptr);
-            }
+            printf("line-%u: ", (unsigned)i);
+            cstring_write(stdout, &csv.ptr[i], NULL);
+            printf("\n");
         }}
         printf("\n");
 

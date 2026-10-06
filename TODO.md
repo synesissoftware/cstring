@@ -58,6 +58,7 @@
     * [ ] `--no-cpp`;
     * [ ] `--no-p99`;
     * [ ] `--no-shwild`;
+    * [x] ~~~`--wide-strings`~~~ - ✅;
 * [ ] API headers reconciled:
   * [ ] String API in cstring/string.h;
   * [ ] Hash API in cstring/hash.h;

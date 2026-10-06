@@ -4,21 +4,37 @@
  * Purpose: Tests `cstring_vector_t` functionality.
  *
  * Created: 12th January 2024
- * Updated: 3rd October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 
+/* /////////////////////////////////////////////////////////////////////////
+ * includes
+ */
+
+/* /////////////////////////////////////
+ * test component header file include(s)
+ */
+
 #include <cstring/cstring.vector.h>
+
+/* /////////////////////////////////////
+ * general includes
+ */
 
 #ifdef USE_PANTHEIOS_EXTRAS_DIAGUTIL_MAIN
 
 # include <pantheios/extras/diagutil/main_leak_trace.h>
 #endif
 
+#include "../../cstring_testing.h"
+
+/* xTests header files */
 #include <xtests/terse-api.h>
 
+/* Standard C header files */
 #include <stdlib.h>
 #include <string.h>
 
@@ -240,19 +256,19 @@ static void TEST_cstring_vector_insertAt_ONE(void)
 
 static void TEST_cstring_vector_insertAt_LIST(void)
 {
-    char const* const   strings[] =
+    cstring_char_t const* const strings[] =
     {
-        "blah",
-        "",
-        "abcdefghijklmnopqrstuvwxyz",
-        "My Ever Changing Moods",
-        "I Can Give You Everything",
-        "Newborn Friend",
-        "Escape Velocity",
-        "Weapon Of Choice",
-        "Ain't No Doubt",
-        "Eye Know",
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        CSTRING_T_("blah"),
+        CSTRING_T_(""),
+        CSTRING_T_("abcdefghijklmnopqrstuvwxyz"),
+        CSTRING_T_("My Ever Changing Moods"),
+        CSTRING_T_("I Can Give You Everything"),
+        CSTRING_T_("Newborn Friend"),
+        CSTRING_T_("Escape Velocity"),
+        CSTRING_T_("Weapon Of Choice"),
+        CSTRING_T_("Ain't No Doubt"),
+        CSTRING_T_("Eye Know"),
+        CSTRING_T_("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
     };
 
     cstring_vector_t    csv;
@@ -297,8 +313,8 @@ static void TEST_cstring_vector_insertAt_LIST(void)
 
             for (i = 0; i != STLSOFT_NUM_ELEMENTS(strings); ++i)
             {
-                TEST_INT_EQ(strlen(strings[i]), csv.ptr[i].len);
-                TEST_MS_EQ(strings[i], csv.ptr[i].ptr);
+                TEST_INT_EQ(cstring_testing_strlen_(strings[i]), csv.ptr[i].len);
+                TEST_STR_EQ_(strings[i], csv.ptr[i].ptr);
             }
         }
         else

@@ -23,6 +23,10 @@ on:
         required: false
         type: string
         default: ''
+      wide-strings:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -75,6 +79,9 @@ jobs:
           elif [ "${{ inputs.c-compiler }}" != "cl" ]; then
             export CC="${{ inputs.c-compiler }}"
             export CXX="${{ inputs.cpp-compiler }}"
+          fi
+          if [ "${{ inputs.wide-strings }}" = "true" ]; then
+            PREPARE_ARGS+=(--wide-strings)
           fi
           ./prepare_cmake.sh ${PREPARE_ARGS[@]+"${PREPARE_ARGS[@]}"}
 
@@ -187,8 +194,9 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_automated_tests.cmd
 
+      # Wide-string cells do not run performance tests.
       - name: Performance tests [non-Windows]
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && inputs.wide-strings == false
         shell: bash
         env:
           # Mild CI smoke budget (Release default is 100000 / 2).
@@ -201,7 +209,7 @@ jobs:
             ./run_all_performance_tests.sh -M
 
       - name: Performance tests [Windows]
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && inputs.wide-strings == false
         shell: cmd
         env:
           # windows-cl keeps Release defaults; MinGW alone is throttled

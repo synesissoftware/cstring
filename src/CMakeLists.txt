@@ -62,6 +62,16 @@ add_library(core
 	${CORE_SRCS}
 )
 
+if(CSTRING_USE_WIDE_STRINGS)
+
+	# PUBLIC so dependents, and the exported cstring::core target, compile
+	# against the same cstring_char_t as this library.
+	target_compile_definitions(core
+		PUBLIC
+			CSTRING_USE_WIDE_STRINGS
+	)
+endif(CSTRING_USE_WIDE_STRINGS)
+
 if(_BUILD_AS_WIN32)
 
 	# win.c uses the COM Task Allocator (CoTaskMem*) from ole32
