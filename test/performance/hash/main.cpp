@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    test/performance/hash/main.cpp
  *
- * Purpose: Times djb2 and FNV-1a against a degenerate lose-lose sum. Each
- *          group is one input and length: lose-lose, djb2, then FNV-1a. The
- *          "vs cstr" column is the ratio against lose-lose. --gap-groups
- *          separates those groups.
+ * Purpose: Times djb2, FNV-1a, and SDBM against a degenerate lose-lose
+ *          sum. Each group is one input and length: lose-lose, djb2,
+ *          FNV-1a, then SDBM. The "vs cstr" column is the ratio against
+ *          lose-lose. --gap-groups separates those groups.
  *
  * Created: 6th October 2026
  * Updated: 6th October 2026
@@ -119,6 +119,7 @@ cstring_algo const CSTRING_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_cstring, },
     { "djb2", cstring_hash_djb2, },
     { "fnv1a", cstring_hash_fnv1a, },
+    { "sdbm", cstring_hash_sdbm, },
 };
 
 cstring_algo const CSTRING_CASE_ALGOS[] =
@@ -126,6 +127,7 @@ cstring_algo const CSTRING_CASE_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_cstring_case, },
     { "djb2", cstring_hash_djb2_case, },
     { "fnv1a", cstring_hash_fnv1a_case, },
+    { "sdbm", cstring_hash_sdbm_case, },
 };
 
 mbs_algo const MBS_ALGOS[] =
@@ -133,6 +135,7 @@ mbs_algo const MBS_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_mbs, },
     { "djb2", cstring_hash_djb2_mbs, },
     { "fnv1a", cstring_hash_fnv1a_mbs, },
+    { "sdbm", cstring_hash_sdbm_mbs, },
 };
 
 mbs_algo const MBS_CASE_ALGOS[] =
@@ -140,6 +143,7 @@ mbs_algo const MBS_CASE_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_mbs_case, },
     { "djb2", cstring_hash_djb2_mbs_case, },
     { "fnv1a", cstring_hash_fnv1a_mbs_case, },
+    { "sdbm", cstring_hash_sdbm_mbs_case, },
 };
 
 mbuf_algo const MBUF_ALGOS[] =
@@ -147,6 +151,7 @@ mbuf_algo const MBUF_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_mbuf, },
     { "djb2", cstring_hash_djb2_mbuf, },
     { "fnv1a", cstring_hash_fnv1a_mbuf, },
+    { "sdbm", cstring_hash_sdbm_mbuf, },
 };
 
 mbuf_algo const MBUF_CASE_ALGOS[] =
@@ -154,6 +159,7 @@ mbuf_algo const MBUF_CASE_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_mbuf_case, },
     { "djb2", cstring_hash_djb2_mbuf_case, },
     { "fnv1a", cstring_hash_fnv1a_mbuf_case, },
+    { "sdbm", cstring_hash_sdbm_mbuf_case, },
 };
 
 wcs_algo const WCS_ALGOS[] =
@@ -161,6 +167,7 @@ wcs_algo const WCS_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_wcs, },
     { "djb2", cstring_hash_djb2_wcs, },
     { "fnv1a", cstring_hash_fnv1a_wcs, },
+    { "sdbm", cstring_hash_sdbm_wcs, },
 };
 
 wcs_algo const WCS_CASE_ALGOS[] =
@@ -168,6 +175,7 @@ wcs_algo const WCS_CASE_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_wcs_case, },
     { "djb2", cstring_hash_djb2_wcs_case, },
     { "fnv1a", cstring_hash_fnv1a_wcs_case, },
+    { "sdbm", cstring_hash_sdbm_wcs_case, },
 };
 
 wbuf_algo const WBUF_ALGOS[] =
@@ -175,6 +183,7 @@ wbuf_algo const WBUF_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_wbuf, },
     { "djb2", cstring_hash_djb2_wbuf, },
     { "fnv1a", cstring_hash_fnv1a_wbuf, },
+    { "sdbm", cstring_hash_sdbm_wbuf, },
 };
 
 wbuf_algo const WBUF_CASE_ALGOS[] =
@@ -182,6 +191,7 @@ wbuf_algo const WBUF_CASE_ALGOS[] =
     { IMPL_LOSE_LOSE, lose_lose_wbuf_case, },
     { "djb2", cstring_hash_djb2_wbuf_case, },
     { "fnv1a", cstring_hash_fnv1a_wbuf_case, },
+    { "sdbm", cstring_hash_sdbm_wbuf_case, },
 };
 
 
@@ -665,7 +675,7 @@ void
 display_banner()
 {
     std::cout
-        << "test.performance.hash: djb2 and FNV-1a against lose-lose."
+        << "test.performance.hash: djb2, FNV-1a, and SDBM against lose-lose."
         << std::endl
         << "  Human attention only; not a CI gate. Prefer a Release build."
         << std::endl
@@ -673,7 +683,7 @@ display_banner()
         << std::endl
         << "  against that baseline (lose-lose prints 1.00)."
         << std::endl
-        << "  A group is one scenario and length: lose-lose, djb2, fnv1a."
+        << "  A group is one scenario and length: lose-lose, djb2, fnv1a, sdbm."
         << std::endl
         << "  SIS_PERFTESTS_GROUPGAPS=1 separates groups"
         << std::endl

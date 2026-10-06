@@ -90,6 +90,15 @@ cstring_hash_fnv1a_step_(
     return hash;
 }
 
+static cstring_hash_t
+cstring_hash_sdbm_step_(
+    cstring_hash_t  hash
+,   uint8_t         octet
+)
+{
+    return (hash * CSTRING_HASH_SDBM_MULTIPLIER) + octet;
+}
+
 
 /* /////////////////////////////////////////////////////////////////////////
  * djb2
@@ -486,6 +495,207 @@ cstring_hash_fnv1a_wbuf_case(
             uint8_t const octet = (uint8_t)(unsigned)towlower(s[i]);
 
             hash = cstring_hash_fnv1a_step_(hash, octet);
+        }
+    }
+
+    return hash;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * SDBM
+ */
+
+cstring_hash_t
+cstring_hash_sdbm(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_buf(pcs->ptr, pcs->len);
+}
+
+cstring_hash_t
+cstring_hash_sdbm_mbs(
+    char const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_mbuf(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_sdbm_wcs(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_wbuf(s, wcslen(s));
+}
+
+cstring_hash_t
+cstring_hash_sdbm_buf(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_sdbm_wbuf(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_sdbm_mbuf(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_sdbm_mbuf(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_SDBM_SEED;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_sdbm_step_(hash, p[i]);
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_sdbm_wbuf(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_SDBM_SEED;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_sdbm_step_(hash, (uint8_t)s[i]);
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_sdbm_case(
+    struct cstring_t const* pcs
+)
+{
+    if (NULL == pcs)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_buf_case(pcs->ptr, pcs->len);
+}
+
+cstring_hash_t
+cstring_hash_sdbm_mbs_case(
+    char const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_mbuf_case(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_sdbm_wcs_case(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_SDBM_SEED;
+    }
+
+    return cstring_hash_sdbm_wbuf_case(s, wcslen(s));
+}
+
+cstring_hash_t
+cstring_hash_sdbm_buf_case(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_sdbm_wbuf_case(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_sdbm_mbuf_case(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_sdbm_mbuf_case(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_SDBM_SEED;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_sdbm_step_(hash, (uint8_t)tolower(p[i]));
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_sdbm_wbuf_case(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_SDBM_SEED;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            uint8_t const octet = (uint8_t)(unsigned)towlower(s[i]);
+
+            hash = cstring_hash_sdbm_step_(hash, octet);
         }
     }
 

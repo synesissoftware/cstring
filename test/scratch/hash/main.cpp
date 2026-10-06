@@ -1,7 +1,7 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    test/scratch/hash/main.cpp
  *
- * Purpose: Reports how lose-lose, djb2, and FNV-1a spread 10000
+ * Purpose: Reports how lose-lose, djb2, FNV-1a, and SDBM spread 10000
  *          pseudo-random strings: distinct 64-bit values, distinct values
  *          in each hash octet, and distinct residues for likely hashtable
  *          divisors.
@@ -91,6 +91,7 @@ algo_t const ALGOS[] =
     { "lose-lose", lose_lose_mbuf, },
     { "djb2", cstring_hash_djb2_mbuf, },
     { "fnv1a", cstring_hash_fnv1a_mbuf, },
+    { "sdbm", cstring_hash_sdbm_mbuf, },
 };
 
 
@@ -374,13 +375,13 @@ assess(
 void
 display_banner()
 {
-    ::printf("test.scratch.hash: spread of lose-lose, djb2, and FNV-1a.\n");
+    ::printf("test.scratch.hash: spread of lose-lose, djb2, FNV-1a, and SDBM.\n");
     ::printf("  Human attention only; not a CI gate.\n");
     ::printf("  %zu distinct strings. Lengths %zu..%zu. Octets 0x01..0xFF.\n", NUM_STRINGS, MIN_LENGTH, MAX_LENGTH);
     ::printf("  Generator seed 0x%016llx (splitmix64). Duplicate strings are\n", static_cast<unsigned long long>(GENERATOR_SEED));
     ::printf("  discarded, so an absolute collision is a hash collision.\n");
-    ::printf("  lose-lose adds each octet (lose_lose_mbuf). djb2 and FNV-1a\n");
-    ::printf("  use the counted multibyte mix (cstring_hash_*_mbuf).\n");
+    ::printf("  lose-lose adds each octet (lose_lose_mbuf). djb2, FNV-1a,\n");
+    ::printf("  and SDBM use the counted multibyte mix (cstring_hash_*_mbuf).\n");
     ::printf("  absolute: distinct full 64-bit values.\n");
     ::printf("  octet: each of the 8 hash bytes. A mixed lane uses all 256\n");
     ::printf("  values, with min near the mean.\n");

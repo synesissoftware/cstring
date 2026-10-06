@@ -28,10 +28,11 @@
 /* /////////////////////////////////////////////////////////////////////////
  * lose-lose
  *
- * NUL-terminated forms measure the length once, then add. djb2 and FNV-1a
- * do that too, so the ratio compares the mix: addition against
- * hash*33+octet and against the FNV-1a xor-multiply. The published LoseLose
- * loop that calls strlen on every step is not used here.
+ * NUL-terminated forms measure the length once, then add. djb2, FNV-1a, and
+ * SDBM do that too, so the ratio compares the mix: addition against
+ * hash*33+octet, the FNV-1a xor-multiply, and hash*65599+octet. The
+ * published LoseLose loop that calls strlen on every step is not used
+ * here.
  */
 
 cstring_hash_t

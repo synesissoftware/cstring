@@ -95,6 +95,8 @@ namespace
     using cstring::hash_djb2_case;
     using cstring::hash_fnv1a;
     using cstring::hash_fnv1a_case;
+    using cstring::hash_sdbm;
+    using cstring::hash_sdbm_case;
 
 
 static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
@@ -120,6 +122,15 @@ static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<wchar_t const*>(NULL), 0));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<char const*>(NULL), 10));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<wchar_t const*>(NULL)));
+
+    TEST_INT_EQ(0ULL, hash_sdbm(static_cast<struct cstring_t const*>(NULL)));
+    TEST_INT_EQ(0ULL, hash_sdbm_case(static_cast<struct cstring_t const*>(NULL)));
+    TEST_INT_EQ(0ULL, hash_sdbm(default_cs));
+    TEST_INT_EQ(0ULL, hash_sdbm_case(default_cs));
+    TEST_INT_EQ(0ULL, hash_sdbm(static_cast<char const*>(NULL)));
+    TEST_INT_EQ(0ULL, hash_sdbm(static_cast<wchar_t const*>(NULL), 0));
+    TEST_INT_EQ(0ULL, hash_sdbm_case(static_cast<char const*>(NULL), 10));
+    TEST_INT_EQ(0ULL, hash_sdbm_case(static_cast<wchar_t const*>(NULL)));
 }
 
 static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
@@ -132,12 +143,14 @@ static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(177670ULL, hash_djb2(cs_a));
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(cs_a));
+    TEST_INT_EQ(97ULL, hash_sdbm(cs_a));
     cstring_destroy(&cs_a);
 
     rc = cstring_create(&cs_foobar, CSTRING_T_("foobar"));
     TEST_ENUM_EQ(CSTRING_RC_SUCCESS, rc);
     TEST_INT_EQ(6953516687550ULL, hash_djb2(cs_foobar));
     TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(cs_foobar));
+    TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm(cs_foobar));
     cstring_destroy(&cs_foobar);
 }
 
@@ -153,18 +166,24 @@ static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(v
     TEST_INT_EQ(cstring_hash_djb2_case(&cs), hash_djb2_case(cs));
     TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(cs));
     TEST_INT_EQ(cstring_hash_fnv1a_case(&cs), hash_fnv1a_case(cs));
+    TEST_INT_EQ(cstring_hash_sdbm(&cs), hash_sdbm(cs));
+    TEST_INT_EQ(cstring_hash_sdbm_case(&cs), hash_sdbm_case(cs));
 
     /* Overload by pointer */
     TEST_INT_EQ(cstring_hash_djb2(&cs), hash_djb2(&cs));
     TEST_INT_EQ(cstring_hash_djb2_case(&cs), hash_djb2_case(&cs));
     TEST_INT_EQ(cstring_hash_fnv1a(&cs), hash_fnv1a(&cs));
     TEST_INT_EQ(cstring_hash_fnv1a_case(&cs), hash_fnv1a_case(&cs));
+    TEST_INT_EQ(cstring_hash_sdbm(&cs), hash_sdbm(&cs));
+    TEST_INT_EQ(cstring_hash_sdbm_case(&cs), hash_sdbm_case(&cs));
 
     /* Overload by slice/buffer */
     TEST_INT_EQ(cstring_hash_djb2_buf(cs.ptr, cs.len), hash_djb2(cs.ptr, cs.len));
     TEST_INT_EQ(cstring_hash_djb2_buf_case(cs.ptr, cs.len), hash_djb2_case(cs.ptr, cs.len));
     TEST_INT_EQ(cstring_hash_fnv1a_buf(cs.ptr, cs.len), hash_fnv1a(cs.ptr, cs.len));
     TEST_INT_EQ(cstring_hash_fnv1a_buf_case(cs.ptr, cs.len), hash_fnv1a_case(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_sdbm_buf(cs.ptr, cs.len), hash_sdbm(cs.ptr, cs.len));
+    TEST_INT_EQ(cstring_hash_sdbm_buf_case(cs.ptr, cs.len), hash_sdbm_case(cs.ptr, cs.len));
 
     cstring_destroy(&cs);
 }
@@ -185,21 +204,36 @@ static void TEST_hash_mbs_AND_wcs_OVERLOADS(void)
     TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(L"a"));
     TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a("foobar", 6));
     TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(L"foobar"));
+    TEST_INT_EQ(97ULL, hash_sdbm("a"));
+    TEST_INT_EQ(97ULL, hash_sdbm(L"a"));
+    TEST_INT_EQ(97ULL, hash_sdbm("a", 1));
+    TEST_INT_EQ(97ULL, hash_sdbm(L"a", 1));
+    TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm("foobar"));
+    TEST_INT_EQ(0x430d469aa6437b0dULL, hash_sdbm(L"foobar", 6));
 
     TEST_INT_EQ(hash_djb2_case("Test"), hash_djb2_case(L"tEst"));
     TEST_INT_EQ(hash_fnv1a_case("TEST", 4), hash_fnv1a_case(L"test"));
+    TEST_INT_EQ(hash_sdbm_case("Test"), hash_sdbm_case(L"tEst"));
     TEST_INT_NE(hash_djb2("Test"), hash_djb2(L"test"));
+    TEST_INT_NE(hash_sdbm("Test"), hash_sdbm(L"test"));
 
     TEST_INT_NE(hash_djb2("ab"), hash_djb2(a_nul_b, 3));
     TEST_INT_EQ(hash_djb2(a_nul_b, 3), hash_djb2(wa_nul_b, 3));
     TEST_INT_NE(hash_djb2(L"ab"), hash_djb2(wa_nul_b, 3));
     TEST_INT_EQ(hash_djb2("a"), hash_djb2(wide_alias, 1));
     TEST_INT_EQ(hash_fnv1a(L"a"), hash_fnv1a(wide_alias, 1));
+    TEST_INT_NE(hash_sdbm("ab"), hash_sdbm(a_nul_b, 3));
+    TEST_INT_EQ(hash_sdbm(a_nul_b, 3), hash_sdbm(wa_nul_b, 3));
+    TEST_INT_EQ(hash_sdbm("a"), hash_sdbm(wide_alias, 1));
 
     TEST_INT_EQ(cstring_hash_djb2_mbs("foobar"), hash_djb2("foobar"));
     TEST_INT_EQ(cstring_hash_djb2_wcs(L"foobar"), hash_djb2(L"foobar"));
     TEST_INT_EQ(cstring_hash_fnv1a_mbuf("foobar", 6), hash_fnv1a("foobar", 6));
     TEST_INT_EQ(cstring_hash_fnv1a_wbuf(L"foobar", 6), hash_fnv1a(L"foobar", 6));
+    TEST_INT_EQ(cstring_hash_sdbm_mbs("foobar"), hash_sdbm("foobar"));
+    TEST_INT_EQ(cstring_hash_sdbm_wcs(L"foobar"), hash_sdbm(L"foobar"));
+    TEST_INT_EQ(cstring_hash_sdbm_mbuf("foobar", 6), hash_sdbm("foobar", 6));
+    TEST_INT_EQ(cstring_hash_sdbm_wbuf(L"foobar", 6), hash_sdbm(L"foobar", 6));
 }
 } /* anonymous namespace */
 
