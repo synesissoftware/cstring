@@ -4,7 +4,7 @@
  * Purpose: The implementation of the cstring hash API
  *
  * Created: 5th September 2026
- * Updated: 5th October 2026
+ * Updated: 6th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -55,26 +55,44 @@
 /* Standard C header files */
 
 #include <ctype.h>
-#ifdef CSTRING_USE_WIDE_STRINGS
-# include <wctype.h>
-#endif /* CSTRING_USE_WIDE_STRINGS */
+#include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * character encoding
+ * helpers
  */
 
-#ifdef CSTRING_USE_WIDE_STRINGS
+/* Each code unit contributes its low 8 bits. Multibyte input is read as
+ * unsigned char. Wide input is truncated to uint8_t. Case-insensitive forms
+ * fold with tolower or towlower before that truncation.
+ */
 
-# define cstring_tolower_                                   towlower
-#else /* ? CSTRING_USE_WIDE_STRINGS */
+static cstring_hash_t
+cstring_hash_djb2_step_(
+    cstring_hash_t  hash
+,   uint8_t         octet
+)
+{
+    return ((hash << 5) + hash) + octet;
+}
 
-# define cstring_tolower_                                   tolower
-#endif /* CSTRING_USE_WIDE_STRINGS */
+static cstring_hash_t
+cstring_hash_fnv1a_step_(
+    cstring_hash_t  hash
+,   uint8_t         octet
+)
+{
+    hash ^= octet;
+    hash *= CSTRING_HASH_FNV1A_PRIME;
+
+    return hash;
+}
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * hashing functions
+ * djb2
  */
 
 cstring_hash_t
@@ -91,6 +109,90 @@ cstring_hash_djb2(
 }
 
 cstring_hash_t
+cstring_hash_djb2_mbs(
+    char const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_DJB2_SEED;
+    }
+
+    return cstring_hash_djb2_mbuf(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_djb2_wcs(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_DJB2_SEED;
+    }
+
+    return cstring_hash_djb2_wbuf(s, wcslen(s));
+}
+
+cstring_hash_t
+cstring_hash_djb2_buf(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_djb2_wbuf(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_djb2_mbuf(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_djb2_mbuf(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_djb2_step_(hash, p[i]);
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_djb2_wbuf(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_djb2_step_(hash, (uint8_t)s[i]);
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
 cstring_hash_djb2_case(
     struct cstring_t const* pcs
 )
@@ -104,26 +206,29 @@ cstring_hash_djb2_case(
 }
 
 cstring_hash_t
-cstring_hash_djb2_buf(
-    cstring_char_t const*   s
-,   size_t                  cch
+cstring_hash_djb2_mbs_case(
+    char const* s
 )
 {
-    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
-
-    if (NULL != s)
+    if (NULL == s)
     {
-        size_t i;
-
-        for (i = 0; i != cch; ++i)
-        {
-            uint8_t const c = (uint8_t)s[i];
-
-            hash = ((hash << 5) + hash) + c;
-        }
+        return CSTRING_HASH_DJB2_SEED;
     }
 
-    return hash;
+    return cstring_hash_djb2_mbuf_case(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_djb2_wcs_case(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_DJB2_SEED;
+    }
+
+    return cstring_hash_djb2_wbuf_case(s, wcslen(s));
 }
 
 cstring_hash_t
@@ -132,6 +237,43 @@ cstring_hash_djb2_buf_case(
 ,   size_t                  cch
 )
 {
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_djb2_wbuf_case(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_djb2_mbuf_case(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_djb2_mbuf_case(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_djb2_step_(hash, (uint8_t)tolower(p[i]));
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_djb2_wbuf_case(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
     cstring_hash_t hash = CSTRING_HASH_DJB2_SEED;
 
     if (NULL != s)
@@ -140,18 +282,19 @@ cstring_hash_djb2_buf_case(
 
         for (i = 0; i != cch; ++i)
         {
-#ifdef CSTRING_USE_WIDE_STRINGS
-            uint8_t const c = (uint8_t)(unsigned int)cstring_tolower_(s[i]);
-#else
-            uint8_t const c = (uint8_t)cstring_tolower_((unsigned char)s[i]);
-#endif
+            uint8_t const octet = (uint8_t)(unsigned)towlower(s[i]);
 
-            hash = ((hash << 5) + hash) + c;
+            hash = cstring_hash_djb2_step_(hash, octet);
         }
     }
 
     return hash;
 }
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * FNV-1a
+ */
 
 cstring_hash_t
 cstring_hash_fnv1a(
@@ -164,6 +307,90 @@ cstring_hash_fnv1a(
     }
 
     return cstring_hash_fnv1a_buf(pcs->ptr, pcs->len);
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_mbs(
+    char const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_FNV1A_OFFSET;
+    }
+
+    return cstring_hash_fnv1a_mbuf(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_wcs(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_FNV1A_OFFSET;
+    }
+
+    return cstring_hash_fnv1a_wbuf(s, wcslen(s));
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_buf(
+    cstring_char_t const*   s
+,   size_t                  cch
+)
+{
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_fnv1a_wbuf(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_fnv1a_mbuf(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_mbuf(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_fnv1a_step_(hash, p[i]);
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_wbuf(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
+
+    if (NULL != s)
+    {
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_fnv1a_step_(hash, (uint8_t)s[i]);
+        }
+    }
+
+    return hash;
 }
 
 cstring_hash_t
@@ -180,27 +407,29 @@ cstring_hash_fnv1a_case(
 }
 
 cstring_hash_t
-cstring_hash_fnv1a_buf(
-    cstring_char_t const*   s
-,   size_t                  cch
+cstring_hash_fnv1a_mbs_case(
+    char const* s
 )
 {
-    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
-
-    if (NULL != s)
+    if (NULL == s)
     {
-        size_t i;
-
-        for (i = 0; i != cch; ++i)
-        {
-            uint8_t const c = (uint8_t)s[i];
-
-            hash ^= c;
-            hash *= CSTRING_HASH_FNV1A_PRIME;
-        }
+        return CSTRING_HASH_FNV1A_OFFSET;
     }
 
-    return hash;
+    return cstring_hash_fnv1a_mbuf_case(s, strlen(s));
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_wcs_case(
+    wchar_t const* s
+)
+{
+    if (NULL == s)
+    {
+        return CSTRING_HASH_FNV1A_OFFSET;
+    }
+
+    return cstring_hash_fnv1a_wbuf_case(s, wcslen(s));
 }
 
 cstring_hash_t
@@ -209,6 +438,43 @@ cstring_hash_fnv1a_buf_case(
 ,   size_t                  cch
 )
 {
+#ifdef CSTRING_USE_WIDE_STRINGS
+
+    return cstring_hash_fnv1a_wbuf_case(s, cch);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+
+    return cstring_hash_fnv1a_mbuf_case(s, cch);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_mbuf_case(
+    char const* s
+,   size_t      cch
+)
+{
+    cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
+
+    if (NULL != s)
+    {
+        unsigned char const* p = (unsigned char const*)s;
+        size_t i;
+
+        for (i = 0; i != cch; ++i)
+        {
+            hash = cstring_hash_fnv1a_step_(hash, (uint8_t)tolower(p[i]));
+        }
+    }
+
+    return hash;
+}
+
+cstring_hash_t
+cstring_hash_fnv1a_wbuf_case(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
     cstring_hash_t hash = CSTRING_HASH_FNV1A_OFFSET;
 
     if (NULL != s)
@@ -217,14 +483,9 @@ cstring_hash_fnv1a_buf_case(
 
         for (i = 0; i != cch; ++i)
         {
-#ifdef CSTRING_USE_WIDE_STRINGS
-            uint8_t const c = (uint8_t)(unsigned int)cstring_tolower_(s[i]);
-#else
-            uint8_t const c = (uint8_t)cstring_tolower_((unsigned char)s[i]);
-#endif
+            uint8_t const octet = (uint8_t)(unsigned)towlower(s[i]);
 
-            hash ^= c;
-            hash *= CSTRING_HASH_FNV1A_PRIME;
+            hash = cstring_hash_fnv1a_step_(hash, octet);
         }
     }
 

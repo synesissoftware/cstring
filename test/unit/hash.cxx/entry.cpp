@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for the C++ cstring hash access shims.
  *
  * Created: 5th September 2026
- * Updated: 5th October 2026
+ * Updated: 6th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -17,7 +17,7 @@
  * test component header file include(s)
  */
 
-#include <cstring/cstring.h>
+#include <cstring/hash.h>
 
 /* /////////////////////////////////////
  * general includes
@@ -54,6 +54,7 @@ namespace
     static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void);
     static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void);
     static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(void);
+    static void TEST_hash_mbs_AND_wcs_OVERLOADS(void);
 } /* anonymous namespace */
 
 
@@ -73,6 +74,7 @@ int main(int argc, char* argv[])
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY);
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS);
         XTESTS_RUN_CASE(TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case);
+        XTESTS_RUN_CASE(TEST_hash_mbs_AND_wcs_OVERLOADS);
 
         XTESTS_PRINT_RESULTS();
 
@@ -89,6 +91,11 @@ int main(int argc, char* argv[])
 
 namespace
 {
+    using cstring::hash_djb2;
+    using cstring::hash_djb2_case;
+    using cstring::hash_fnv1a;
+    using cstring::hash_fnv1a_case;
+
 
 static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
 {
@@ -98,15 +105,21 @@ static void TEST_hash_djb2_AND_hash_fnv1a_NULL_AND_EMPTY(void)
     TEST_INT_EQ(5381ULL, hash_djb2_case(static_cast<struct cstring_t const*>(NULL)));
     TEST_INT_EQ(5381ULL, hash_djb2(default_cs));
     TEST_INT_EQ(5381ULL, hash_djb2_case(default_cs));
-    TEST_INT_EQ(5381ULL, hash_djb2(NULL, 0));
-    TEST_INT_EQ(5381ULL, hash_djb2_case(NULL, 0));
+    TEST_INT_EQ(5381ULL, hash_djb2(static_cast<char const*>(NULL)));
+    TEST_INT_EQ(5381ULL, hash_djb2(static_cast<wchar_t const*>(NULL)));
+    TEST_INT_EQ(5381ULL, hash_djb2(static_cast<char const*>(NULL), 0));
+    TEST_INT_EQ(5381ULL, hash_djb2(static_cast<wchar_t const*>(NULL), 10));
+    TEST_INT_EQ(5381ULL, hash_djb2_case(static_cast<char const*>(NULL)));
+    TEST_INT_EQ(5381ULL, hash_djb2_case(static_cast<wchar_t const*>(NULL), 0));
 
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<struct cstring_t const*>(NULL)));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<struct cstring_t const*>(NULL)));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(default_cs));
     TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(default_cs));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(NULL, 0));
-    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(NULL, 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<char const*>(NULL)));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a(static_cast<wchar_t const*>(NULL), 0));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<char const*>(NULL), 10));
+    TEST_INT_EQ(0xcbf29ce484222325ULL, hash_fnv1a_case(static_cast<wchar_t const*>(NULL)));
 }
 
 static void TEST_hash_djb2_AND_hash_fnv1a_KNOWN_VECTORS(void)
@@ -154,6 +167,39 @@ static void TEST_hash_djb2_AND_hash_djb2_ci_AND_hash_fnv1a_AND_hash_fnv1a_case(v
     TEST_INT_EQ(cstring_hash_fnv1a_buf_case(cs.ptr, cs.len), hash_fnv1a_case(cs.ptr, cs.len));
 
     cstring_destroy(&cs);
+}
+
+static void TEST_hash_mbs_AND_wcs_OVERLOADS(void)
+{
+    char const      a_nul_b[3] = { 'a', '\0', 'b' };
+    wchar_t const   wide_alias[1] = { static_cast<wchar_t>(0x161) };
+    wchar_t const   wa_nul_b[3] = { L'a', L'\0', L'b' };
+
+    TEST_INT_EQ(177670ULL, hash_djb2("a"));
+    TEST_INT_EQ(177670ULL, hash_djb2(L"a"));
+    TEST_INT_EQ(177670ULL, hash_djb2("a", 1));
+    TEST_INT_EQ(177670ULL, hash_djb2(L"a", 1));
+    TEST_INT_EQ(6953516687550ULL, hash_djb2("foobar"));
+    TEST_INT_EQ(6953516687550ULL, hash_djb2(L"foobar", 6));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a("a"));
+    TEST_INT_EQ(0xaf63dc4c8601ec8cULL, hash_fnv1a(L"a"));
+    TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a("foobar", 6));
+    TEST_INT_EQ(0x85944171f73967e8ULL, hash_fnv1a(L"foobar"));
+
+    TEST_INT_EQ(hash_djb2_case("Test"), hash_djb2_case(L"tEst"));
+    TEST_INT_EQ(hash_fnv1a_case("TEST", 4), hash_fnv1a_case(L"test"));
+    TEST_INT_NE(hash_djb2("Test"), hash_djb2(L"test"));
+
+    TEST_INT_NE(hash_djb2("ab"), hash_djb2(a_nul_b, 3));
+    TEST_INT_EQ(hash_djb2(a_nul_b, 3), hash_djb2(wa_nul_b, 3));
+    TEST_INT_NE(hash_djb2(L"ab"), hash_djb2(wa_nul_b, 3));
+    TEST_INT_EQ(hash_djb2("a"), hash_djb2(wide_alias, 1));
+    TEST_INT_EQ(hash_fnv1a(L"a"), hash_fnv1a(wide_alias, 1));
+
+    TEST_INT_EQ(cstring_hash_djb2_mbs("foobar"), hash_djb2("foobar"));
+    TEST_INT_EQ(cstring_hash_djb2_wcs(L"foobar"), hash_djb2(L"foobar"));
+    TEST_INT_EQ(cstring_hash_fnv1a_mbuf("foobar", 6), hash_fnv1a("foobar", 6));
+    TEST_INT_EQ(cstring_hash_fnv1a_wbuf(L"foobar", 6), hash_fnv1a(L"foobar", 6));
 }
 } /* anonymous namespace */
 
