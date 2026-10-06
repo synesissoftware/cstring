@@ -795,11 +795,10 @@ static void TEST_cstring_hash_case_SETLOCALE(void)
     cstring_hash_t  sdbm_w;
 
     /* _case ignores the process locale: ASCII A-Z maps to a-z and every
-     * other code unit is unchanged. ASCII "I" does not distinguish that
-     * from tolower here, because towlower(L'I') stays U+0069 under
-     * tr_TR.UTF-8. Octet 0xDD and U+00C0 do change under tolower and
-     * towlower: the C locale leaves them unchanged, and tr_TR.UTF-8 maps
-     * them to 0xFD and U+00E0.
+     * other code unit is unchanged. A Turkish LC_CTYPE is used when the
+     * host has one. ASCII "I" does not distinguish that from tolower here,
+     * because towlower(L'I') stays U+0069 under tr_TR.UTF-8. Octet 0xDD and
+     * U+00C0 do change under tolower and towlower.
      */
 
     current = setlocale(LC_CTYPE, NULL);
@@ -831,18 +830,42 @@ static void TEST_cstring_hash_case_SETLOCALE(void)
         sdbm_m = cstring_hash_sdbm_mbuf_case(octet_dd, 1);
         sdbm_w = cstring_hash_sdbm_wbuf_case(agrave, 1);
 
-        if (NULL == setlocale(LC_CTYPE, "tr_TR.UTF-8"))
         {
-            TEST_FAIL("LC_CTYPE \"tr_TR.UTF-8\" could not be selected");
-        }
-        else
-        {
-            TEST_INT_EQ(djb2_m, cstring_hash_djb2_mbuf_case(octet_dd, 1));
-            TEST_INT_EQ(djb2_w, cstring_hash_djb2_wbuf_case(agrave, 1));
-            TEST_INT_EQ(fnv1a_m, cstring_hash_fnv1a_mbuf_case(octet_dd, 1));
-            TEST_INT_EQ(fnv1a_w, cstring_hash_fnv1a_wbuf_case(agrave, 1));
-            TEST_INT_EQ(sdbm_m, cstring_hash_sdbm_mbuf_case(octet_dd, 1));
-            TEST_INT_EQ(sdbm_w, cstring_hash_sdbm_wbuf_case(agrave, 1));
+            /* Probe order: the UTF-8 name first, then the other Turkish
+             * ctype names hosts actually install.
+             */
+            static char const* const turkish_locales[] =
+            {
+                "tr_TR.UTF-8",
+                "tr_TR.utf8",
+                "tr_TR.ISO8859-9",
+                "Turkish_Turkey.1254",
+                "Turkish",
+            };
+            size_t  i;
+            int     selected;
+
+            selected = 0;
+
+            for (i = 0; i != STLSOFT_NUM_ELEMENTS(turkish_locales); ++i)
+            {
+                if (NULL != setlocale(LC_CTYPE, turkish_locales[i]))
+                {
+                    selected = 1;
+
+                    break;
+                }
+            }
+
+            if (selected)
+            {
+                TEST_INT_EQ(djb2_m, cstring_hash_djb2_mbuf_case(octet_dd, 1));
+                TEST_INT_EQ(djb2_w, cstring_hash_djb2_wbuf_case(agrave, 1));
+                TEST_INT_EQ(fnv1a_m, cstring_hash_fnv1a_mbuf_case(octet_dd, 1));
+                TEST_INT_EQ(fnv1a_w, cstring_hash_fnv1a_wbuf_case(agrave, 1));
+                TEST_INT_EQ(sdbm_m, cstring_hash_sdbm_mbuf_case(octet_dd, 1));
+                TEST_INT_EQ(sdbm_w, cstring_hash_sdbm_wbuf_case(agrave, 1));
+            }
         }
     }
 
