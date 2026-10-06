@@ -54,8 +54,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_HASH_MAJOR       1
 # define CSTRING_VER_CSTRING_H_HASH_MINOR       0
-# define CSTRING_VER_CSTRING_H_HASH_REVISION    2
-# define CSTRING_VER_CSTRING_H_HASH_EDIT        5
+# define CSTRING_VER_CSTRING_H_HASH_REVISION    3
+# define CSTRING_VER_CSTRING_H_HASH_EDIT        6
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -133,7 +133,7 @@
 typedef uint64_t                                            cstring_hash_t;
 #elif defined(_MSC_VER)
 
-typedef unsigned __int64_t                                  cstring_hash_t;
+typedef unsigned __int64                                    cstring_hash_t;
 #else
 
 # error 64-bit unsigned integer type not discriminated
