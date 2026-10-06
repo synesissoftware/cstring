@@ -6,13 +6,24 @@
 * Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_case()`, `cstring_hash_djb2_buf()`, and `cstring_hash_djb2_buf_case()`;
 * Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_case()`, `cstring_hash_fnv1a_buf()`, and `cstring_hash_fnv1a_buf_case()`;
 * Added multibyte and wide hash entry points `cstring_hash_djb2_mbs()`, `cstring_hash_djb2_wcs()`, `cstring_hash_djb2_mbuf()`, `cstring_hash_djb2_wbuf()`, and the `_case` forms, and the same set for `cstring_hash_fnv1a()`;
+* Added 64-bit `SDBM` hash functions: `cstring_hash_sdbm()`, `cstring_hash_sdbm_case()`, and the multibyte, wide, and counted-buffer forms, including `_case`;
 * Added `cstring_hash_t` typedef (`uint64_t`);
 * Added **common.h** for shared `<stdint.h>` discrimination, and **hash.h** for the hash API, included from **cstring.h**;
-* Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, and `hash_fnv1a_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
+* Recognised `<stdint.h>` on Visual C++ from `_MSC_VER` 1600 (Visual Studio 2010); older MSVC uses `unsigned __int64` for `cstring_hash_t`;
+* Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, `hash_fnv1a_case()`, `hash_sdbm()`, and `hash_sdbm_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
 * Added unit test **test.unit.hash** (C hashing API, built with and without the C++ API) and **test.unit.hash.cxx** (C++ hash shims);
-* Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` as the djb2 and FNV-1a basis constants;
-* Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, and `CSTRING_HASH_FNV1A_PRIME` with references to the published djb2 and FNV-1a algorithms;
-* Documented the hash contract (forms, low octet, case fold, published vectors) and grouped the algorithms as `group__cstring_api__hashing__djb2` and `group__cstring_api__hashing__fnv1a`;
+* Added **test.performance.hash**, timing `djb2`, `FNV-1a`, and `SDBM` against a degenerate lose-lose sum for cstring, multibyte, wide, counted-buffer, and case-insensitive inputs;
+* Suppressed MSVC warning 4996 (`getenv` in **perf_harness.hpp**) on **test.performance.hash**, matching the other performance programs;
+* Added scratch program **test.scratch.hash**, reporting full-hash, per-octet, and hashtable-modulo spread of lose-lose, `djb2`, `FNV-1a`, and `SDBM` on 10000 pseudo-random strings;
+* Stopped counted copies (`cstring_createLen()`, `cstring_assignLen()`, and the insert and append forms) from reading past `cch` when that slice contains no NUL;
+* Published `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, `CSTRING_HASH_FNV1A_PRIME`, `CSTRING_HASH_SDBM_MULTIPLIER`, and `CSTRING_HASH_SDBM_SEED` as the djb2, FNV-1a, and SDBM basis constants;
+* Documented `CSTRING_HASH_DJB2_SEED`, `CSTRING_HASH_FNV1A_OFFSET`, `CSTRING_HASH_FNV1A_PRIME`, `CSTRING_HASH_SDBM_MULTIPLIER`, and `CSTRING_HASH_SDBM_SEED` with references to the published djb2, FNV-1a, and SDBM algorithms;
+* Hashed every octet of each wide code unit, low byte first, so a multibyte string and its wide equivalent differ;
+* Counted those same wide octets in the lose-lose timing baseline;
+* Documented the hash contract (forms, little-endian wide code units, case fold, published multibyte vectors, and the 32-bit djb2 limit) and grouped the algorithms as `group__cstring_api__hashing__djb2`, `group__cstring_api__hashing__fnv1a`, and `group__cstring_api__hashing__sdbm`;
+* Folded `_case` on ASCII A-Z only, independent of the process locale, and applied that same fold in the lose-lose timing baseline;
+* Specialised `std::hash<cstring_t>` on FNV-1a for C++11 and later;
+* Added `cstring_equal()` (`cstring_truthy_t`) and `cstring_compare()` (`cstring_sint_t`). Equality is the truthy function; compare is the signed order. C++ `==`, `!=`, and `<` call them;
 
 
 ## 4.0.19 - 4th October 2026

@@ -25,10 +25,12 @@ Small standalone C library that provides extensible C-style strings and extensib
     - [Status and capacity](#status-and-capacity)
     - [Creation/destruction functions](#creationdestruction-functions)
     - [Modification functions](#modification-functions)
+    - [Comparison functions](#comparison-functions)
     - [File functions](#file-functions)
     - [Hashing functions](#hashing-functions)
       - [djb2](#djb2)
       - [FNV-1a](#fnv-1a)
+      - [SDBM](#sdbm)
   - [Vector API](#vector-api)
   - [C++ Integration](#c-integration)
 - [Examples](#examples)
@@ -169,6 +171,8 @@ Supporting scalar typedefs:
 * `CSTRING_HASH_DJB2_SEED` — djb2 initial seed (`5381`); also the hash of an empty input;
 * `CSTRING_HASH_FNV1A_OFFSET` — FNV-1a 64-bit offset basis (`0xcbf29ce484222325ULL`); also the hash of an empty input;
 * `CSTRING_HASH_FNV1A_PRIME` — FNV-1a 64-bit prime (`0x100000001b3ULL`);
+* `CSTRING_HASH_SDBM_MULTIPLIER` — sdbm multiplier (`65599`);
+* `CSTRING_HASH_SDBM_SEED` — sdbm initial seed (`0`); also the hash of an empty input;
 
 
 ### String API
@@ -208,6 +212,12 @@ Defined in **cstring/cstring.h**:
 * `cstring_truncate()` — shortens the logical length (capacity unchanged);
 * `cstring_swap()` — swaps the contents of two instances;
 
+#### Comparison functions
+
+* `cstring_equal()` — non-zero when two strings hold the same code units for `len`. A `NULL` pointer and a zero length are empty. `capacity` and `flags` are ignored;
+* `cstring_compare()` — negative, zero, or positive order of those same code units. Test equality with `cstring_equal()`;
+* C++ `operator==` and `operator!=` call `cstring_equal()`; `operator<` calls `cstring_compare()`;
+
 #### File functions
 
 * `cstring_readline()` — reads a line of text from the given text stream into the instance;
@@ -217,7 +227,7 @@ Defined in **cstring/cstring.h**:
 
 #### Hashing functions
 
-Declared in **cstring/hash.h**, which **cstring.h** includes. Both algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. Each code unit contributes its low 8 bits, so ASCII text has one hash in both encodings. A wide code unit of value `0x161` hashes as the octet `0x61` (`'a'`). A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer.
+Declared in **cstring/hash.h**, which **cstring.h** includes. The three algorithms return `cstring_hash_t` (`uint64_t`). Multibyte and wide entry points exist in every build, whatever ambient `cstring_char_t` is. A multibyte code unit contributes its one octet. A wide code unit contributes every octet of the `wchar_t`, low byte first, so `"a"` and `L"a"` differ. The wide value depends on `sizeof(wchar_t)`: two octets on Windows, four on Unix. Big-endian and little-endian hosts of the same width agree. A `NULL` pointer, or a zero length, yields that algorithm's empty-input value and does not read the pointer. The numeric tables below are the multibyte results.
 
 | Suffix | Input | What is hashed |
 | ------ | ----- | -------------- |
@@ -228,9 +238,11 @@ Declared in **cstring/hash.h**, which **cstring.h** includes. Both algorithms re
 | `_mbuf` | `char const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 | `_wbuf` | `wchar_t const*`, `size_t` | exactly `cch` code units, including embedded NULs |
 
-`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, and so on). Case folding uses `tolower` or `towlower`, which follow the process locale, and then the low 8 bits.
+`_case` is the last suffix of each name (`cstring_hash_djb2_mbs_case()`, `cstring_hash_fnv1a_wbuf_case()`, `cstring_hash_sdbm_mbuf_case()`, and so on). Case folding maps ASCII A-Z to a-z and leaves every other code unit unchanged, independent of the process locale, and then hashes the octets of the folded code unit. It is not a Unicode case-fold.
 
-Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_djb2_mbuf()`, and `cstring_hash_fnv1a_wbuf_case()`.
+Names follow `cstring_hash_<algorithm><suffix>`, for example `cstring_hash_djb2()`, `cstring_hash_fnv1a_wbuf_case()`, and `cstring_hash_sdbm_mbuf()`.
+
+From C++11, `std::hash<cstring_t>` is the FNV-1a hash of `ptr` and `len`, converted to `size_t`. djb2 and SDBM are not used for that specialisation.
 
 
 ##### djb2
@@ -245,7 +257,7 @@ The hash starts at `CSTRING_HASH_DJB2_SEED` (`5381`). For each octet `b` the ste
 | `{ 'a', 0, 'b' }` length 3 | `193482728` |
 | octet `0xFF` | `177828` |
 
-The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed.
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed. 64-bit djb2 matches 32-bit djb2 only while the running total stays below 2^32. `"foobar"` is already past that point.
 
 
 ##### FNV-1a
@@ -259,6 +271,21 @@ The hash starts at `CSTRING_HASH_FNV1A_OFFSET` (`0xcbf29ce484222325`). For each 
 | `"foobar"` | `0x85944171f73967e8` |
 | `{ 'a', 0, 'b' }` length 3 | `0xe5d29919042666b2` |
 | octet `0xFF` | `0xaf64724c8602eb6e` |
+
+
+##### SDBM
+
+The hash starts at `CSTRING_HASH_SDBM_SEED` (`0`). For each octet `b` the step is `hash * CSTRING_HASH_SDBM_MULTIPLIER + b`. The multiplier is `65599`. This is the sdbm recurrence published by Ozan Yigit, evaluated in a 64-bit accumulator.
+
+| Input | Hash |
+| ----- | ---- |
+| empty, or `NULL` | `0` |
+| `"a"` | `97` |
+| `"foobar"` | `0x430d469aa6437b0d` |
+| `{ 'a', 0, 'b' }` length 3 | `0x612fc3e043` |
+| octet `0xFF` | `255` |
+
+The length-3 buffer differs from `"ab"`, because the embedded NUL is hashed.
 
 
 ### Vector API
@@ -278,7 +305,7 @@ Defined in **cstring/cstring.vector.h**:
 
 When included in C++ compilation units, **cstring/cstring.h** provides inline access shims:
 * **String access shims** — `c_str_data()`, `c_str_len()`, and `c_str_ptr()`, allowing `cstring_t` instances to be used directly with **STLSoft** and generic C++ templates;
-* **Hash access shims** — `cstring::hash_djb2()`, `cstring::hash_djb2_case()`, `cstring::hash_fnv1a()`, and `cstring::hash_fnv1a_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
+* **Hash access shims** — `cstring::hash_djb2()`, `cstring::hash_djb2_case()`, `cstring::hash_fnv1a()`, `cstring::hash_fnv1a_case()`, `cstring::hash_sdbm()`, and `cstring::hash_sdbm_case()`, overloaded for `struct cstring_t const&`, `struct cstring_t const*`, `char const*`, `wchar_t const*`, and the buffer forms `(char const* s, size_t cch)` and `(wchar_t const* s, size_t cch)`. A `NULL` argument must be cast, because `char const*` and `wchar_t const*` are both viable;
 
 
 ## Examples

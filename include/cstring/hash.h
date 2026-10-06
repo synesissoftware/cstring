@@ -54,13 +54,13 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_HASH_MAJOR       1
 # define CSTRING_VER_CSTRING_H_HASH_MINOR       0
-# define CSTRING_VER_CSTRING_H_HASH_REVISION    1
-# define CSTRING_VER_CSTRING_H_HASH_EDIT        3
+# define CSTRING_VER_CSTRING_H_HASH_REVISION    3
+# define CSTRING_VER_CSTRING_H_HASH_EDIT        9
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * includes
+ * includes - 1
  */
 
 #include <cstring/common.h>
@@ -76,6 +76,35 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
+ * compatibility
+ */
+
+#ifdef __cplusplus
+
+# if 0
+# elif 0 ||\
+       __cplusplus >= 201103L ||\
+       (    1 &&\
+            defined(_MSVC_LANG) &&\
+            _MSVC_LANG >= 201103L ||\
+            1) ||\
+       0
+
+#  define CSTRING_HAS_std_hash_cstring_t_
+# endif
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * includes - 2
+ */
+
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+# include <functional>
+#endif
+
+
+/* /////////////////////////////////////////////////////////////////////////
  * documentation
  */
 
@@ -83,11 +112,12 @@
  * \ingroup group__cstring_api
  * \brief Hash functions for cstring instances, C strings, and buffers.
  *
- * \c cstring/hash.h declares two 64-bit algorithms, djb2 and FNV-1a.
- * \c cstring.h includes this header. Every function returns
+ * \c cstring/hash.h declares three 64-bit algorithms, djb2, FNV-1a, and
+ * SDBM. \c cstring.h includes this header. Every function returns
  * \c cstring_hash_t. The algorithms are
- * \ref group__cstring_api__hashing__djb2 and
- * \ref group__cstring_api__hashing__fnv1a.
+ * \ref group__cstring_api__hashing__djb2,
+ * \ref group__cstring_api__hashing__fnv1a, and
+ * \ref group__cstring_api__hashing__sdbm.
  *
  * Each algorithm has six entry points, and a \c _case twin of each. \c _mbs
  * and \c _mbuf take multibyte \c char strings. \c _wcs and \c _wbuf take
@@ -97,20 +127,26 @@
  * and \c len, so embedded NULs count.
  *
  * NUL-terminated forms stop at the first NUL. Buffer forms hash exactly
- * \c cch code units and include embedded NULs. Each code unit contributes
- * its low 8 bits, so ASCII text has one hash in both encodings. A wide code
- * unit of value 0x161 hashes as the octet 0x61 ('a'). A \c NULL pointer, or
- * a zero length, yields that algorithm's empty-input value and does not
- * read the pointer.
+ * \c cch code units and include embedded NULs. A multibyte code unit
+ * contributes its one octet. A wide code unit contributes every octet of
+ * the \c wchar_t, low byte first, so \c "a" and \c L"a" differ. The wide
+ * value depends on \c sizeof(wchar_t): two octets on Windows, four on Unix.
+ * Big-endian and little-endian hosts of the same width agree. A \c NULL
+ * pointer, or a zero length, yields that algorithm's empty-input value and
+ * does not read the pointer.
  *
- * \c _case forms fold with \c tolower or \c towlower, which follow the
- * process locale, and then take the low 8 bits.
+ * \c _case forms map ASCII A-Z to a-z and leave every other code unit
+ * unchanged. The fold does not follow the process locale, and it is not a
+ * Unicode case-fold. The octets of the folded code unit are then hashed.
  *
  * In C++, namespace \c cstring provides \c hash_djb2(),
- * \c hash_djb2_case(), \c hash_fnv1a(), and \c hash_fnv1a_case(). Each
+ * \c hash_djb2_case(), \c hash_fnv1a(), \c hash_fnv1a_case(),
+ * \c hash_sdbm(), and \c hash_sdbm_case(). Each
  * overloads on \c cstring_t (pointer and reference), \c char const*,
  * \c wchar_t const*, and both buffer forms. \c NULL is ambiguous between
- * \c char const* and \c wchar_t const* and must be cast.
+ * \c char const* and \c wchar_t const* and must be cast. From C++11,
+ * \c std::hash<cstring_t> is FNV-1a of \c ptr and \c len, converted to
+ * \c size_t. djb2 and SDBM are not used for that specialisation.
  * @{
  */
 
@@ -129,7 +165,7 @@
 typedef uint64_t                                            cstring_hash_t;
 #elif defined(_MSC_VER)
 
-typedef unsigned __int64_t                                  cstring_hash_t;
+typedef unsigned __int64                                    cstring_hash_t;
 #else
 
 # error 64-bit unsigned integer type not discriminated
@@ -158,7 +194,9 @@ typedef unsigned __int64_t                                  cstring_hash_t;
  * <code>"a"</code> hash to 177670. The octets of <code>"foobar"</code> hash
  * to 6953516687550. The buffer <code>{ 'a', 0, 'b' }</code> of length 3
  * hashes to 193482728, which differs from <code>"ab"</code>. The octet
- * <code>0xFF</code> hashes to 177828.
+ * <code>0xFF</code> hashes to 177828. These figures are multibyte results.
+ * 64-bit djb2 matches 32-bit djb2 only while the running total stays below
+ * 2^32. <code>"foobar"</code> is already past that point.
  *
  * \sa http://www.cse.yorku.ca/~oz/hash.html#djb2
  * @{
@@ -353,7 +391,8 @@ cstring_hash_djb2_wbuf_case(
  * The octets of <code>"foobar"</code> hash to
  * <code>0x85944171f73967e8</code>. The buffer <code>{ 'a', 0, 'b' }</code>
  * of length 3 hashes to <code>0xe5d29919042666b2</code>. The octet
- * <code>0xFF</code> hashes to <code>0xaf64724c8602eb6e</code>.
+ * <code>0xFF</code> hashes to <code>0xaf64724c8602eb6e</code>. These
+ * figures are the multibyte results.
  *
  * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-1a
  * \sa https://www.isthe.com/chongo/tech/comp/fnv/#FNV-param
@@ -534,6 +573,207 @@ cstring_hash_fnv1a_mbuf_case(
 CSTRING_EXTERN_C
 cstring_hash_t
 cstring_hash_fnv1a_wbuf_case(
+    wchar_t const*  s
+,   size_t          cch
+);
+
+/** @} */
+
+
+/* /////////////////////////////////////////////////////////
+ * SDBM
+ */
+
+/** \defgroup group__cstring_api__hashing__sdbm SDBM
+ * \ingroup group__cstring_api__hashing
+ * \brief sdbm hash, as a 64-bit accumulator.
+ *
+ * The hash starts at \c CSTRING_HASH_SDBM_SEED (0). For each octet \c b
+ * the step is <code>hash * CSTRING_HASH_SDBM_MULTIPLIER + b</code>. The
+ * multiplier is 65599. This is the sdbm recurrence published by Ozan
+ * Yigit, evaluated in a 64-bit accumulator.
+ *
+ * Empty input, including \c NULL, hashes to 0. The octet of
+ * <code>"a"</code> hashes to 97. The octets of <code>"foobar"</code> hash
+ * to <code>0x430d469aa6437b0d</code>. The buffer
+ * <code>{ 'a', 0, 'b' }</code> of length 3 hashes to
+ * <code>0x612fc3e043</code>. The octet <code>0xFF</code> hashes to 255.
+ * These figures are the multibyte results.
+ *
+ * \sa http://www.cse.yorku.ca/~oz/hash.html#sdbm
+ * @{
+ */
+
+
+/** \def CSTRING_HASH_SDBM_MULTIPLIER
+ * \ingroup group__cstring_api__hashing__sdbm
+ * \brief sdbm multiplier, 65599
+ */
+#define CSTRING_HASH_SDBM_MULTIPLIER                        (65599) /* == 0x1003f */
+
+/** \def CSTRING_HASH_SDBM_SEED
+ * \ingroup group__cstring_api__hashing__sdbm
+ * \brief sdbm initial seed (also the hash of an empty input)
+ */
+#define CSTRING_HASH_SDBM_SEED                              (0)
+
+
+/** \brief Computes a 64-bit SDBM hash of a cstring instance.
+ *
+ * \param pcs The cstring instance. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a 64-bit SDBM hash of a NUL-terminated multibyte
+ *   string.
+ *
+ * \param s The multibyte string. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_mbs(
+    char const* s
+);
+
+/** \brief Computes a 64-bit SDBM hash of a NUL-terminated wide string.
+ *
+ * \param s The wide string. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_wcs(
+    wchar_t const* s
+);
+
+/** \brief Computes a 64-bit SDBM hash of an ambient character buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_buf(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** \brief Computes a 64-bit SDBM hash of a multibyte character buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_mbuf(
+    char const* s
+,   size_t      cch
+);
+
+/** \brief Computes a 64-bit SDBM hash of a wide-character buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_wbuf(
+    wchar_t const*  s
+,   size_t          cch
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of a cstring.
+ *
+ * \param pcs The cstring instance. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_case(
+    struct cstring_t const* pcs
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of a multibyte
+ *   string.
+ *
+ * \param s The multibyte string. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_mbs_case(
+    char const* s
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of a wide string.
+ *
+ * \param s The wide string. May be NULL;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_wcs_case(
+    wchar_t const* s
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of an ambient
+ *   character buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_buf_case(
+    cstring_char_t const*   s
+,   size_t                  cch
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of a multibyte
+ *   buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_mbuf_case(
+    char const* s
+,   size_t      cch
+);
+
+/** \brief Computes a case-insensitive 64-bit SDBM hash of a wide buffer.
+ *
+ * \param s The buffer. May be NULL;
+ * \param cch The number of code units, including embedded NULs;
+ *
+ * \return The 64-bit SDBM hash;
+ */
+CSTRING_EXTERN_C
+cstring_hash_t
+cstring_hash_sdbm_wbuf_case(
     wchar_t const*  s
 ,   size_t          cch
 );
@@ -884,11 +1124,193 @@ hash_fnv1a_case(
 /** @} */
 
 
+/** \addtogroup group__cstring_api__hashing__sdbm
+ * @{
+ */
+
+/** \see cstring_hash_sdbm
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_sdbm(pcs);
+}
+
+/** \see cstring_hash_sdbm
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_sdbm(&cs);
+}
+
+/** \see cstring_hash_sdbm_mbs
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    char const* s
+)
+{
+    return cstring_hash_sdbm_mbs(s);
+}
+
+/** \see cstring_hash_sdbm_wcs
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    wchar_t const* s
+)
+{
+    return cstring_hash_sdbm_wcs(s);
+}
+
+/** \see cstring_hash_sdbm_mbuf
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    char const* s
+,   size_t      cch
+)
+{
+    return cstring_hash_sdbm_mbuf(s, cch);
+}
+
+/** \see cstring_hash_sdbm_wbuf
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    return cstring_hash_sdbm_wbuf(s, cch);
+}
+
+/** \see cstring_hash_sdbm_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    struct cstring_t const* pcs
+)
+{
+    return cstring_hash_sdbm_case(pcs);
+}
+
+/** \see cstring_hash_sdbm_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    struct cstring_t const& cs
+)
+{
+    return cstring_hash_sdbm_case(&cs);
+}
+
+/** \see cstring_hash_sdbm_mbs_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    char const* s
+)
+{
+    return cstring_hash_sdbm_mbs_case(s);
+}
+
+/** \see cstring_hash_sdbm_wcs_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    wchar_t const* s
+)
+{
+    return cstring_hash_sdbm_wcs_case(s);
+}
+
+/** \see cstring_hash_sdbm_mbuf_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    char const* s
+,   size_t      cch
+)
+{
+    return cstring_hash_sdbm_mbuf_case(s, cch);
+}
+
+/** \see cstring_hash_sdbm_wbuf_case
+ *
+ */
+inline
+cstring_hash_t
+hash_sdbm_case(
+    wchar_t const*  s
+,   size_t          cch
+)
+{
+    return cstring_hash_sdbm_wbuf_case(s, cch);
+}
+
+/** @} */
+
+
 /* /////////////////////////////////////////////////////////////////////////
  * namespace
  */
 
 } /* namespace cstring */
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * std::hash<cstring_t>
+ */
+
+#ifdef CSTRING_HAS_std_hash_cstring_t_
+
+/* FNV-1a of ptr and len, converted to size_t. djb2 and SDBM are not used.
+ * C++98 has no std::hash.
+ */
+namespace std
+{
+
+template <>
+struct hash< ::cstring_t>
+{
+    size_t
+    operator ()(
+        ::cstring_t const& cs
+    ) const noexcept
+    {
+        return static_cast<size_t>(::cstring::hash_fnv1a(cs));
+    }
+};
+} /* namespace std */
+#endif /* C++11 */
 
 
 /* /////////////////////////////////////////////////////////////////////////

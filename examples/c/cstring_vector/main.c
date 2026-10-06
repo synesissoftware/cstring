@@ -5,7 +5,7 @@
  *          them.
  *
  * Created: 12th January 2024
- * Updated: 4th October 2026
+ * Updated: 6th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -143,38 +143,13 @@ int main(int argc, char* argv[])
 
 static
 int
-cstring_compare(
-    cstring_t const*    cs1
-,   cstring_t const*    cs2
-)
-{
-    size_t const    min_len =   (cs1->len < cs2->len) ? cs1->len : cs2->len;
-    int             r       =   strncmp(cs1->ptr, cs2->ptr, min_len);
-
-    if (0 == r)
-    {
-        if (cs1->len > cs2->len)
-        {
-            return -1;
-        }
-        if (cs1->len < cs2->len)
-        {
-            return +1;
-        }
-    }
-
-    return r;
-}
-
-static
-int
 cstring_compare_pv(
     void const* p1
 ,   void const* p2
 )
 {
-    cstring_t const*    cs1 =   p1;
-    cstring_t const*    cs2 =   p2;
+    cstring_t const* const  cs1 =   p1;
+    cstring_t const* const  cs2 =   p2;
 
     return cstring_compare(cs1, cs2);
 }
@@ -186,8 +161,8 @@ cstring_compare_reverse_pv(
 ,   void const* p2
 )
 {
-    cstring_t const*    cs1 =   p1;
-    cstring_t const*    cs2 =   p2;
+    cstring_t const* const  cs1 =   p1;
+    cstring_t const* const  cs2 =   p2;
 
     return cstring_compare(cs2, cs1);
 }

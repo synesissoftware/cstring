@@ -54,6 +54,19 @@ EXPORTS
 	cstring_hash_fnv1a_mbuf_case                    @81
 	cstring_hash_fnv1a_wbuf_case                    @82
 
+	cstring_hash_sdbm                               @91
+	cstring_hash_sdbm_mbs                           @92
+	cstring_hash_sdbm_wcs                           @93
+	cstring_hash_sdbm_buf                           @94
+	cstring_hash_sdbm_mbuf                          @95
+	cstring_hash_sdbm_wbuf                          @96
+	cstring_hash_sdbm_case                          @97
+	cstring_hash_sdbm_mbs_case                      @98
+	cstring_hash_sdbm_wcs_case                      @99
+	cstring_hash_sdbm_buf_case                      @100
+	cstring_hash_sdbm_mbuf_case                     @101
+	cstring_hash_sdbm_wbuf_case                     @102
+
 ; deprecated items by name
 	cstring_error=cstring_getStatusCodeStringLength @399
 
