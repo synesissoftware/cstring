@@ -1,16 +1,13 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.1.0 - 5th October 2026
+## 4.1.0-alpha1 - 6th October 2026
 
 * Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_case()`, `cstring_hash_djb2_buf()`, and `cstring_hash_djb2_buf_case()`;
 * Added 64-bit `FNV-1a` hash functions: `cstring_hash_fnv1a()`, `cstring_hash_fnv1a_case()`, `cstring_hash_fnv1a_buf()`, and `cstring_hash_fnv1a_buf_case()`;
 * Added multibyte and wide hash entry points `cstring_hash_djb2_mbs()`, `cstring_hash_djb2_wcs()`, `cstring_hash_djb2_mbuf()`, `cstring_hash_djb2_wbuf()`, and the `_case` forms, and the same set for `cstring_hash_fnv1a()`;
 * Added 64-bit `SDBM` hash functions: `cstring_hash_sdbm()`, `cstring_hash_sdbm_case()`, and the multibyte, wide, and counted-buffer forms, including `_case`;
 * Added `cstring_hash_t` typedef (`uint64_t`);
-* Added C++ hash access shims for `cstring_t` (reference and pointer) and buffer/slice forms;
-* Added unit test suite **test.unit.hash**;
-* Wide-string CI cells **windows-cl-wide** and **windows-mingw-wide** run the Windows cell suite with `--wide-strings`, and do not run performance tests;
 * Added **common.h** for shared `<stdint.h>` discrimination, and **hash.h** for the hash API, included from **cstring.h**;
 * Recognised `<stdint.h>` on Visual C++ from `_MSC_VER` 1600 (Visual Studio 2010); older MSVC uses `unsigned __int64` for `cstring_hash_t`;
 * Added C++ hash access shims `hash_djb2()`, `hash_djb2_case()`, `hash_fnv1a()`, `hash_fnv1a_case()`, `hash_sdbm()`, and `hash_sdbm_case()` for `cstring_t` (reference and pointer), `char const*`, `wchar_t const*`, and both buffer forms;
@@ -27,11 +24,13 @@
 * Folded `_case` on ASCII A-Z only, independent of the process locale, and applied that same fold in the lose-lose timing baseline;
 * Specialised `std::hash<cstring_t>` on FNV-1a for C++11 and later;
 * Added `cstring_equal()` (`cstring_truthy_t`) and `cstring_compare()` (`cstring_sint_t`). Equality is the truthy function; compare is the signed order. C++ `==`, `!=`, and `<` call them;
+* Added unit tests **test.unit.compare** and **test.unit.compare.cxx**;
+* Wide-string build via **prepare_cmake.sh** `--wide-strings` (`CSTRING_USE_WIDE_STRINGS` on **cstring::core**): `cstring_char_t` is `wchar_t`; `cstring_write()` / `cstring_writeline()` emit the payload as multibyte bytes; examples and tests take literals and comparisons from **cstring.helpers.h** (`CSTRING_T_()`, `CSTRING_STRCMP_()`, `CSTRING_STRNCMP_()`), which is not part of the library contract; performance tests are not built; CI job **wide-strings**;
+* Wide-string CI cells **windows-cl-wide** and **windows-mingw-wide** run the Windows cell suite with `--wide-strings`, and do not run performance tests;
 
 
 ## 4.0.19 - 4th October 2026
 
-* Wide-string build via **prepare_cmake.sh** `--wide-strings` (`CSTRING_USE_WIDE_STRINGS` on **cstring::core**): `cstring_char_t` is `wchar_t`; `cstring_write()` / `cstring_writeline()` emit the payload as multibyte bytes; examples and tests take literals and comparisons from **test/cstring.helpers.h** (`CSTRING_T_()`, `CSTRING_STRCMP_()`, `CSTRING_STRNCMP_()`), which is not part of the library contract; performance tests stay multibyte; CI job **wide-strings**;
 * Corrected `cstring_readline()` so `numRead` counts every character read from the stream for the line, including the terminator; CR and LF are not stored;
 * Treated a lone CR (not followed by LF, including CR at end of stream) as a line terminator that returns `CSTRING_RC_SUCCESS` and pushes the following character back;
 * Freed a zero-size realloc-arena block on every platform (`realloc(pv, 0)` allocates on some), leaving a `NULL` pointer unchanged;
