@@ -1,6 +1,10 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-alpha2 - 16th October 2026
+
+
+
 ## 4.1.0-alpha1 - 6th October 2026
 
 * Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_case()`, `cstring_hash_djb2_buf()`, and `cstring_hash_djb2_buf_case()`;
