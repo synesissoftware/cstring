@@ -42,6 +42,7 @@ SisUseColours=0
 STLSoftDirGiven=
 TestingDisabled=0
 VerboseMakefile=0
+WideStrings=0
 
 
 # ##########################################################
@@ -185,6 +186,10 @@ while [[ $# -gt 0 ]]; do
       shift
       STLSoftDirGiven=$1
       ;;
+    --wide-strings)
+
+      WideStrings=1
+      ;;
     --help)
 
       [ -f "$Dir/.sis/script_info_lines.txt" ] && cat "$Dir/.sis/script_info_lines.txt"
@@ -253,6 +258,11 @@ Flags/options:
         as the variable STLSOFT, and which will override the environment
         variable STLSOFT (if present)
 
+    --wide-strings
+        compiles cstring_char_t as wchar_t (CSTRING_USE_WIDE_STRINGS=ON).
+        The library and every target that links it must agree. Performance
+        tests are not built in this configuration
+
 
     standard flags:
 
@@ -292,6 +302,7 @@ if [ $NO_shwild -eq 0 ]; then CMakeNoShwild="OFF" ; else CMakeNoShwild="ON" ; fi
 if [ -z "$STLSoftDirGiven" ]; then CMakeSTLSoftVariable="" ; else CMakeSTLSoftVariable="-DSTLSOFT=$STLSoftDirGiven/" ; fi
 if [ $TestingDisabled -eq 0 ]; then CMakeBuildTestingFlag="ON" ; else CMakeBuildTestingFlag="OFF" ; fi
 if [ $VerboseMakefile -eq 0 ]; then CMakeVerboseMakefileFlag="OFF" ; else CMakeVerboseMakefileFlag="ON" ; fi
+if [ $WideStrings -eq 0 ]; then CMakeWideStringsFlag="OFF" ; else CMakeWideStringsFlag="ON" ; fi
 
 # NOTE: the generator is the *only* thing that may differ between the MinGW
 # and the default paths; every -D option is passed in both cases, so that no
@@ -315,6 +326,7 @@ cmake \
   -DBUILD_TESTING:BOOL=$CMakeBuildTestingFlag \
   -DCMAKE_BUILD_TYPE=$Configuration \
   -DCMAKE_VERBOSE_MAKEFILE:BOOL=$CMakeVerboseMakefileFlag \
+  -DCSTRING_USE_WIDE_STRINGS:BOOL=$CMakeWideStringsFlag \
   -DMSVC_USE_MT:BOOL=$CMakeMsvcMtFlag \
   -DNO_CSTRING_CPP_API:BOOL=$CMakeNoCppApiFlag \
   -DNO_P99:BOOL=$CMakeNoP99 \

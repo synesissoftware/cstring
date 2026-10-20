@@ -5,13 +5,14 @@
  *          `LoadLibrary` / `GetProcAddress`.
  *
  * Created: 19th August 2005
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* cstring header files */
 #include <cstring/cstring.h>
+#include "cstring.helpers.h"
 
 /* STLSoft header files */
 #include <stlsoft/stlsoft.h>
@@ -33,7 +34,6 @@ namespace std
     using ::exception;
 }
 #endif /* __WATCOMC__ */
-
 
 /* Standard C header files */
 #include <stdio.h>
@@ -68,11 +68,12 @@ namespace cstring
             }
         }
     }
-
-
 }  // namespace cstring
 
-/* ////////////////////////////////////////////////////////////////////// */
+
+/* /////////////////////////////////////////////////////////////////////////
+ * main()
+ */
 
 static char const* cstring_error_(CSTRING_RC rc)
 {
@@ -90,7 +91,7 @@ static char const* cstring_error_(CSTRING_RC rc)
     );
 }
 
-#define cstring_error   cstring_error_
+#define cstring_error                                       cstring_error_
 
 static int main_(int /* argc */, char ** /*argv*/)
 {
@@ -99,18 +100,18 @@ static int main_(int /* argc */, char ** /*argv*/)
 
     GetLastError();
 
-    CSTRING_RC (*_create)(cstring_t* , char const* );
-    CSTRING_RC (*_yield)(cstring_t* pcs, char** );
-    CSTRING_RC (*_createEx)(cstring_t* , char const* , size_t , void* , size_t );
+    CSTRING_RC (*_create)(cstring_t*, cstring_char_t const*);
+    CSTRING_RC (*_yield)(cstring_t* pcs, cstring_char_t**);
+    CSTRING_RC (*_createEx)(cstring_t*, cstring_char_t const*, size_t, void*, size_t);
 
 #if defined(__GNUC__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif /* __GNUC__ */
 
-    _create     =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char const*)>(::GetProcAddress(hinst, "cstring_create"));
-    _createEx   =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char const*, size_t, void*, size_t)>(::GetProcAddress(hinst, "cstring_createEx"));
-    _yield      =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, char**)>(::GetProcAddress(hinst, "cstring_yield"));
+    _create     =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, cstring_char_t const*)>(::GetProcAddress(hinst, "cstring_create"));
+    _createEx   =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, cstring_char_t const*, size_t, void*, size_t)>(::GetProcAddress(hinst, "cstring_createEx"));
+    _yield      =   reinterpret_cast<CSTRING_RC (*)(cstring_t*, cstring_char_t**)>(::GetProcAddress(hinst, "cstring_yield"));
 
 #if defined(__GNUC__)
 # pragma GCC diagnostic pop
@@ -121,11 +122,11 @@ static int main_(int /* argc */, char ** /*argv*/)
     {
         cstring_t   cs;
 #if 0
-        CSTRING_RC  rc  =   _create(&cs, "Hello");
+        CSTRING_RC  rc  =   _create(&cs, CSTRING_T_("Hello"));
 #else /* ? 0 */
-        CSTRING_RC  rc  =   _createEx(&cs, "Hello", CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY, NULL, 100);
+        CSTRING_RC  rc  =   _createEx(&cs, CSTRING_T_("Hello"), CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY, NULL, 100);
 #endif /* 0 */
-        char*       p;
+        cstring_char_t* p;
 
         try
         {
@@ -142,7 +143,9 @@ static int main_(int /* argc */, char ** /*argv*/)
         }
         else
         {
-            fprintf(stdout, "string=%s\n", cs.ptr);
+            fprintf(stdout, "string=");
+            cstring_write(stdout, &cs, NULL);
+            fprintf(stdout, "\n");
 
             rc = _yield(&cs, &p);
 

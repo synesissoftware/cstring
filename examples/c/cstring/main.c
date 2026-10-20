@@ -6,13 +6,14 @@
  *          where available).
  *
  * Created: 7th July 2005
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 /* cstring header files */
 #include <cstring/cstring.h>
+#include "cstring.helpers.h"
 
 /* Standard C header files */
 #include <stdio.h>
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
         printf("cstring_createLen():\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createLen(&cs1, "string-#1", 9);
+            CSTRING_RC          rc  =   cstring_createLen(&cs1, CSTRING_T_("string-#1"), 9);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -88,7 +89,7 @@ int main(int argc, char *argv[])
         printf("cstring_createLenEx(CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createLenEx(&cs1, "string-#2", 9, CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
+            CSTRING_RC          rc  =   cstring_createLenEx(&cs1, CSTRING_T_("string-#2"), 9, CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -102,7 +103,7 @@ int main(int argc, char *argv[])
         printf("cstring_createLenFn(CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createLenFn(&cs1, "string-#2", 9, CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY, NULL, 0, on_allocFail, NULL);
+            CSTRING_RC          rc  =   cstring_createLenFn(&cs1, CSTRING_T_("string-#2"), 9, CSTRING_F_USE_WINDOWS_PROCESSHEAP_MEMORY, NULL, 0, on_allocFail, NULL);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
         printf("cstring_createLenEx(CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY):\n");
         {
             struct cstring_t    cs1;
-            CSTRING_RC          rc  =   cstring_createEx(&cs1, "string-#3", CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
+            CSTRING_RC          rc  =   cstring_createEx(&cs1, CSTRING_T_("string-#3"), CSTRING_F_USE_WINDOWS_COM_TASK_MEMORY, NULL, 0);
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -132,14 +133,14 @@ int main(int argc, char *argv[])
         printf("\n========================================\n");
         printf("cstring_createLenEx(CSTRING_F_MEMORY_IS_FIXED | CSTRING_F_MEMORY_IS_BORROWED):\n");
         {
-            char                sz[101];
+            cstring_char_t      sz[101];
             struct cstring_t    cs1;
             CSTRING_RC          rc  =   cstring_createLenEx(&cs1
-                                                        ,   "string-#4"
+                                                        ,   CSTRING_T_("string-#4")
                                                         ,   9
                                                         ,   CSTRING_F_MEMORY_IS_FIXED | CSTRING_F_MEMORY_IS_BORROWED
                                                         ,   &sz[0]
-                                                        ,   sizeof(sz));
+                                                        ,   sizeof(sz) / sizeof(sz[0]));
 
             if (CSTRING_RC_SUCCESS == rc)
             {
@@ -158,84 +159,93 @@ int main(int argc, char *argv[])
  * function implementations
  */
 
+static void show_cstring_(char const* label, struct cstring_t const* pcs)
+{
+    fprintf(stdout, "%s", label);
+
+    cstring_write(stdout, pcs, NULL);
+
+    fprintf(stdout, "\n");
+}
+
 static void play_with_string(struct cstring_t *pcs)
 {
     struct cstring_t    cs2 =   cstring_t_DEFAULT;
     struct cstring_t    cs3;
     CSTRING_RC          rc;
 
-    fprintf(stdout, "  Initial contents: %.*s\n", (int)pcs->len, pcs->ptr);
+    show_cstring_("  Initial contents: ", pcs);
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Assigning another C-style string to the instance:\n");
-    rc = cstring_assign(pcs, "another string");
+    rc = cstring_assign(pcs, CSTRING_T_("another string"));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Assigning part of another C-style string to the instance:\n");
-    rc = cstring_assignLen(pcs, "some more contents", 17);
+    rc = cstring_assignLen(pcs, CSTRING_T_("some more contents"), 17);
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Appending another C-style string to the instance:\n");
-    rc = cstring_append(pcs, " - ");
+    rc = cstring_append(pcs, CSTRING_T_(" - "));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Appending part of another C-style string to the instance:\n");
-    rc = cstring_appendLen(pcs, "and another string", 11);
+    rc = cstring_appendLen(pcs, CSTRING_T_("and another string"), 11);
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Appending part of another C-style string to the instance:\n");
-    rc = cstring_append(pcs, "; and a whole lot more stringy stuff to try and precipitate a reallocation, in order to check that the 3.3 change will be tested");
+    rc = cstring_append(pcs, CSTRING_T_("; and a whole lot more stringy stuff to try and precipitate a reallocation, in order to check that the 3.3 change will be tested"));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
     fprintf(stdout, "  Appending part of another C-style string to the instance:\n");
-    rc = cstring_append(pcs, "; and a last bit to try and get the remaining reallocation");
+    rc = cstring_append(pcs, CSTRING_T_("; and a last bit to try and get the remaining reallocation"));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "    error: %s\n", cstring_getStatusCodeString(rc));
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
@@ -247,7 +257,7 @@ static void play_with_string(struct cstring_t *pcs)
     }
     else
     {
-        fprintf(stdout, "  Contents: %.*s\n", (int)pcs->len, pcs->ptr);
+        show_cstring_("  Contents: ", pcs);
     }
 
     fprintf(stdout, "\n");
@@ -259,8 +269,12 @@ static void play_with_string(struct cstring_t *pcs)
     }
     else
     {
-        fprintf(stdout, "  Contents:         %p %.*s\n", (void const*)pcs->ptr, (int)pcs->len, pcs->ptr);
-        fprintf(stdout, "  Contents of copy: %p %.*s\n", (void const*)cs2.ptr, (int)cs2.len, cs2.ptr);
+        fprintf(stdout, "  Contents:         %p ", (void const*)pcs->ptr);
+        cstring_write(stdout, pcs, NULL);
+        fprintf(stdout, "\n");
+        fprintf(stdout, "  Contents of copy: %p ", (void const*)cs2.ptr);
+        cstring_write(stdout, &cs2, NULL);
+        fprintf(stdout, "\n");
     }
 
     fprintf(stdout, "\n");
@@ -272,8 +286,12 @@ static void play_with_string(struct cstring_t *pcs)
     }
     else
     {
-        fprintf(stdout, "  Contents:         %p %.*s\n", (void const*)pcs->ptr, (int)pcs->len, pcs->ptr);
-        fprintf(stdout, "  Contents of copy: %p %.*s\n", (void const*)cs3.ptr, (int)cs3.len, cs3.ptr);
+        fprintf(stdout, "  Contents:         %p ", (void const*)pcs->ptr);
+        cstring_write(stdout, pcs, NULL);
+        fprintf(stdout, "\n");
+        fprintf(stdout, "  Contents of copy: %p ", (void const*)cs3.ptr);
+        cstring_write(stdout, &cs3, NULL);
+        fprintf(stdout, "\n");
     }
 
     fprintf(stdout, "\n");
@@ -285,8 +303,12 @@ static void play_with_string(struct cstring_t *pcs)
     }
     else
     {
-        fprintf(stdout, "  Contents:         %p %.*s\n", (void const*)pcs->ptr, (int)pcs->len, pcs->ptr);
-        fprintf(stdout, "  Contents of copy: %p %.*s\n", (void const*)cs2.ptr, (int)cs2.len, cs2.ptr);
+        fprintf(stdout, "  Contents:         %p ", (void const*)pcs->ptr);
+        cstring_write(stdout, pcs, NULL);
+        fprintf(stdout, "\n");
+        fprintf(stdout, "  Contents of copy: %p ", (void const*)cs2.ptr);
+        cstring_write(stdout, &cs2, NULL);
+        fprintf(stdout, "\n");
     }
 
     fprintf(stdout, "\n");
@@ -301,7 +323,7 @@ static int run_unittests(void)
 
     cstring_init(&cs1);
 
-    rc = cstring_create(&cs1, "");
+    rc = cstring_create(&cs1, CSTRING_T_(""));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "API error: %s\n", cstring_getStatusCodeString(rc));
@@ -332,7 +354,7 @@ static int run_unittests(void)
     }
 
 
-    rc = cstring_assignLen(&cs1, "Lemon shoes", 11);
+    rc = cstring_assignLen(&cs1, CSTRING_T_("Lemon shoes"), 11);
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "API error: %s\n", cstring_getStatusCodeString(rc));
@@ -343,9 +365,11 @@ static int run_unittests(void)
         fprintf(stdout, "Length of string not 11; length=%lu\n", (unsigned long)cs1.len);
         goto Failure;
     }
-    else if (0 != strcmp(cs1.ptr, "Lemon shoes"))
+    else if (0 != CSTRING_STRCMP_(cs1.ptr, CSTRING_T_("Lemon shoes")))
     {
-        fprintf(stdout, "Invalid string contents; not \"Lemon shoes\", but \"%s\"\n", cs1.ptr);
+        fprintf(stdout, "Invalid string contents; not \"Lemon shoes\", but \"");
+        cstring_write(stdout, &cs1, NULL);
+        fprintf(stdout, "\"\n");
         goto Failure;
     }
     else if (cs1.capacity < 100)
@@ -355,7 +379,7 @@ static int run_unittests(void)
     }
 
 
-    rc = cstring_append(&cs1, " - and orange tie");
+    rc = cstring_append(&cs1, CSTRING_T_(" - and orange tie"));
     if (CSTRING_RC_SUCCESS != rc)
     {
         fprintf(stdout, "API error: %s\n", cstring_getStatusCodeString(rc));
@@ -366,9 +390,11 @@ static int run_unittests(void)
         fprintf(stdout, "Length of string not 28; length=%lu\n", (unsigned long)cs1.len);
         goto Failure;
     }
-    else if (0 != strcmp(cs1.ptr, "Lemon shoes - and orange tie"))
+    else if (0 != CSTRING_STRCMP_(cs1.ptr, CSTRING_T_("Lemon shoes - and orange tie")))
     {
-        fprintf(stdout, "Invalid string contents; not \"Lemon shoes - and orange tie\", but \"%s\"\n", cs1.ptr);
+        fprintf(stdout, "Invalid string contents; not \"Lemon shoes - and orange tie\", but \"");
+        cstring_write(stdout, &cs1, NULL);
+        fprintf(stdout, "\"\n");
         goto Failure;
     }
     else if (cs1.capacity < 100)

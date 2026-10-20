@@ -23,6 +23,10 @@ on:
         required: false
         type: string
         default: ''
+      wide-strings:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -76,6 +80,9 @@ jobs:
             export CC="${{ inputs.c-compiler }}"
             export CXX="${{ inputs.cpp-compiler }}"
           fi
+          if [ "${{ inputs.wide-strings }}" = "true" ]; then
+            PREPARE_ARGS+=(--wide-strings)
+          fi
           ./prepare_cmake.sh ${PREPARE_ARGS[@]+"${PREPARE_ARGS[@]}"}
 
       - name: Build via build_cmake.sh
@@ -88,6 +95,18 @@ jobs:
             export PATH="/mingw64/bin:$PATH"
           fi
           ./build_cmake.sh
+
+      # Ubuntu runners do not ship tr_TR.UTF-8. The hash locale test
+      # compares C with a Turkish ctype locale when one is installed.
+      - name: Install Turkish locale (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y locales
+          sudo sed -i '/^# tr_TR.UTF-8 UTF-8/s/^# //' /etc/locale.gen
+          sudo locale-gen
 
       - name: CTest via ctest_cmake.sh
         shell: bash
@@ -147,6 +166,18 @@ jobs:
             \( -name 'example*' ! -name '*.md' \) \
           \) -exec chmod +x {} +
 
+      # Ubuntu runners do not ship tr_TR.UTF-8. The hash locale test
+      # compares C with a Turkish ctype locale when one is installed.
+      - name: Install Turkish locale (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y locales
+          sudo sed -i '/^# tr_TR.UTF-8 UTF-8/s/^# //' /etc/locale.gen
+          sudo locale-gen
+
       - name: Automated tests (unit then component) [non-Windows]
         if: runner.os != 'Windows'
         shell: bash
@@ -163,8 +194,9 @@ jobs:
           if /I "${{ inputs.toolchain }}"=="mingw" set "PATH=${{ steps.msys2.outputs.msys2-location }}\mingw64\bin;%PATH%"
           call run_all_automated_tests.cmd
 
+      # Wide-string cells do not run performance tests.
       - name: Performance tests [non-Windows]
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && inputs.wide-strings == false
         shell: bash
         env:
           # Mild CI smoke budget (Release default is 100000 / 2).
@@ -177,7 +209,7 @@ jobs:
             ./run_all_performance_tests.sh -M
 
       - name: Performance tests [Windows]
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && inputs.wide-strings == false
         shell: cmd
         env:
           # windows-cl keeps Release defaults; MinGW alone is throttled

@@ -3,8 +3,8 @@
 **cstring** is a classic-form C library, insofar as it has implementation
 files in its **src** directory and header files in its **include/cstring**
 directory. Thus, once "installed", one must simply include
-**cstring/cstring.h** (and, where needed, **cstring/cstring.vector.h**), and
-compile-in or link-in the implementation.
+**cstring/cstring.h** (which includes **cstring/hash.h**) and, where needed,
+**cstring/cstring.vector.h**, and compile-in or link-in the implementation.
 
 The **C** API has no non-standard dependencies. Building the project's tests
 additionally requires **STLSoft** and **xTests** (and optionally recognises
@@ -56,6 +56,8 @@ The primary choice for installation is by use of **CMake**.
      (`NO_CSTRING_CPP_API`);
    * `--no-p99` — do not recognise **p99** (`NO_P99`);
    * `--no-shwild` — do not recognise **shwild** (`NO_SHWILD`);
+   * `--wide-strings` — compile `cstring_char_t` as `wchar_t`
+     (`CSTRING_USE_WIDE_STRINGS`); performance tests are not built;
    * `--disable-examples` / `-E` — omit examples (`BUILD_EXAMPLES=OFF`);
    * `--disable-testing` / `-T` — omit tests (`BUILD_TESTING=OFF`);
    * `--stlsoft-root-dir` / `-s` — pass an **STLSoft** source-tree root when
@@ -106,8 +108,8 @@ The primary choice for installation is by use of **CMake**.
 
       int main(void)
       {
-          cstring_t cs;
-          CSTRING_RC rc = cstring_create(&cs, "Hello");
+          cstring_t   cs;
+          CSTRING_RC  rc = cstring_create(&cs, "Hello");
 
           if (CSTRING_RC_SUCCESS != rc)
           {
@@ -164,10 +166,11 @@ The primary choice for installation is by use of **CMake**.
 In that case:
 
 * add **cstring**'s **include** directory to your project's include path;
-* compile **src/cstring.core.c** and **src/cstring.vector.c** into your build
-  (or link a previously built **libcstring**); and
+* compile **src/cstring.core.c**, **src/cstring.hash.c**, and
+  **src/cstring.vector.c** into your build (or link a previously built
+  **libcstring**); and
 * `#include <cstring/cstring.h>` (and **cstring/cstring.vector.h** where
-  needed).
+  needed). **cstring.h** includes **cstring/hash.h**.
 
 
 <!-- ########################### end of file ########################### -->

@@ -1,4 +1,5 @@
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 if(_BUILD_AS_UNIX)
@@ -40,7 +41,12 @@ foreach(d
 	unit
 )
 
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${d}")
+	if(CSTRING_USE_WIDE_STRINGS AND d STREQUAL "performance")
+
+		# Competitive suites compare char payloads with std::string and
+		# byte-oriented file I/O. They are not a wchar_t build.
+		message(STATUS "wide-string build: not building performance tests")
+	elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${d}")
 
 		add_subdirectory(${d})
 	endif()

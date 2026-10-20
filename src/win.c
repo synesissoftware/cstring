@@ -1,10 +1,10 @@
 /* /////////////////////////////////////////////////////////////////////////
  * File:    win.c
  *
- * Purpose: Windows memory arenas for the cstring core API.
+ * Purpose: Windows memory arenas for cstring API.
  *
  * Created: 28th September 2026
- * Updated: 29th September 2026
+ * Updated: 5th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -41,7 +41,7 @@
  * ////////////////////////////////////////////////////////////////////// */
 
 
-/** \file win.c Windows memory arenas for the cstring core API
+/** \file win.c Windows memory arenas for cstring API
  */
 
 /* /////////////////////////////////////////////////////////////////////////
@@ -53,26 +53,28 @@
 
 
 /* /////////////////////////////////////////////////////////////////////////
- * Win32 functions
+ * Windows functions
  */
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
-# if defined(__MWERKS__)
-#  define  GMEM_FIXED                           0
-#  define  GMEM_MOVEABLE                        2
-typedef int                                     BOOL;
-typedef void*                                   HANDLE;
-typedef void*                                   HGLOBAL;
-__declspec(dllimport) HANDLE    __stdcall       GetProcessHeap(void);
-__declspec(dllimport) HGLOBAL   __stdcall       GlobalAlloc(unsigned int, unsigned long);
-__declspec(dllimport) HGLOBAL   __stdcall       GlobalFree(HGLOBAL);
-__declspec(dllimport) HGLOBAL   __stdcall       GlobalReAlloc(HGLOBAL, unsigned long, unsigned int);
-__declspec(dllimport) void*     __stdcall       HeapAlloc(HANDLE, unsigned long, unsigned int);
-__declspec(dllimport) BOOL      __stdcall       HeapFree(HANDLE, unsigned long, void* );
-__declspec(dllimport) void*     __stdcall       HeapReAlloc(HANDLE, unsigned long, void*, unsigned int);
-__declspec(dllimport) void*     __stdcall       CoTaskMemAlloc(unsigned long);
-__declspec(dllimport) void      __stdcall       CoTaskMemFree(void* );
-__declspec(dllimport) void*     __stdcall       CoTaskMemRealloc(void* , unsigned long);
+# if 0
+# elif defined(__MWERKS__)
+
+#  define  GMEM_FIXED                                       0
+#  define  GMEM_MOVEABLE                                    2
+typedef int                                                 BOOL;
+typedef void*                                               HANDLE;
+typedef void*                                               HGLOBAL;
+__declspec(dllimport) HANDLE    __stdcall   GetProcessHeap(void);
+__declspec(dllimport) HGLOBAL   __stdcall   GlobalAlloc(unsigned int, unsigned long);
+__declspec(dllimport) HGLOBAL   __stdcall   GlobalFree(HGLOBAL);
+__declspec(dllimport) HGLOBAL   __stdcall   GlobalReAlloc(HGLOBAL, unsigned long, unsigned int);
+__declspec(dllimport) void*     __stdcall   HeapAlloc(HANDLE, unsigned long, unsigned int);
+__declspec(dllimport) BOOL      __stdcall   HeapFree(HANDLE, unsigned long, void* );
+__declspec(dllimport) void*     __stdcall   HeapReAlloc(HANDLE, unsigned long, void*, unsigned int);
+__declspec(dllimport) void*     __stdcall   CoTaskMemAlloc(unsigned long);
+__declspec(dllimport) void      __stdcall   CoTaskMemFree(void* );
+__declspec(dllimport) void*     __stdcall   CoTaskMemRealloc(void* , unsigned long);
 # else /* ? compiler */
 
 #  include <windows.h>
@@ -80,7 +82,10 @@ __declspec(dllimport) void*     __stdcall       CoTaskMemRealloc(void* , unsigne
 # endif /* compiler */
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
-/* ////////////////////////////////////////////////////////////////////// */
+
+/* /////////////////////////////////////////////////////////////////////////
+ * internal API functions
+ */
 
 void*
 win32_global_realloc(

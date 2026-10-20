@@ -1,28 +1,54 @@
+/* /////////////////////////////////////////////////////////////////////////
+ * File:    examples/cpp/cstring.global_memory/main.cpp
+ *
+ * Purpose: Windows-only example loading the cstring DLL dynamically via
+ *          `LoadLibrary` / `GetProcAddress`.
+ *
+ * Created: 19th August 2005
+ * Updated: 5th October 2026
+ *
+ * ////////////////////////////////////////////////////////////////////// */
 
+
+/* cstring header files */
 #include <cstring/cstring.h>
+#include "cstring.helpers.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+
+/* /////////////////////////////////////////////////////////////////////////
+ * macros
+ */
 
 #ifndef STLSOFT_NUM_ELEMENTS
 # define STLSOFT_NUM_ELEMENTS(ar)                           (sizeof(ar) / sizeof(ar[0]))
 #endif /*!STLSOFT_NUM_ELEMENTS*/
 
 
+/* /////////////////////////////////////////////////////////////////////////
+ * main()
+ */
+
 int main()
 {
-    static char const* strings[] =
+    static cstring_char_t const* strings[] =
     {
-        "abc"
-    ,   "defghijklmno"
-    ,   "pqrstuvwxyz"
+        CSTRING_T_("abc")
+    ,   CSTRING_T_("defghijklmno")
+    ,   CSTRING_T_("pqrstuvwxyz")
     };
 
     size_t cchTotal = 0;
 
     { for(size_t i = 0; i != STLSOFT_NUM_ELEMENTS(strings); ++i)
     {
+#ifdef CSTRING_USE_WIDE_STRINGS
+        cchTotal += ::wcslen(strings[i]);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
         cchTotal += ::strlen(strings[i]);
+#endif /* CSTRING_USE_WIDE_STRINGS */
     }}
 
     cstring_t       payload =   cstring_t_DEFAULT;
@@ -56,10 +82,20 @@ int main()
         rc = cstring_append(&payload, strings[i]);
         if (CSTRING_RC_SUCCESS == rc)
         {
-            printf("appended '%s' => '%.*s'\n"
-            ,   strings[i]
-            ,   (int)payload.len, payload.ptr
-            );
+            cstring_t shown = cstring_t_DEFAULT;
+
+#ifdef CSTRING_USE_WIDE_STRINGS
+            shown.len = ::wcslen(strings[i]);
+#else /* ? CSTRING_USE_WIDE_STRINGS */
+            shown.len = ::strlen(strings[i]);
+#endif /* CSTRING_USE_WIDE_STRINGS */
+            shown.ptr = const_cast<cstring_char_t*>(strings[i]);
+
+            printf("appended '");
+            cstring_write(stdout, &shown, NULL);
+            printf("' => '");
+            cstring_write(stdout, &payload, NULL);
+            printf("'\n");
         }
         else
         {
@@ -74,6 +110,7 @@ int main()
 
     return 0;
 }
+
 
 /* ///////////////////////////// end of file //////////////////////////// */
 

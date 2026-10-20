@@ -5,7 +5,7 @@
 # Purpose:  CMake lists file for cstring core library
 #
 # Created:  21st December 2023
-# Updated:  3rd October 2026
+# Updated:  6th October 2026
 #
 # ######################################################################## #
 
@@ -45,8 +45,10 @@ endif()
 
 
 set(CORE_SRCS
-	cstring.vector.c
+	cstring.compare.c
 	cstring.core.c
+	cstring.hash.c
+	cstring.vector.c
 )
 
 if(_BUILD_AS_WIN32)
@@ -59,6 +61,16 @@ endif(_BUILD_AS_WIN32)
 add_library(core
 	${CORE_SRCS}
 )
+
+if(CSTRING_USE_WIDE_STRINGS)
+
+	# PUBLIC so dependents, and the exported cstring::core target, compile
+	# against the same cstring_char_t as this library.
+	target_compile_definitions(core
+		PUBLIC
+			CSTRING_USE_WIDE_STRINGS
+	)
+endif(CSTRING_USE_WIDE_STRINGS)
 
 if(_BUILD_AS_WIN32)
 
@@ -76,8 +88,10 @@ endif(_BUILD_AS_WIN32)
 # header files from sub-directories, so this is done below in an additional
 # `install()` step
 set(CORE_PUBLIC_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/common.h"
 	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/${PROJECT_NAME_LOWER}.h"
 	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/cstring.vector.h"
+	"${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME_LOWER}/hash.h"
 )
 
 set_target_properties(core PROPERTIES

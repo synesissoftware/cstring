@@ -4,7 +4,7 @@
  * Purpose: Component-tests `cstring_vector_readLines()`.
  *
  * Created: 27th September 2026
- * Updated: 4th October 2026
+ * Updated: 5th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -24,6 +24,7 @@
  */
 
 #include "component_fixture.hpp"
+#include "../../cstring_testing.h"
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -188,13 +189,13 @@ static void TEST_cstring_vector_readLines_SHORT_MULTILINE()
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
     TEST_INT_EQ(7u, numLinesRead);
     REQUIRE(TEST_INT_EQ(7u, csv.len));
-    TEST_MS_EQ("", csv.ptr[0]);
-    TEST_MS_EQ("abc", csv.ptr[1]);
-    TEST_MS_EQ("abcdef", csv.ptr[2]);
-    TEST_MS_EQ("abcdefghijkl", csv.ptr[3]);
-    TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz", csv.ptr[4]);
-    TEST_MS_EQ("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", csv.ptr[5]);
-    TEST_MS_EQ("xyz", csv.ptr[6]);
+    TEST_MB_EQ_("", csv.ptr[0]);
+    TEST_MB_EQ_("abc", csv.ptr[1]);
+    TEST_MB_EQ_("abcdef", csv.ptr[2]);
+    TEST_MB_EQ_("abcdefghijkl", csv.ptr[3]);
+    TEST_MB_EQ_("abcdefghijklmnopqrstuvwxyz", csv.ptr[4]);
+    TEST_MB_EQ_("abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", csv.ptr[5]);
+    TEST_MB_EQ_("xyz", csv.ptr[6]);
 
     cstring_vector_destroy(&csv);
 }
@@ -225,12 +226,12 @@ static void TEST_cstring_vector_readLines_CRLF_AND_MIXED_EOL()
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
     TEST_INT_EQ(6u, numLinesRead);
     REQUIRE(TEST_INT_EQ(6u, csv.len));
-    TEST_MS_EQ("one", csv.ptr[0]);
-    TEST_MS_EQ("two", csv.ptr[1]);
-    TEST_MS_EQ("three", csv.ptr[2]);
-    TEST_MS_EQ("has", csv.ptr[3]);
-    TEST_MS_EQ("embed", csv.ptr[4]);
-    TEST_MS_EQ("end", csv.ptr[5]);
+    TEST_MB_EQ_("one", csv.ptr[0]);
+    TEST_MB_EQ_("two", csv.ptr[1]);
+    TEST_MB_EQ_("three", csv.ptr[2]);
+    TEST_MB_EQ_("has", csv.ptr[3]);
+    TEST_MB_EQ_("embed", csv.ptr[4]);
+    TEST_MB_EQ_("end", csv.ptr[5]);
 
     cstring_vector_destroy(&csv);
 }
@@ -252,8 +253,8 @@ static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF()
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
         TEST_INT_EQ(2u, numLinesRead);
         REQUIRE(TEST_INT_EQ(2u, csv.len));
-        TEST_MS_EQ("a", csv.ptr[0]);
-        TEST_MS_EQ("b", csv.ptr[1]);
+        TEST_MB_EQ_("a", csv.ptr[0]);
+        TEST_MB_EQ_("b", csv.ptr[1]);
 
         cstring_vector_destroy(&csv);
     }
@@ -272,8 +273,8 @@ static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF()
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
         TEST_INT_EQ(2u, numLinesRead);
         REQUIRE(TEST_INT_EQ(2u, csv.len));
-        TEST_MS_EQ("a", csv.ptr[0]);
-        TEST_MS_EQ("b", csv.ptr[1]);
+        TEST_MB_EQ_("a", csv.ptr[0]);
+        TEST_MB_EQ_("b", csv.ptr[1]);
 
         cstring_vector_destroy(&csv);
     }
@@ -293,7 +294,7 @@ static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF()
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
         TEST_INT_EQ(1u, numLinesRead);
         REQUIRE(TEST_INT_EQ(1u, csv.len));
-        TEST_MS_EQ("a", csv.ptr[0]);
+        TEST_MB_EQ_("a", csv.ptr[0]);
 
         cstring_vector_destroy(&csv);
     }
@@ -313,7 +314,7 @@ static void TEST_cstring_vector_readLines_FINAL_EOL_AND_EMPTY_AT_EOF()
         REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
         TEST_INT_EQ(1u, numLinesRead);
         REQUIRE(TEST_INT_EQ(1u, csv.len));
-        TEST_MS_EQ("xyz", csv.ptr[0]);
+        TEST_MB_EQ_("xyz", csv.ptr[0]);
 
         cstring_vector_destroy(&csv);
     }
@@ -337,8 +338,8 @@ static void TEST_cstring_vector_readLines_CONSECUTIVE_EMPTY_LINES()
     REQUIRE(TEST_INT_EQ(2u, csv.len));
     TEST_INT_EQ(0u, csv.ptr[0].len);
     TEST_INT_EQ(0u, csv.ptr[1].len);
-    TEST_MS_EQ("", csv.ptr[0]);
-    TEST_MS_EQ("", csv.ptr[1]);
+    TEST_MB_EQ_("", csv.ptr[0]);
+    TEST_MB_EQ_("", csv.ptr[1]);
 
     cstring_vector_destroy(&csv);
 }
@@ -350,7 +351,7 @@ static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING()
 
     cstring_t prior = cstring_t_DEFAULT;
 
-    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_create(&prior, "prior")));
+    REQUIRE(TEST_ENUM_EQ(CSTRING_RC_SUCCESS, cstring_create(&prior, CSTRING_T_("prior"))));
 
     cstring_vector_t csv = cstring_vector_t_DEFAULT;
 
@@ -366,9 +367,9 @@ static void TEST_cstring_vector_readLines_APPEND_ONTO_EXISTING()
 
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
     REQUIRE(TEST_INT_EQ(3u, csv.len));
-    TEST_MS_EQ("prior", csv.ptr[0]);
-    TEST_MS_EQ("new-one", csv.ptr[1]);
-    TEST_MS_EQ("new-two", csv.ptr[2]);
+    TEST_MB_EQ_("prior", csv.ptr[0]);
+    TEST_MB_EQ_("new-one", csv.ptr[1]);
+    TEST_MB_EQ_("new-two", csv.ptr[2]);
 
     cstring_vector_destroy(&csv);
 }
@@ -406,8 +407,8 @@ static void TEST_cstring_vector_readLines_LONG_LINES()
         TEST_INT_EQ(2u, numLinesRead);
         REQUIRE(TEST_INT_EQ(2u, csv.len));
         TEST_INT_EQ(len, csv.ptr[0].len);
-        TEST_MS_EQ(line.c_str(), csv.ptr[0]);
-        TEST_MS_EQ("tail", csv.ptr[1]);
+        TEST_MB_EQ_(line.c_str(), csv.ptr[0]);
+        TEST_MB_EQ_("tail", csv.ptr[1]);
 
         cstring_vector_destroy(&csv);
     }}
@@ -449,7 +450,7 @@ static void TEST_cstring_vector_readLines_MANY_SHORT_LINES()
 
     { for (size_t i = 0; i != num_lines; ++i)
     {
-        TEST_MS_EQ(expected[i].c_str(), csv.ptr[i]);
+        TEST_MB_EQ_(expected[i].c_str(), csv.ptr[i]);
     }}
 
     cstring_vector_destroy(&csv);
@@ -471,9 +472,9 @@ static void TEST_cstring_vector_readLines_EMPTY_LINE_IN_MIDDLE()
     REQUIRE(TEST_ENUM_EQ(CSTRING_RC_EOF, rc));
     TEST_INT_EQ(3u, numLinesRead);
     REQUIRE(TEST_INT_EQ(3u, csv.len));
-    TEST_MS_EQ("top", csv.ptr[0]);
-    TEST_MS_EQ("", csv.ptr[1]);
-    TEST_MS_EQ("bottom", csv.ptr[2]);
+    TEST_MB_EQ_("top", csv.ptr[0]);
+    TEST_MB_EQ_("", csv.ptr[1]);
+    TEST_MB_EQ_("bottom", csv.ptr[2]);
 
     cstring_vector_destroy(&csv);
 }
