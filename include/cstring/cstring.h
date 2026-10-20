@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 7th October 2026
+ * Updated: 24th October 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 3
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     101
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     103
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -106,6 +106,7 @@
 # define CSTRING_VER_4_0_19     0x040013ff
 # define CSTRING_VER_4_1_0_A1   0x04010041
 # define CSTRING_VER_4_1_0_A2   0x04010042
+# define CSTRING_VER_4_1_1_A1   0x04010141
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -120,24 +121,29 @@
  * The patch version number of **cstring**
  */
 
+/** \def CSTRING_VER_RELSTATUS
+ * The release-status number of **cstring**
+ */
+
 /** \def CSTRING_VER
  * The current composite version number of **cstring**
  */
 
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   1
-#define CSTRING_VER_PATCH                                   0
-#define CSTRING_VER_ALPHABETA                               0x42
+#define CSTRING_VER_PATCH                                   1
+#define CSTRING_VER_RELSTATUS                               0x41
 
 #define CSTRING_VER \
     (0\
         |   (   CSTRING_VER_MAJOR      << 24   ) \
         |   (   CSTRING_VER_MINOR      << 16   ) \
         |   (   CSTRING_VER_PATCH      <<  8   ) \
-        |   (   CSTRING_VER_ALPHABETA  <<  0   ) \
+        |   (   CSTRING_VER_RELSTATUS  <<  0   ) \
     )
 
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
+# define CSTRING_VER_ALPHABETA                              CSTRING_VER_RELSTATUS
 # define CSTRING_VER_REVISION                               CSTRING_VER_PATCH
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 

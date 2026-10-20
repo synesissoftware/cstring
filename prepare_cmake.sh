@@ -34,16 +34,24 @@ Configuration=Release
 ExamplesDisabled=0
 MinGW=$(sis_cmake_is_truey "${SIS_CMAKE_MINGW:-}" && echo 1 || echo 0)
 MSVC_MT=0
+RunMake=0
+SisUseColours=0
+TestingDisabled=0
+VerboseMakefile=0
+
+# ##########################################################
+# PROJECT-SPECIFIC FLAGS (customise per library; keep marker)
+#
+# Add project-only options here (e.g. --no-cpp, --stlsoft-root-dir,
+# --no-shwild). The common body below must stay aligned with
+# misc-dev-scripts/shell-scripts/cmake-helpers/prepare_cmake.sh.
+
+
 NO_cxx=0
 NO_p99=0
 NO_shwild=0
-RunMake=0
-SisUseColours=0
 STLSoftDirGiven=
-TestingDisabled=0
-VerboseMakefile=0
 WideStrings=0
-
 
 # ##########################################################
 # colours
