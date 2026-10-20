@@ -4,6 +4,7 @@
 | Date                | News Item                            | Details |
 | ------------------- | ------------------------------------ | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
+| 21st October 2026   | Release of [cstring 4.1.0-beta1](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta1) | helper gold 0.6.2; `CSTRING_VER_RELSTATUS` |
 | 6th October 2026    | Release of [cstring 4.1.0-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-alpha1) | `djb2`, `FNV-1a`, and `SDBM`; `cstring_equal()` / `cstring_compare()`; `--wide-strings`; counted copies stop at `cch` |
 | 4th October 2026    | Release of [cstring 4.0.19](https://github.com/synesissoftware/cstring/releases/tag/4.0.19) | lone CR ends a line; `numRead` includes EOL; readonly truncate; zero-size realloc frees; **test.performance.cstring_readline**; shortened test and example directories; **test.unit.cstring**; README usage modes |
 | 29th September 2026 | Release of [cstring 4.0.18](https://github.com/synesissoftware/cstring/releases/tag/4.0.18) | `_WIN32` arena gate; **win.c**; static `CoTaskMem*` (**ole32**) |
