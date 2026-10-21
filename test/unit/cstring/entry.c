@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring instance general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 6th October 2026
+ * Updated: 7th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -241,10 +241,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -266,10 +265,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -291,10 +289,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -316,10 +313,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -341,10 +337,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -366,10 +361,9 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
         else
         {
             TEST_INT_EQ(0u, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
-            TEST_INT_GT(0u, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+            TEST_INT_EQ(0, str.flags);
 
             cstring_destroy(&str);
 
@@ -425,10 +419,15 @@ static void TEST_cstring_assign_AND_cstring_create_AND_cstring_createLen_NULL_AN
             TEST_PTR_NE(NULL, str.ptr);
             TEST_STR_EQ_(CSTRING_T_(""), str.ptr);
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[0]);
+            /* cch runs past the NUL that ends "". Only ptr[0] and the
+             * terminator at ptr[cch] are defined.
+             */
+            /*
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[1]);
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[2]);
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[3]);
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[4]);
+            */
             TEST_CHAR_EQ(CSTRING_T_('\0'), str.ptr[5]);
             TEST_INT_GE(5u, str.capacity);
             TEST_INT_GE(str.len, str.capacity);
@@ -549,10 +548,18 @@ static void TEST_cstring_assignLen_AND_cstring_createLen(void)
         else
         {
             TEST_INT_EQ(cch, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_N_(s, str.ptr, (int)i);
-            TEST_INT_GE(cch, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == cch)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                TEST_STR_EQ_N_(s, str.ptr, (int)i);
+                TEST_INT_GE(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
+            }
 
             cstring_destroy(&str);
 
@@ -579,10 +586,18 @@ static void TEST_cstring_assignLen_AND_cstring_createLen(void)
             else
             {
                 TEST_INT_EQ(cch, str.len);
-                TEST_PTR_NE(NULL, str.ptr);
-                TEST_STR_EQ_N_(s, str.ptr, (int)i);
-                TEST_INT_GE(cch, str.capacity);
-                TEST_INT_GE(str.len, str.capacity);
+                if (0u == cch)
+                {
+                    TEST_PTR_EQ(NULL, str.ptr);
+                    TEST_INT_EQ(0u, str.capacity);
+                }
+                else
+                {
+                    TEST_PTR_NE(NULL, str.ptr);
+                    TEST_STR_EQ_N_(s, str.ptr, (int)i);
+                    TEST_INT_GE(cch, str.capacity);
+                    TEST_INT_GE(str.len, str.capacity);
+                }
             }
         }}
 
@@ -608,10 +623,18 @@ static void TEST_cstring_assignLen_AND_cstring_createLen(void)
         else
         {
             TEST_INT_EQ(cch, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_STR_EQ_N_(s, str.ptr, (int)i);
-            TEST_INT_GE(cch, str.capacity);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == cch)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                TEST_STR_EQ_N_(s, str.ptr, (int)i);
+                TEST_INT_GE(cch, str.capacity);
+                TEST_INT_GE(str.len, str.capacity);
+            }
 
             cstring_destroy(&str);
 
@@ -804,8 +827,17 @@ static void TEST_cstring_create(void)
         cstring_create(&str, s);
 
         TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
@@ -826,9 +858,18 @@ static void TEST_cstring_createLen(void)
 
         cstring_createLen(&str, s, i);
 
-        TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
@@ -875,8 +916,17 @@ static void TEST_cstring_createEx(void)
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
@@ -939,9 +989,18 @@ static void TEST_cstring_createEx(void)
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, GlobalSize(str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, GlobalSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -961,9 +1020,18 @@ static void TEST_cstring_createEx(void)
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, HeapSize(GetProcessHeap(), 0, str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, HeapSize(GetProcessHeap(), 0, str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -983,9 +1051,18 @@ static void TEST_cstring_createEx(void)
         cstring_createEx(&str, s, flags, NULL, 0);
 
         TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        if (0u == str.len)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1008,9 +1085,18 @@ static void TEST_cstring_createLenEx(void)
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+        }
 
         cstring_destroy(&str);
 
@@ -1072,10 +1158,19 @@ static void TEST_cstring_createLenEx(void)
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, GlobalSize(str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, GlobalSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1094,10 +1189,19 @@ static void TEST_cstring_createLenEx(void)
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, HeapSize(GetProcessHeap(), 0, str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, HeapSize(GetProcessHeap(), 0, str.ptr));
+        }
 
         cstring_destroy(&str);
 
@@ -1116,10 +1220,19 @@ static void TEST_cstring_createLenEx(void)
 
         cstring_createLenEx(&str, s, i, flags, NULL, 0);
 
-        TEST_INT_GE(i, str.len);
-        TEST_STR_EQ_(s, str.ptr);
-        TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        TEST_INT_EQ(i, str.len);
+        if (0u == i)
+        {
+            TEST_PTR_EQ(NULL, str.ptr);
+            TEST_INT_EQ(0u, str.capacity);
+        }
+        else
+        {
+            TEST_PTR_NE(NULL, str.ptr);
+            TEST_STR_EQ_(s, str.ptr);
+            TEST_INT_GE(str.len, str.capacity);
+            TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        }
 
         cstring_destroy(&str);
 

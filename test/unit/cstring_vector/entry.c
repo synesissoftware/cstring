@@ -4,7 +4,7 @@
  * Purpose: Tests `cstring_vector_t` functionality.
  *
  * Created: 12th January 2024
- * Updated: 5th October 2026
+ * Updated: 7th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -314,7 +314,14 @@ static void TEST_cstring_vector_insertAt_LIST(void)
             for (i = 0; i != STLSOFT_NUM_ELEMENTS(strings); ++i)
             {
                 TEST_INT_EQ(cstring_testing_strlen_(strings[i]), csv.ptr[i].len);
-                TEST_STR_EQ_(strings[i], csv.ptr[i].ptr);
+                if (0u == csv.ptr[i].len)
+                {
+                    TEST_PTR_EQ(NULL, csv.ptr[i].ptr);
+                }
+                else
+                {
+                    TEST_STR_EQ_(strings[i], csv.ptr[i].ptr);
+                }
             }
         }
         else

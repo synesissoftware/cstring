@@ -4,7 +4,7 @@
  * Purpose: Shared helpers for cstring performance programs.
  *
  * Created: 23rd September 2026
- * Updated: 4th October 2026
+ * Updated: 7th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

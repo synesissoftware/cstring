@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring insert and replace functionality.
  *
  * Created: 4th June 2009
- * Updated: 5th October 2026
+ * Updated: 7th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -138,18 +138,26 @@ static void TEST_cstring_createN(void)
         if (CSTRING_RC_SUCCESS == rc)
         {
             TEST_INT_EQ((size_t)i, str.len);
-            TEST_PTR_NE(NULL, str.ptr);
-            TEST_INT_GE(str.len, str.capacity);
+            if (0u == i)
+            {
+                TEST_PTR_EQ(NULL, str.ptr);
+                TEST_INT_EQ(0u, str.capacity);
+            }
+            else
+            {
+                TEST_PTR_NE(NULL, str.ptr);
+                TEST_INT_GE(str.len, str.capacity);
 
 #if defined(XTESTS_HAS_SHWILD) && !defined(CSTRING_USE_WIDE_STRINGS)
 
-            /* created string must be entirely '~' */
-            TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
-            TEST_MS_DOES_NOT_MATCH("*[ ,.<>/?'\";:[{]}`!@#$%^&*()=_+\\\\|-]*", str.ptr);
+                /* created string must be entirely '~' */
+                TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
+                TEST_MS_DOES_NOT_MATCH("*[ ,.<>/?'\";:[{]}`!@#$%^&*()=_+\\\\|-]*", str.ptr);
 #else /* ? shwild && !wide */
 
-            TEST_PTR_EQ(NULL, cstring_testing_strpbrk_(str.ptr, CSTRING_T_("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,<.>/?'\";:[{]}`!@#$%^&*()-_=+\\|")));
+                TEST_PTR_EQ(NULL, cstring_testing_strpbrk_(str.ptr, CSTRING_T_("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,<.>/?'\";:[{]}`!@#$%^&*()-_=+\\|")));
 #endif /* shwild && !wide */
+            }
 
             cstring_destroy(&str);
 

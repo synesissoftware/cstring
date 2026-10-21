@@ -4,7 +4,7 @@
  * Purpose: Tests borrowed string functionality.
  *
  * Created: 28th July 2011
- * Updated: 5th October 2026
+ * Updated: 7th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

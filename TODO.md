@@ -16,9 +16,9 @@
 * [x] ~~~Delete Visual Studio 2003+ files~~~ - ✅;
 * [x] ~~~discriminate on `_WIN32` in implementation (and maybe also in API)~~~ - ✅;
 * [x] ~~~check `CSTRING_USE_WINAPI_`~~~;
-* [ ] custom arena(s);
-* [ ] wide-string CI;
+* [x] ~~~wide-string CI~~~ - ✅;
 * [ ] `cstring_vector_readlineEx()` that takes a flag to prevent truncate, thereby allowing client code to add to an existing string;
+* [ ] custom arena(s);
 * [ ] when go to 5.x, change the name of `cstring_vector_readLines()` to `cstring_vector_readlines()`;
 * [ ] when go to 5.x, consider use of SSO;
 * [ ] when go to 5.x, consider expanding `cstring_vector_t` to allow it to own the memory of the strings it manages, such that can do a single file read and then break up into strings without allocating payload memory;
@@ -64,7 +64,7 @@
   * [ ] Hash API in cstring/hash.h;
   * [ ] Vector API in cstring/vector.h;
   * [ ] Umbrella / All API in cstring/cstring.h;
-* [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
+* [x] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;
   * [ ] HomeBrew;

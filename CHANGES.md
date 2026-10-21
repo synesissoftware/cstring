@@ -1,6 +1,17 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-alpha2 - 7th October 2026
+
+* performance optimisations;
+
+
+## 4.1.0-beta1 - 21st October 2026
+
+* Brought the tip CMake runners up to **misc-dev-scripts** 0.6.2 and merged that gold into **prepare_cmake.sh**, keeping the cstring `-D` flags and `--gap-groups`;
+* Defined `CSTRING_VER_RELSTATUS` (`0x81`, beta 1) and aliased `CSTRING_VER_ALPHABETA` to it;
+
+
 ## 4.1.0-alpha1 - 6th October 2026
 
 * Added 64-bit `djb2` hash functions: `cstring_hash_djb2()`, `cstring_hash_djb2_case()`, `cstring_hash_djb2_buf()`, and `cstring_hash_djb2_buf_case()`;

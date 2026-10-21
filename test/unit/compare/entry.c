@@ -192,8 +192,8 @@ static void TEST_cstring_equal_AND_cstring_compare_ORDER(void)
 
 static void TEST_cstring_equal_AND_cstring_compare_EMBEDDED_NUL(void)
 {
-    /* cstring_createLen() stops at the first NUL, so the slice is built
-     * here.
+    /* The payload is this array, so equal and compare read the embedded
+     * NUL. len includes the byte after that NUL.
      */
     cstring_char_t  a_nul_b[3];
     cstring_char_t  a_nul_c[3];

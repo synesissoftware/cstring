@@ -5,12 +5,12 @@ if(NOT NO_CSTRING_CPP_API)
 
 	add_subdirectory(compare.cxx)
 endif()
-add_subdirectory(cstring_vector)
+add_subdirectory(cstring)
 if(NOT NO_CSTRING_CPP_API)
 
 	add_subdirectory(cstring.cxx)
 endif()
-add_subdirectory(cstring)
+add_subdirectory(cstring_vector)
 add_subdirectory(hash)
 if(NOT NO_CSTRING_CPP_API)
 
