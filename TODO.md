@@ -64,7 +64,7 @@
   * [ ] Hash API in cstring/hash.h;
   * [ ] Vector API in cstring/vector.h;
   * [ ] Umbrella / All API in cstring/cstring.h;
-* [-] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
+* [x] ~~~Makefiles (legacy build trees removed; CMake-only)~~~ - ❌;
 * [ ] Packages:
   * [ ] vcpkg;
   * [ ] HomeBrew;
