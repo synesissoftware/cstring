@@ -1,6 +1,10 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-beta2 - 25th October 2026
+
+
+
 ## 4.1.0-beta1 - 21st October 2026
 
 * Brought the tip CMake runners up to **misc-dev-scripts** 0.6.2 and merged that gold into **prepare_cmake.sh**, keeping the cstring `-D` flags and `--gap-groups`;
