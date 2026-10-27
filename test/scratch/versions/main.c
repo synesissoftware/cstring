@@ -11,6 +11,10 @@
 
 #include <cstring/cstring.h>
 
+#ifdef HAS_p99
+# include <p99/p99.h>
+#endif
+
 #ifdef HAS_shwild
 # include <shwild/shwild.h>
 #endif
@@ -67,6 +71,17 @@ int main(int argc, char* argv[])
         version(stdout, "", "cstring", "CSTRING_VER", libver);
     }
 
+#ifdef HAS_p99
+
+    (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
+
+    {
+        unsigned const libver = (unsigned)P99_VER;
+
+        version(stdout, "\t", "p99", "P99_VER", libver);
+    }
+#endif
+
 #ifdef HAS_shwild
 
     (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
@@ -78,7 +93,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifdef HAS_STLSOFT
+#ifdef HAS_STLSoft
 
     (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
 
