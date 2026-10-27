@@ -4,15 +4,23 @@
  * Purpose: Prints cstring composite version (and STLSoft when present).
  *
  * Created: 17th September 2026
- * Updated: 17th September 2026
+ * Updated: 27th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
 
 #include <cstring/cstring.h>
 
-#ifdef HAS_STLSOFT
+#ifdef HAS_shwild
+# include <shwild/shwild.h>
+#endif
+
+#ifdef HAS_STLSoft
 # include <stlsoft/stlsoft.h>
+#endif
+
+#ifdef HAS_xTests
+# include <xtests/xtests.h>
 #endif
 
 #include <stdio.h>
@@ -48,6 +56,8 @@ version(
 
 int main(int argc, char* argv[])
 {
+    size_t efferent_counts = 0;
+
     ((void)&argc);
     ((void)&argv);
 
@@ -57,14 +67,36 @@ int main(int argc, char* argv[])
         version(stdout, "", "cstring", "CSTRING_VER", libver);
     }
 
+#ifdef HAS_shwild
+
+    (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
+
+    {
+        unsigned const libver = (unsigned)SHWILD_VER;
+
+        version(stdout, "\t", "shwild", "SHWILD_VER", libver);
+    }
+#endif
+
 #ifdef HAS_STLSOFT
 
-    fputs("\nefferent dependencies:\n", stdout);
+    (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
 
     {
         unsigned const libver = (unsigned)_STLSOFT_VER;
 
         version(stdout, "\t", "STLSoft", "_STLSOFT_VER", libver);
+    }
+#endif
+
+#ifdef HAS_xTests
+
+    (0 == efferent_counts++) && fputs("\nefferent dependencies:\n", stdout);
+
+    {
+        unsigned const libver = (unsigned)_XTESTS_VER;
+
+        version(stdout, "\t", "xTests", "_XTESTS_VER", libver);
     }
 #endif
 
