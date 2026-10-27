@@ -4,7 +4,7 @@
  * Purpose: Unit-tests `cstring_error()`, `cstring_getStatusCodeString()`.
  *
  * Created: 28th July 2011
- * Updated: 4th October 2026
+ * Updated: 27th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -23,10 +23,10 @@
  * general includes
  */
 
-#ifdef XTESTS_HAS_SHWILD
+#ifdef CSTRING_HAS_SHWILD
  /* shwild header files */
 # include <shwild/shwild.h>
-#endif /* XTESTS_HAS_SHWILD */
+#endif /* CSTRING_HAS_SHWILD */
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -149,7 +149,7 @@ static void TEST_cstring_getStatusCodeString_KNOWN_CODES(void)
         TEST_MS_NE("<<unknown error>>", cstring_getStatusCodeString(knownCodes[i]));
     }}
 
-#ifdef XTESTS_HAS_SHWILD
+#ifdef CSTRING_HAS_SHWILD
 
     TEST_MS_MATCHES("operation completed successfully", cstring_getStatusCodeString(CSTRING_RC_SUCCESS));
     TEST_MS_MATCHES("out of memory", cstring_getStatusCodeString(CSTRING_RC_OUTOFMEMORY));
@@ -168,7 +168,7 @@ static void TEST_cstring_getStatusCodeString_KNOWN_CODES(void)
     TEST_MS_MATCHES("an I/O error occured", cstring_getStatusCodeString(CSTRING_RC_IOERROR));
     TEST_MS_MATCHES("system-specific failure occurred", cstring_getStatusCodeString(CSTRING_RC_SYSTEMSPECIFICFAILURE));
     TEST_MS_MATCHES("request exceeded inherent or runtime limit", cstring_getStatusCodeString(CSTRING_RC_REQUESTTOOLARGE));
-#endif /* XTESTS_HAS_SHWILD */
+#endif /* CSTRING_HAS_SHWILD */
 }
 
 static void TEST_cstring_getStatusCodeString_UNKNOWN_CODES(void)
@@ -195,7 +195,7 @@ static void TEST_cstring_error_KNOWN_CODES(void)
         TEST_MS_NE("<<unknown error>>", cstring_error(knownCodes[i]));
     }}
 
-#ifdef XTESTS_HAS_SHWILD
+#ifdef CSTRING_HAS_SHWILD
 
     TEST_MS_MATCHES("operation completed successfully", cstring_error(CSTRING_RC_SUCCESS));
     TEST_MS_MATCHES("out of memory", cstring_error(CSTRING_RC_OUTOFMEMORY));
@@ -214,7 +214,7 @@ static void TEST_cstring_error_KNOWN_CODES(void)
     TEST_MS_MATCHES("an I/O error occured", cstring_error(CSTRING_RC_IOERROR));
     TEST_MS_MATCHES("system-specific failure occurred", cstring_error(CSTRING_RC_SYSTEMSPECIFICFAILURE));
     TEST_MS_MATCHES("request exceeded inherent or runtime limit", cstring_error(CSTRING_RC_REQUESTTOOLARGE));
-#endif /* XTESTS_HAS_SHWILD */
+#endif /* CSTRING_HAS_SHWILD */
 }
 
 static void TEST_cstring_error_UNKNOWN_CODES(void)
