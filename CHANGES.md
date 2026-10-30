@@ -1,6 +1,14 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-beta3 - 31st October 2026
+
+* testing:
+  * `File:` labels under **test** name the project-relative path;
+* documentation and boilerplate:
+  * **Doxyfile** `PROJECT_NUMBER` is **4.1.0-beta3**;
+
+
 ## 4.1.0-beta2 - 27th October 2026
 
 * Defined `HAS_shwild` / `HAS_SHWILD` and `HAS_p99` / `HAS_P99` when those packages are detected;

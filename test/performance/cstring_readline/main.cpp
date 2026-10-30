@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test/performance/test.performance.cstring_readline/main.cpp
+ * File:    test/performance/cstring_readline/main.cpp
  *
  * Purpose: Competitive performance tests for cstring_readline() against
  *          std::getline, fgets (bounded buffer), and a char-at-a-time fgetc
@@ -9,7 +9,7 @@
  *          require p99.
  *
  * Created: 27th September 2026
- * Updated: 4th October 2026
+ * Updated: 30th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
