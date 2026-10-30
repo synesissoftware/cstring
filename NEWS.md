@@ -4,7 +4,7 @@
 | Date                | News Item                            | Details |
 | ------------------- | ------------------------------------ | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
-| 31st October 2026   | Release of [cstring 4.1.0-beta3](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta3) | `File:` labels use the project-relative path |
+| 31st October 2026   | Release of [cstring 4.1.0-beta3](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta3) | `File:` labels use the project-relative path; **Check test names** |
 | 27th October 2026   | Release of [cstring 4.1.0-beta2](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta2) | `HAS_shwild` / `HAS_p99`; tests use `CSTRING_HAS_SHWILD` |
 | 21st October 2026   | Release of [cstring 4.1.0-beta1](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta1) | helper gold 0.6.2; `CSTRING_VER_RELSTATUS` |
 | 6th October 2026    | Release of [cstring 4.1.0-alpha1](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-alpha1) | `djb2`, `FNV-1a`, and `SDBM`; `cstring_equal()` / `cstring_compare()`; `--wide-strings`; counted copies stop at `cch` |
