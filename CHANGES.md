@@ -1,6 +1,16 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-beta3 - 1st November 2026
+
+* testing:
+  * `File:` labels under **test** name the project-relative path;
+* build:
+  * the **Check test names** job runs **STLSoft** **check_unit_test_names.rb** over **examples** and **test**;
+* documentation and boilerplate:
+  * **Doxyfile** `PROJECT_NUMBER` is **4.1.0-beta3**;
+
+
 ## 4.1.0-beta2 - 27th October 2026
 
 * Defined `HAS_shwild` / `HAS_SHWILD` and `HAS_p99` / `HAS_P99` when those packages are detected;

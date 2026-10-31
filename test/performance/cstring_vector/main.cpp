@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test/performance/test.performance.cstring_vector/main.cpp
+ * File:    test/performance/cstring_vector/main.cpp
  *
  * Purpose: Competitive performance tests for cstring_vector vs
  *          std::vector<std::string> and a hand-rolled floor. When p99 is
@@ -8,7 +8,7 @@
  *          getline, platformstl::file_lines).
  *
  * Created: 23rd September 2026
- * Updated: 4th October 2026
+ * Updated: 30th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
