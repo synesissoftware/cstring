@@ -1,7 +1,7 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.1.0-beta3 - 31st October 2026
+## 4.1.0-beta3 - 1st November 2026
 
 * testing:
   * `File:` labels under **test** name the project-relative path;
