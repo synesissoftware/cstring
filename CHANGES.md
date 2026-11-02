@@ -1,6 +1,15 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-beta4 - 2nd November 2026
+
+* version:
+  * added `CSTRING_VER_4_1_0_B4`;
+
+* build:
+  * **STLSoft** minimum is **1.11.5**;
+  * **xTests** minimum is **0.28.2**;
+
 ## 4.1.0-beta3 - 1st November 2026
 
 * testing:
