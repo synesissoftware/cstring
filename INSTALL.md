@@ -42,7 +42,7 @@ The primary choice for installation is by use of **CMake**.
    $ ./prepare_cmake.sh --no-cpp --disable-testing -v
    ```
 
-   For a full build including examples and tests, install **STLSoft** 1.11
+   For a full build including examples and tests, install **STLSoft** 1.11.5
    (and **xTests** for tests) via their own **CMake** scripts first, then:
 
    ```bash
