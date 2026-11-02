@@ -97,7 +97,7 @@ Pass memory flags to `cstring_createEx()` or `cstring_createLenEx()`. For a borr
 
 * Owned, fixed, and borrowed (including Windows allocators, where the host has them): [**example.c.cstring**](./examples/c/cstring/);
 * Auto-buffer: [**example.c.cstring.auto_buffer**](./examples/c/auto-buffer/);
-* Win32 global memory: [**example.cpp.cstring.global_memory**](./examples/cpp/cstring.global_memory/).
+* Win32 global memory: [**example.cpp.windows.global-memory**](./examples/cpp/windows.global-memory/).
 
 
 ### Allocators
@@ -318,8 +318,8 @@ Examples live under **examples/** (`c/` and `cpp/`). The directory is the subjec
 | [**example.c.cstring.auto_buffer**](./examples/c/auto-buffer/) | C | Borrowed buffer that may grow to the heap |
 | [**example.c.cstring_create**](./examples/c/cstring_create/) | C | Minimal `cstring_create()` |
 | [**example.c.cstring_vector**](./examples/c/cstring_vector/) | C | Read lines into `cstring_vector_t` and sort (input path or `--`; `SIS_EXAMPLE_SMOKE` enables no-arg demo) |
-| [**example.cpp.cstring.dynload**](./examples/cpp/cstring.dynload/) | C++ | Windows-only dynamic load of the cstring DLL |
-| [**example.cpp.cstring.global_memory**](./examples/cpp/cstring.global_memory/) | C++ | Windows-only `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` |
+| [**example.cpp.windows.dyamic-load**](./examples/cpp/windows.dyamic-load/) | C++ | Windows-only dynamic load of the cstring DLL |
+| [**example.cpp.windows.global-memory**](./examples/cpp/windows.global-memory/) | C++ | Windows-only `CSTRING_F_USE_WINDOWS_GLOBAL_MEMORY` |
 
 
 ## Project Information

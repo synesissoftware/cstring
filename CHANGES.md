@@ -3,8 +3,8 @@
 
 ## 4.1.0-beta5 - 3rd November 2026
 
-* renamed **examples/cpp/cstring.dynload** => **examples/cpp/dynload**;
-* renamed **examples/cpp/cstring.global_memory** => **examples/cpp/global_memory**;
+* renamed **examples/cpp/cstring.dynload** => **examples/cpp/windows.dyamic-load**;
+* renamed **examples/cpp/cstring.global_memory** => **examples/cpp/windows.global-memory**;
 
 
 ## 4.1.0-beta4 - 2nd November 2026

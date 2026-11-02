@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    examples/cpp/cstring.dynload/main.cpp
+ * File:    examples/cpp/windows.dynamic-load/main.cpp
  *
  * Purpose: Windows-only example loading the cstring DLL dynamically via
  *          `LoadLibrary` / `GetProcAddress`.
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
     {
 #if defined(_DEBUG) || \
     defined(__SYNSOFT_DBS_DEBUG)
-        puts("example.cpp.cstring.dynload: " STLSOFT_COMPILER_LABEL_STRING);
+        puts("example.cpp.windows.dyamic-load: " STLSOFT_COMPILER_LABEL_STRING);
 #endif /* debug */
 
         return main_(argc, argv);
