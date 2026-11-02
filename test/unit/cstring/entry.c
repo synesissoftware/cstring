@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring instance general functionality.
  *
  * Created: 23rd May 2009
- * Updated: 6th October 2026
+ * Updated: 2nd November 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -985,7 +985,7 @@ static void TEST_cstring_createEx(void)
         TEST_INT_GE(i, str.len);
         TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        TEST_INT_GE(str.capacity, comstl_C_CoTaskMemGetSize(str.ptr));
 
         cstring_destroy(&str);
 
@@ -1119,7 +1119,7 @@ static void TEST_cstring_createLenEx(void)
         TEST_INT_GE(i, str.len);
         TEST_STR_EQ_(s, str.ptr);
         TEST_INT_GE(str.len, str.capacity);
-        TEST_INT_GE(str.capacity, comstl__CoTaskMemGetSize(str.ptr));
+        TEST_INT_GE(str.capacity, comstl_C_CoTaskMemGetSize(str.ptr));
 
         cstring_destroy(&str);
 

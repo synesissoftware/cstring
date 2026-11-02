@@ -29,7 +29,7 @@ For a minimal library install with no external dependencies:
 $ ./prepare_cmake.sh --no-cpp --disable-testing -m
 ```
 
-For a full build including examples and tests, install **STLSoft** 1.11 and
+For a full build including examples and tests, install **STLSoft** 1.11.5 and
 **xTests** first, then:
 
 ```bash

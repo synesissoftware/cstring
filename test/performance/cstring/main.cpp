@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    test/performance/test.performance.cstring/main.cpp
+ * File:    test/performance/cstring/main.cpp
  *
  * Purpose: Competitive performance tests for cstring vs std::string and a
  *          hand-rolled realloc/memcpy floor. On Windows, the same scenarios
@@ -7,7 +7,7 @@
  *          p99 is available, also report per-iteration percentiles.
  *
  * Created: 23rd September 2026
- * Updated: 4th October 2026
+ * Updated: 30th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 

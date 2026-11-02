@@ -1,8 +1,36 @@
 # cstring - Changes <!-- omit in toc -->
 
 
-## 4.1.0-beta2 - 25th October 2026
+## 4.1.0-beta5 - 3rd November 2026
 
+* renamed **examples/cpp/cstring.dynload** => **examples/cpp/dynload**;
+* renamed **examples/cpp/cstring.global_memory** => **examples/cpp/global_memory**;
+
+
+## 4.1.0-beta4 - 2nd November 2026
+
+* version:
+  * added `CSTRING_VER_4_1_0_B4`;
+
+* build:
+  * **STLSoft** minimum is **1.11.5**;
+  * **xTests** minimum is **0.28.2**;
+
+
+## 4.1.0-beta3 - 1st November 2026
+
+* testing:
+  * `File:` labels under **test** name the project-relative path;
+* build:
+  * the **Check test names** job runs **STLSoft** **check_unit_test_names.rb** over **examples** and **test**;
+* documentation and boilerplate:
+  * **Doxyfile** `PROJECT_NUMBER` is **4.1.0-beta3**;
+
+
+## 4.1.0-beta2 - 27th October 2026
+
+* Defined `HAS_shwild` / `HAS_SHWILD` and `HAS_p99` / `HAS_P99` when those packages are detected;
+* Unit tests **test.unit.insert-replace** and **test.unit.status-codes** include **shwild** under `CSTRING_HAS_SHWILD`, and **test.scratch.versions** prints **shwild** under `HAS_shwild`;
 
 
 ## 4.1.0-beta1 - 21st October 2026

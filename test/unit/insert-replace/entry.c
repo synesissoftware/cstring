@@ -4,7 +4,7 @@
  * Purpose: Unit-tests for cstring insert and replace functionality.
  *
  * Created: 4th June 2009
- * Updated: 5th October 2026
+ * Updated: 27th October 2026
  *
  * ////////////////////////////////////////////////////////////////////// */
 
@@ -25,10 +25,10 @@
 
 #include "../../cstring_testing.h"
 
-#ifdef XTESTS_HAS_SHWILD
+#ifdef CSTRING_HAS_SHWILD
  /* shwild header files */
 # include <shwild/shwild.h>
-#endif /* XTESTS_HAS_SHWILD */
+#endif /* CSTRING_HAS_SHWILD */
 
 /* xTests header files */
 #include <xtests/terse-api.h>
@@ -141,7 +141,9 @@ static void TEST_cstring_createN(void)
             TEST_PTR_NE(NULL, str.ptr);
             TEST_INT_GE(str.len, str.capacity);
 
-#if defined(XTESTS_HAS_SHWILD) && !defined(CSTRING_USE_WIDE_STRINGS)
+#if 0
+#elif defined(CSTRING_HAS_SHWILD) &&\
+      !defined(CSTRING_USE_WIDE_STRINGS)
 
             /* created string must be entirely '~' */
             TEST_MS_DOES_NOT_MATCH("*[a-zA-Z0-9]*", str.ptr);
