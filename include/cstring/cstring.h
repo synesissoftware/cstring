@@ -55,8 +55,8 @@
 #ifndef CSTRING_DOCUMENTATION_SKIP_SECTION
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
-# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 3
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     106
+# define CSTRING_VER_CSTRING_H_CSTRING_REVISION 4
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     107
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -110,6 +110,7 @@
 # define CSTRING_VER_4_1_0_B2   0x04010082
 # define CSTRING_VER_4_1_0_B3   0x04010083
 # define CSTRING_VER_4_1_0_B4   0x04010084
+# define CSTRING_VER_4_1_0_B5   0x04010085
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -135,7 +136,7 @@
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   1
 #define CSTRING_VER_PATCH                                   0
-#define CSTRING_VER_RELSTATUS                               0x84
+#define CSTRING_VER_RELSTATUS                               0x85
 
 #define CSTRING_VER \
     (0\
@@ -156,6 +157,7 @@
  */
 
 #include <cstring/common.h>
+
 #include <stdio.h>
 
 

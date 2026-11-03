@@ -1,7 +1,7 @@
 if(_BUILD_AS_WIN32)
 
-	add_subdirectory(cstring.dynload)
-	add_subdirectory(cstring.global_memory)
+	add_subdirectory(windows.dynamic-load)
+	add_subdirectory(windows.global-memory)
 endif(_BUILD_AS_WIN32)
 
 

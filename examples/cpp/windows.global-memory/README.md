@@ -1,4 +1,4 @@
-# example.cpp.cstring.global_memory <!-- omit in toc -->
+# example.cpp.windows.global-memory <!-- omit in toc -->
 
 
 ## Purpose
@@ -14,7 +14,7 @@ Built when `BUILD_EXAMPLES` is enabled, `NO_CSTRING_CPP_API` is off, and the tar
 ## Run
 
 ```sh
-${SIS_CMAKE_BUILD_DIR:-./_build}/examples/cpp/cstring.global_memory/example.cpp.cstring.global_memory
+${SIS_CMAKE_BUILD_DIR:-./_build}/examples/cpp/windows.global-memory/example.cpp.windows.global-memory
 ```
 
 

@@ -4,6 +4,7 @@
 | Date                | News Item                            | Details |
 | ------------------- | ------------------------------------ | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
+| 3rd November 2026   | Release of [cstring 4.1.0-beta5](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta5) | directory renames |
 | 2nd November 2026   | Release of [cstring 4.1.0-beta4](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta4) | **STLSoft** **1.11.5**; **xTests** **0.28.2** |
 | 1st November 2026   | Release of [cstring 4.1.0-beta3](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta3) | `File:` labels use the project-relative path; **Check test names** |
 | 27th October 2026   | Release of [cstring 4.1.0-beta2](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta2) | `HAS_shwild` / `HAS_p99`; tests use `CSTRING_HAS_SHWILD` |

@@ -1,4 +1,4 @@
-# example.cpp.cstring.dynload <!-- omit in toc -->
+# example.cpp.windows.dyamic-load <!-- omit in toc -->
 
 
 ## Purpose
@@ -14,7 +14,7 @@ Built when `BUILD_EXAMPLES` is enabled, `NO_CSTRING_CPP_API` is off, and the tar
 ## Run
 
 ```sh
-${SIS_CMAKE_BUILD_DIR:-./_build}/examples/cpp/cstring.dynload/example.cpp.cstring.dynload
+${SIS_CMAKE_BUILD_DIR:-./_build}/examples/cpp/windows.dyamic-load/example.cpp.windows.dyamic-load
 ```
 
 Expects a suitable **cstring** DLL (for example `cstring.3.debug.dll`) to be loadable on the process search path.

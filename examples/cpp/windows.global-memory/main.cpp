@@ -1,5 +1,5 @@
 /* /////////////////////////////////////////////////////////////////////////
- * File:    examples/cpp/cstring.global_memory/main.cpp
+ * File:    examples/cpp/windows.global-memory/main.cpp
  *
  * Purpose: Windows-only example loading the cstring DLL dynamically via
  *          `LoadLibrary` / `GetProcAddress`.
