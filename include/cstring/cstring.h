@@ -4,7 +4,7 @@
  * Purpose: Definition of the cstring.core API.
  *
  * Created: 16th June 1994
- * Updated: 2nd November 2026
+ * Updated: 6th November 2026
  *
  * Home:    http://synesis.com.au/software/
  *
@@ -56,7 +56,7 @@
 # define CSTRING_VER_CSTRING_H_CSTRING_MAJOR    3
 # define CSTRING_VER_CSTRING_H_CSTRING_MINOR    13
 # define CSTRING_VER_CSTRING_H_CSTRING_REVISION 4
-# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     107
+# define CSTRING_VER_CSTRING_H_CSTRING_EDIT     108
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 
@@ -111,6 +111,7 @@
 # define CSTRING_VER_4_1_0_B3   0x04010083
 # define CSTRING_VER_4_1_0_B4   0x04010084
 # define CSTRING_VER_4_1_0_B5   0x04010085
+# define CSTRING_VER_4_1_0_B6   0x04010086
 #endif /* !CSTRING_DOCUMENTATION_SKIP_SECTION */
 
 /** \def CSTRING_VER_MAJOR
@@ -136,7 +137,7 @@
 #define CSTRING_VER_MAJOR                                   4
 #define CSTRING_VER_MINOR                                   1
 #define CSTRING_VER_PATCH                                   0
-#define CSTRING_VER_RELSTATUS                               0x85
+#define CSTRING_VER_RELSTATUS                               0x86
 
 #define CSTRING_VER \
     (0\

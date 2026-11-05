@@ -4,6 +4,7 @@
 | Date                | News Item                            | Details |
 | ------------------- | ------------------------------------ | ------- |
 | Available from [**cstring** project on GitHub](https://synesissoftware.com/cstring):  |
+| 6th November 2026   | Release of [cstring 4.1.0-beta6](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta6) | CI installs **woad** before **xTests**; **Doxyfile** `PROJECT_NUMBER` |
 | 3rd November 2026   | Release of [cstring 4.1.0-beta5](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta5) | directory renames |
 | 2nd November 2026   | Release of [cstring 4.1.0-beta4](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta4) | **STLSoft** **1.11.5**; **xTests** **0.28.2** |
 | 1st November 2026   | Release of [cstring 4.1.0-beta3](https://github.com/synesissoftware/cstring/releases/tag/4.1.0-beta3) | `File:` labels use the project-relative path; **Check test names** |
