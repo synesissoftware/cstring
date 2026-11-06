@@ -1,6 +1,16 @@
 # cstring - Changes <!-- omit in toc -->
 
 
+## 4.1.0-beta6 - 6th November 2026
+
+* version:
+  * added `CSTRING_VER_4_1_0_B6`;
+* build:
+  * CI installs **woad** before **xTests**, which **xTests** 0.29 requires;
+* documentation and boilerplate:
+  * **Doxyfile** `PROJECT_NUMBER` is **4.1.0-beta6**;
+
+
 ## 4.1.0-beta5 - 3rd November 2026
 
 * renamed **examples/cpp/cstring.dynload** => **examples/cpp/windows.dyamic-load**;

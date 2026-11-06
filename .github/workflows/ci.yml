@@ -262,13 +262,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install test dependencies (STLSoft + shwild + xTests)
+      - name: Install test dependencies (STLSoft + shwild + woad + xTests)
         uses: ./.github/actions/install-sis-deps
         with:
           build-type: ${{ env.BUILD_TYPE }}
           c-compiler: gcc
           cpp-compiler: g++
-          dependencies: STLSoft shwild xTests
+          dependencies: STLSoft shwild woad xTests
 
       - name: Configure via prepare_cmake.sh --no-cpp
         shell: bash
@@ -300,13 +300,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install test dependencies (STLSoft + shwild + xTests)
+      - name: Install test dependencies (STLSoft + shwild + woad + xTests)
         uses: ./.github/actions/install-sis-deps
         with:
           build-type: ${{ env.BUILD_TYPE }}
           c-compiler: gcc
           cpp-compiler: g++
-          dependencies: STLSoft shwild xTests
+          dependencies: STLSoft shwild woad xTests
 
       - name: Configure via prepare_cmake.sh --wide-strings
         shell: bash
